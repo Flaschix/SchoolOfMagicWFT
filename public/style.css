@@ -1,0 +1,15 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+button {
+    margin: 10px;
+}
+
+#joinRoomDialog {
+    margin-top: 10px;
+}
+
+#gameContainer {
+    margin-top: 20px;
+}
