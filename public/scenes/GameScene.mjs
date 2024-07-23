@@ -16,9 +16,6 @@ export class GameScene extends Phaser.Scene {
         //зона в которой стоит игрок
         this.eventZone = null;
 
-        //массив изображений оверлея
-        this.overlayImages = [];
-
         //существует ли оверлей сейчас поврех экрана
         this.isOverlayVisible = false;
     }
@@ -34,12 +31,11 @@ export class GameScene extends Phaser.Scene {
         //overlayImages
         this.load.image('overlayBackground', 'assets/overlay/overlayBackground.png');
         this.load.image('overlay', 'assets/overlay/overlay.png');
-        this.load.image('overlay1', 'assets/overlay/1.png');
-        this.load.image('overlay2', 'assets/overlay/2.png');
 
         //ключи
         this.load.image('firstKey', 'assets/keyFrame/firstKey.png');
         this.load.image('secondKey', 'assets/keyFrame/secondKey.png');
+        this.load.image('empty', 'assets/keyFrame/Empty.png')
 
 
         //specialZone
@@ -83,7 +79,7 @@ export class GameScene extends Phaser.Scene {
         this.createCollision();
 
         //Создание оверлея
-        this.createOverlays(2);
+        this.createOverlays();
 
         //Создание слушателей нажатия кнопок
         this.createInputHandlers();
@@ -238,7 +234,7 @@ export class GameScene extends Phaser.Scene {
         });
     }
 
-    createOverlays(N) {
+    createOverlays() {
         this.pressX = this.add.image(player.x, player.y - 50, 'pressX');
         this.pressX.setDisplaySize(this.pressX.width, this.pressX.height);
         this.pressX.setVisible(false);
@@ -257,41 +253,16 @@ export class GameScene extends Phaser.Scene {
         this.firstKey.setVisible(false);
         this.firstKey.setDepth(2);
 
+        //Второй ключ
         this.secondKey = this.add.image(0, 0, 'secondKey');
         this.secondKey.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
         this.secondKey.setVisible(false);
         this.secondKey.setDepth(2);
 
-        //особая зона с вводом кода над заменить, тк я её вызываю по другому теперь
-        let specialZone = this.add.image(0, 0, 'specialZone');
-        specialZone.setVisible(false);
-        this.overlayImages.push(specialZone);
-
-        this.domContainer = this.add.dom(0, 0).createFromHTML(`
-            <div style="text-align: center;">
-                <input type="text" id="codeInput" placeholder="Enter code" style="width: 200px; padding: 10px; margin-bottom: 10px;">
-                <br>
-                <button id="enterButton" style="padding: 10px 20px;">Enter</button>
-            </div>
-        `);
-
-        this.enterButton = document.getElementById('enterButton');
-        this.enterButton.addEventListener('click', () => {
-            const codeInput = document.getElementById('codeInput');
-            console.log(codeInput.value);
-        });
-
-        this.domContainer.setVisible(false);
-
-        for (let i = 1; i <= N; i++) {
-            let overlayImage = this.add.image(0, 0, `overlay`);
-            overlayImage.setOrigin(0.5, 0.5);
-            overlayImage.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
-            overlayImage.setVisible(false);
-            overlayImage.setDepth(2);
-            // overlayImage.setAlpha(0); // Начальное значение прозрачности
-            this.overlayImages.push(overlayImage);
-        }
+        //Текст для пустых
+        this.emptySign = this.add.image(0, 0, 'empty');
+        this.emptySign.setVisible(false);
+        this.emptySign.setDepth(2);
 
         this.closeButton = this.add.image(0, 0, 'closeIcon');
         this.closeButton.setDisplaySize(this.overlayBackground.displayWidth * 0.05, this.overlayBackground.displayHeight * 0.07);
@@ -303,7 +274,7 @@ export class GameScene extends Phaser.Scene {
         this.closeButton.on('pointerdown', () => {
             this.isOverlayVisible = false;
             this.tweens.add({
-                targets: [this.overlayImages[this.eventZone], this.closeButton, this.domContainer, this.overlayBackground],
+                targets: [this.closeButton, this.overlayBackground, this.emptySign],
                 alpha: 0,
                 duration: 500,
                 onComplete: () => {
@@ -334,14 +305,14 @@ export class GameScene extends Phaser.Scene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.overlayImages[this.eventZone], this.closeButton, this.domContainer, this.overlayBackground, this.enterCodeContainer],
+                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.emptySign],
                         alpha: 1,
                         duration: 500
                     });
                 }
                 else {
                     this.tweens.add({
-                        targets: [this.overlayImages[this.eventZone], this.closeButton, this.domContainer, this.overlayBackground, this.enterCodeContainer],
+                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.emptySign],
                         alpha: 0,
                         duration: 500,
                         onComplete: () => {
@@ -374,7 +345,7 @@ export class GameScene extends Phaser.Scene {
             this.secondKey.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
         }
         else {
-            this.overlayImages[this.eventZone].setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360 + 20).setVisible(true);
+            this.emptySign.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);;
         }
 
         this.overlayBackground.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
@@ -390,10 +361,10 @@ export class GameScene extends Phaser.Scene {
         else if (this.eventZone == FIRST_KEY) this.firstKey.setVisible(false);
         else if (this.eventZone == SECOND_KEY) this.secondKey.setVisible(false);
         else {
-            this.overlayBackground.setVisible(false);
-            this.overlayImages[this.eventZone].setVisible(false);
-            this.closeButton.setVisible(false);
+            this.emptySign.setVisible(false);
         }
+        this.overlayBackground.setVisible(false);
+        this.closeButton.setVisible(false);
     }
 
     createUI() {

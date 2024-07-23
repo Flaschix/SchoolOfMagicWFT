@@ -26,6 +26,10 @@ export class GameScene4 extends Phaser.Scene {
     preload() {
         //map
         this.load.image('map4', './assets/map/library_room_4.png');
+        this.load.image('doorRoom4', './assets/map/door_room_4.png');
+        this.load.image('tableRoom4', './assets/map/table_room_4.png');
+        this.load.image('sixethKey', 'assets/keyFrame/sixethKey.png');
+
     }
 
     create(data) {
@@ -96,6 +100,8 @@ export class GameScene4 extends Phaser.Scene {
 
     createMap() {
         this.map = this.add.image(0, 0, 'map4').setOrigin(0, 0);
+        this.add.image(1040, 1960, 'doorRoom4');
+        this.add.image(1024, 596, 'tableRoom4');
         this.matter.world.setBounds(0, 0, this.map.width, this.map.height);
     }
 
@@ -177,12 +183,14 @@ export class GameScene4 extends Phaser.Scene {
         //     },
         //     context: this
         // })
+        const bodyMiddleTopTable = this.matter.add.fromVertices(804 + 225, 608, '1 1 1 181 454 181 454 1', { label: '0', isStatic: true });
+
 
         const bodyLeftTopBookShell = this.matter.add.fromVertices(250 + 206, 392 + 120, '1.5 145 8 208 8 444.5 411.5 444.5 411.5 208 418 158 382.5 85.5 319 24.5 218.5 0.5 115.5 16 34.5 85.5', { label: '1', isStatic: true });
         const bodyLeftTable1 = this.matter.add.fromVertices(250 + 192, 392 + 410, '190.5 95.5 1 91.5 1 0.5 190.5 0.5', { label: '1', isStatic: true });
         const bodyLeftTable2 = this.matter.add.fromVertices(250 + 200, 392 + 590, '252.5 1 4.5 1 1.5 90.5 248.5 87.5', { label: '1', isStatic: true });
         const bodyLeftTable3 = this.matter.add.fromVertices(250 + 214, 392 + 732, '272 0.5 1 0.5 1 82.5 267 87.5', { label: '1', isStatic: true });
-        const bodyLeftTable4 = this.matter.add.fromVertices(250 + 196, 392 + 880, '243 1 1 1 1 87.5 246.5 87.5', { label: '1', isStatic: true });
+        const bodyLeftTable4 = this.matter.add.fromVertices(250 + 196, 392 + 880, '243 1 1 1 1 87.5 246.5 87.5', { label: `${SIXETH_KEY}`, isStatic: true });
 
         const bodyLeftMiddleBookshell = this.matter.add.fromVertices(1500 + 168, 392 + 950, '189 2 0.5 0.5 2 125.5 191.5 125.5', { label: '1', isStatic: true });
         const bodyRightTable3 = this.matter.add.fromVertices(1500 + 116, 392 + 680, '412.5 71.5 1 71.5 5.5 0.5 412.5 0.5', { label: '1', isStatic: true });
@@ -190,12 +198,13 @@ export class GameScene4 extends Phaser.Scene {
         const bodyRightTable1 = this.matter.add.fromVertices(1500 + 112, 390 + 380, '275.5 70 1 70 11 1 275.5 1', { label: '1', isStatic: true });
         const bodyRightTopBookshell = this.matter.add.fromVertices(1500 + 35, 392 + 90, '399.5 440 7 446.5 4 446.5 7 211.5 0.5 174.5 7 120.5 79 38.5 158.5 1 251 1 352 59.5 408.5 143.5 408.5 194.5 399.5 212', { label: '1', isStatic: true });
 
-        const bodyDoor = this.matter.add.fromVertices(942 + 86, 1900 + 90, '8 130.5 1 190.5 544.5 190.5 508.5 142.5 422.5 62.5 309 0.5 217 0.5 115.5 56.5', {
+        const bodyDoor = this.matter.add.fromVertices(942 + 86, 1900 + 80, '8 130.5 1 190.5 544.5 190.5 508.5 142.5 422.5 62.5 309 0.5 217 0.5 115.5 56.5', {
             label: `${DOOR_ID}`,
             isStatic: true,
+            isSensor: true
         })
 
-        const arrBodies = [bodyDoor, bodyRightTable3, bodyRightTable2, bodyRightTable1, bodyRightTopBookshell, bodyLeftMiddleBookshell, bodyLeftTable1, bodyLeftTable2, bodyLeftTable3, bodyLeftTable4]
+        const arrBodies = [bodyDoor, bodyMiddleTopTable, bodyRightTable3, bodyRightTable2, bodyRightTable1, bodyRightTopBookshell, bodyLeftMiddleBookshell, bodyLeftTable1, bodyLeftTable2, bodyLeftTable3, bodyLeftTable4]
 
         this.matterCollision.addOnCollideStart({
             objectA: player,
@@ -230,7 +239,7 @@ export class GameScene4 extends Phaser.Scene {
         });
     }
 
-    createOverlays(N) {
+    createOverlays() {
         this.pressX = this.add.image(player.x, player.y - 50, 'pressX');
         this.pressX.setDisplaySize(this.pressX.width, this.pressX.height);
         this.pressX.setVisible(false);
@@ -242,36 +251,16 @@ export class GameScene4 extends Phaser.Scene {
         this.overlayBackground.setVisible(false);
         this.overlayBackground.setAlpha(0); // Начальное значение прозрачности
 
-        //особая зона с вводом кода над заменить, тк я её вызываю по другому теперь
-        let specialZone = this.add.image(0, 0, 'specialZone');
-        specialZone.setVisible(false);
-        this.overlayImages.push(specialZone);
+        //Шестой ключ
+        this.sixethKey = this.add.image(0, 0, 'sixethKey');
+        this.sixethKey.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
+        this.sixethKey.setVisible(false);
+        this.sixethKey.setDepth(2);
 
-        this.domContainer = this.add.dom(0, 0).createFromHTML(`
-            <div style="text-align: center;">
-                <input type="text" id="codeInput" placeholder="Enter code" style="width: 200px; padding: 10px; margin-bottom: 10px;">
-                <br>
-                <button id="enterButton" style="padding: 10px 20px;">Enter</button>
-            </div>
-        `);
-
-        this.enterButton = document.getElementById('enterButton');
-        this.enterButton.addEventListener('click', () => {
-            const codeInput = document.getElementById('codeInput');
-            console.log(codeInput.value);
-        });
-
-        this.domContainer.setVisible(false);
-
-        for (let i = 1; i <= N; i++) {
-            let overlayImage = this.add.image(0, 0, `overlay`);
-            overlayImage.setOrigin(0.5, 0.5);
-            overlayImage.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
-            overlayImage.setVisible(false);
-            overlayImage.setDepth(2);
-            overlayImage.setAlpha(0); // Начальное значение прозрачности
-            this.overlayImages.push(overlayImage);
-        }
+        //Текст для пустых
+        this.emptySign = this.add.image(0, 0, 'empty');
+        this.emptySign.setVisible(false);
+        this.emptySign.setDepth(2);
 
         this.closeButton = this.add.image(0, 0, 'closeIcon');
         this.closeButton.setDisplaySize(this.overlayBackground.displayWidth * 0.05, this.overlayBackground.displayHeight * 0.07);
@@ -282,7 +271,7 @@ export class GameScene4 extends Phaser.Scene {
         this.closeButton.on('pointerdown', () => {
             this.isOverlayVisible = false;
             this.tweens.add({
-                targets: [this.overlayImages[this.eventZone], this.closeButton, this.domContainer, this.overlayBackground],
+                targets: [this.closeButton, this.overlayBackground, this.sixethKey, this.emptySign],
                 alpha: 0,
                 duration: 500,
                 onComplete: () => {
@@ -302,7 +291,9 @@ export class GameScene4 extends Phaser.Scene {
                 console.log(this.eventZone);
 
                 if (this.eventZone == DOOR_ID) {
-                    socket.emit('switchScene', CST.SCENE.GAMESCENE2, 1024, 2000);
+                    this.isInZone = false;
+                    this.eventZone = null;
+                    socket.emit('switchScene', CST.SCENE.GAMESCENE3, 1024, 800);
                     return;
                 }
 
@@ -311,14 +302,14 @@ export class GameScene4 extends Phaser.Scene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.overlayImages[this.eventZone], this.closeButton, this.domContainer, this.overlayBackground, this.enterCodeContainer],
+                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySign],
                         alpha: 1,
                         duration: 500
                     });
                 }
                 else {
                     this.tweens.add({
-                        targets: [this.overlayImages[this.eventZone], this.closeButton, this.domContainer, this.overlayBackground, this.enterCodeContainer],
+                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySign],
                         alpha: 0,
                         duration: 500,
                         onComplete: () => {
@@ -344,25 +335,33 @@ export class GameScene4 extends Phaser.Scene {
         if (this.eventZone == 0) {
             this.enterCodeContainer.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360);
             this.enterCodeContainer.setVisible(true);
-        } else {
-            this.overlayBackground.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
-            this.overlayImages[this.eventZone].setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360 + 20).setVisible(true);
-
-            this.closeButton.setPosition(
-                this.cameras.main.scrollX + 640 + this.overlayBackground.displayWidth / 2 - this.overlayBackground.displayWidth * 0.1 / 2 + 10,
-                this.cameras.main.scrollY + 360 - this.overlayBackground.displayHeight / 2 + this.overlayBackground.displayHeight * 0.1 / 2,
-            ).setVisible(true);
+            return;
+        } else if (this.eventZone == SIXETH_KEY) {
+            this.sixethKey.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
         }
+        else {
+            this.emptySign.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);;
+        }
+
+        this.overlayBackground.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
+        this.closeButton.setPosition(
+            this.cameras.main.scrollX + 640 + this.overlayBackground.displayWidth / 2 - this.overlayBackground.displayWidth * 0.1 / 2 + 10,
+            this.cameras.main.scrollY + 360 - this.overlayBackground.displayHeight / 2 + this.overlayBackground.displayHeight * 0.1 / 2,
+        ).setVisible(true);
     }
 
     hideOverlay() {
         this.isOverlayVisible = false
-        if (this.eventZone == 0) this.enterCodeContainer.setVisible(false);
-        else {
-            this.overlayBackground.setVisible(false);
-            this.overlayImages[this.eventZone].setVisible(false);
-            this.closeButton.setVisible(false);
+        if (this.eventZone == 0) {
+            this.enterCodeContainer.setVisible(false);
+            return;
         }
+        else if (this.eventZone == SIXETH_KEY) this.sixethKey.setVisible(false);
+        else {
+            this.emptySign.setVisible(false);
+        }
+        this.overlayBackground.setVisible(false);
+        this.closeButton.setVisible(false);
     }
 
     createUI() {
@@ -737,3 +736,4 @@ function updateAnimation(playerSprite, playerInfo) {
 }
 
 const DOOR_ID = 11111111;
+const SIXETH_KEY = 77777777;
