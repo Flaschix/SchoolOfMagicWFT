@@ -4,6 +4,8 @@
 import { LobbyScene } from "./scenes/LobbyScene.mjs";
 import { GameScene } from "./scenes/GameScene.mjs";
 import { GameScene2 } from "./scenes/GameScene2.mjs";
+import { GameScene3 } from "./scenes/GameScene3.mjs";
+import { GameScene4 } from "./scenes/GameScene4.mjs";
 
 let game;
 
@@ -19,11 +21,11 @@ const config = {
     physics: {
         default: 'matter',
         matter: {
-            // debug: true,
+            debug: true,
             gravity: { y: 0 }
         }
     },
-    scene: [LobbyScene, GameScene, GameScene2],
+    scene: [LobbyScene, GameScene, GameScene2, GameScene3, GameScene4],
     dom: {
         createContainer: true
     },

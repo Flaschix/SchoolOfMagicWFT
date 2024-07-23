@@ -85,12 +85,13 @@ export class GameScene2 extends Phaser.Scene {
 
         this.createEnterCodeContainer();
 
-        socket.on('sceneSwitched', (players) => {
+        socket.on('sceneSwitched', (data) => {
             this.map.destroy();
             this.avatarDialog.destroy();
             this.exitContainer.destroy();
             this.enterCodeContainer.destroy();
-            this.scene.start(CST.SCENE.GAMESCENE, { players });
+            let players = data.players;
+            this.scene.start(data.scene, { players });
         });
     }
 
@@ -151,60 +152,9 @@ export class GameScene2 extends Phaser.Scene {
     createCollision() {
         const bodyDoor = this.matter.add.fromVertices(900 + 107, 672, '26.8986 397.653 31.7546 397.653 40.3874 401 224.375 397.653 233.008 401 242.72 394.863 267 374.222 250.813 218.015 254.051 117.597 241.101 76.8717 203.872 28.3361 170.959 8.81032 143.442 1 107.832 4.34728 67.3651 28.3361 45.783 43.3989 33.9128 58.4616 10.712 105.881 8.55375 122.06 9.63286 132.102 9.63286 198.49 1 377.569', { isStatic: true });
 
-
-        const body1 = this.matter.add.fromVertices(600, 1200, '458.5 105.5 24 105.5 1.5 66.5 6 24.5', {
-            label: '1',
-            isStatic: true,
-            isSensor: true
-        });
-
-        const body2 = this.matter.add.fromVertices(900, 900, '458.5 105.5 24 105.5 1.5 66.5 6 24.5', {
-            label: '2',
-            isStatic: true,
-            isSensor: true
-        });
-
-        const specialZone = this.matter.add.fromVertices(900, 700, '70 80 24 105.5 1.5 66.5 6 24.5', {
-            label: '0',
-            isStatic: true,
-            isSensor: true
-        });
-
         // Создаем графику для подсветки
         const highlightGraphics = this.add.graphics();
         highlightGraphics.lineStyle(2, 0x06ff01, 1);
-
-        this.matterCollision.addOnCollideStart({
-            objectA: player,
-            objectB: [body1, body2, specialZone],
-            callback: function (eventData) {
-                this.isInZone = true;
-                this.eventZone = Number(eventData.bodyB.label);
-
-                // Подсвечиваем границы зоны
-                const vertices = eventData.bodyB.vertices;
-                highlightGraphics.beginPath();
-                highlightGraphics.moveTo(vertices[0].x, vertices[0].y);
-                for (let i = 1; i < vertices.length; i++) {
-                    highlightGraphics.lineTo(vertices[i].x, vertices[i].y);
-                }
-                highlightGraphics.closePath();
-                highlightGraphics.strokePath();
-            },
-            context: this
-        });
-
-        this.matterCollision.addOnCollideEnd({
-            objectA: player,
-            objectB: [body1, body2, specialZone],
-            callback: function (eventData) {
-                this.isInZone = false;
-                this.eventZone = null;
-
-                highlightGraphics.clear();
-            },
-            context: this
-        })
     }
 
     createOverlays(N) {
@@ -308,7 +258,10 @@ export class GameScene2 extends Phaser.Scene {
                 }
             }
         });
-
+        this.input.keyboard.on('keydown-V', () => {
+            // console.log(player.x + " " + player.y)
+            socket.emit('switchScene', CST.SCENE.GAMESCENE3, 1024, 1024);
+        });
         this.input.keyboard.on('keydown-C', () => {
             // console.log(player.x + " " + player.y)
             socket.emit('switchScene', CST.SCENE.GAMESCENE, 1024, 1024);
@@ -317,16 +270,17 @@ export class GameScene2 extends Phaser.Scene {
 
     showOverlay() {
         this.isOverlayVisible = true
+
         if (this.eventZone == 0) {
-            this.enterCodeContainer.setPosition(player.x, player.y);
+            this.enterCodeContainer.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360);
             this.enterCodeContainer.setVisible(true);
         } else {
-            this.overlayBackground.setPosition(player.x, player.y).setVisible(true);
-            this.overlayImages[this.eventZone].setPosition(player.x, player.y + 20).setVisible(true);
+            this.overlayBackground.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
+            this.overlayImages[this.eventZone].setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360 + 20).setVisible(true);
 
             this.closeButton.setPosition(
-                player.x + this.overlayBackground.displayWidth / 2 - this.overlayBackground.displayWidth * 0.1 / 2 + 10,
-                player.y - this.overlayBackground.displayHeight / 2 + this.overlayBackground.displayHeight * 0.1 / 2,
+                this.cameras.main.scrollX + 640 + this.overlayBackground.displayWidth / 2 - this.overlayBackground.displayWidth * 0.1 / 2 + 10,
+                this.cameras.main.scrollY + 360 - this.overlayBackground.displayHeight / 2 + this.overlayBackground.displayHeight * 0.1 / 2,
             ).setVisible(true);
         }
     }
@@ -358,14 +312,14 @@ export class GameScene2 extends Phaser.Scene {
         const exitButton = document.getElementById('exitButton');
         settingsButton.addEventListener('click', () => {
             console.log('Settings button clicked');
-            this.avatarDialog.setPosition(player.x, player.y);
+            this.avatarDialog.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360);
             this.avatarDialog.setVisible(true);
             this.isOverlayVisible = true
             player.setVelocity(0);
         });
         exitButton.addEventListener('click', () => {
             console.log('exitButton button clicked');
-            this.exitContainer.setPosition(player.x, player.y);
+            this.exitContainer.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360);
             this.exitContainer.setVisible(true);
             this.isOverlayVisible = true
             player.setVelocity(0);
@@ -650,6 +604,7 @@ export class GameScene2 extends Phaser.Scene {
 function addPlayer(self, playerInfo) {
     console.log(playerInfo.character);
     const newPlayer = self.matter.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`);
+    newPlayer.setScale(1.3);
     newPlayer.character = playerInfo.character;
     newPlayer.name = playerInfo.name;
     newPlayer.setBounce(0); // настройка упругости
@@ -663,7 +618,7 @@ function addPlayer(self, playerInfo) {
         width: colliderWidth,
         height: colliderHeight
     });
-    newPlayer.setOrigin(0.5, 0.65);
+    newPlayer.setOrigin(0.5, 0.7);
 
 
     // Добавляем текст с именем игрока
@@ -676,6 +631,7 @@ function addPlayer(self, playerInfo) {
 
 function addOtherPlayer(self, playerInfo) {
     const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`);
+    newPlayer.setScale(1.3);
     // const otherPlayer = self.matter.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`); //это если нужно будет взаимодействие
     otherPlayer.character = playerInfo.character;
     otherPlayer.name = playerInfo.name;

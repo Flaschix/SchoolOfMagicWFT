@@ -129,7 +129,7 @@ io.on('connection', (socket) => {
                 rooms[roomId].levels[newScene][socket.id] = { id: socket.id, x: posX, y: posY, character: avatarCur, name: usernameCur };
                 socket.join(`${roomId}:${newScene}`);
 
-                socket.emit('sceneSwitched', rooms[roomId].levels[newScene]);
+                socket.emit('sceneSwitched', { players: rooms[roomId].levels[newScene], scene: newScene });
 
                 socket.to(`${roomId}:${newScene}`).emit(`newPlayer:${newScene}`, rooms[roomId].levels[newScene][socket.id]);
 

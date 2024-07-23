@@ -3,6 +3,8 @@ export const CST = {
         LOBBYSCENE: "LobbyScene",
         GAMESCENE: "GameScene",
         GAMESCENE2: "GameScene2",
+        GAMESCENE3: "GameScene3",
+        GAMESCENE4: "GameScene4"
     }
 }
 
