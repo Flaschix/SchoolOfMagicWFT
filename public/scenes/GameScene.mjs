@@ -36,18 +36,6 @@ export class GameScene extends Phaser.Scene {
         this.load.image('firstKey', 'assets/keyFrame/firstKey.png');
         this.load.image('secondKey', 'assets/keyFrame/secondKey.png');
         this.load.image('empty', 'assets/keyFrame/Empty.png')
-
-
-        //specialZone
-        this.load.image('specialZone', 'assets/overlay/specialZone.png');
-
-        //characters
-        this.load.spritesheet('character1', './assets/characterMap/character1.png', { frameWidth: 32, frameHeight: 64 });
-        this.load.spritesheet('character2', './assets/characterMap/character2.png', { frameWidth: 32, frameHeight: 64 });
-        this.load.spritesheet('character3', './assets/characterMap/character3.png', { frameWidth: 32, frameHeight: 64 });
-        this.load.spritesheet('character4', './assets/characterMap/character4.png', { frameWidth: 48, frameHeight: 64 });
-        this.load.spritesheet('character5', './assets/characterMap/character5.png', { frameWidth: 48, frameHeight: 64 });
-        this.load.spritesheet('character6', './assets/characterMap/character6.png', { frameWidth: 48, frameHeight: 64 });
     }
 
     create(data) {
@@ -64,7 +52,7 @@ export class GameScene extends Phaser.Scene {
         this.createExitButton();
 
         //Создаём анимации
-        this.createAnimations();
+        // this.createAnimations();
 
         //Создаём стены и остальные непроходимые объекты
         this.createUnWalkedObjects();
@@ -124,34 +112,7 @@ export class GameScene extends Phaser.Scene {
         this.matter.world.setBounds(0, 0, this.map.width, this.map.height);
     }
 
-    createAnimations() {
-        for (let i = 1; i <= 6; i++) {
-            this.anims.create({
-                key: `walk_down${i}`,
-                frames: this.anims.generateFrameNumbers(`character${i}`, { start: 0, end: 2 }),
-                frameRate: 10,
-                repeat: -1
-            });
-            this.anims.create({
-                key: `walk_left${i}`,
-                frames: this.anims.generateFrameNumbers(`character${i}`, { start: 3, end: 5 }),
-                frameRate: 10,
-                repeat: -1
-            });
-            this.anims.create({
-                key: `walk_right${i}`,
-                frames: this.anims.generateFrameNumbers(`character${i}`, { start: 9, end: 11 }),
-                frameRate: 10,
-                repeat: -1
-            });
-            this.anims.create({
-                key: `walk_up${i}`,
-                frames: this.anims.generateFrameNumbers(`character${i}`, { start: 6, end: 8 }),
-                frameRate: 10,
-                repeat: -1
-            });
-        }
-    }
+
 
     createUnWalkedObjects() {
         const bodyRightDownWall = this.matter.add.fromVertices(1350 + 290, 1722 + 124, '1.5 180 10 327.5 699 326.5 699 156 652.5 156 650.5 145.5 643 142.5 638.5 139 627.5 134 627.5 120.5 634.5 116.5 641 109 651.5 101.5 656.5 92 655.5 84 650.5 77.5 641 71 634.5 67 631.5 63.5 629 60 624 55 616.5 55 615 63.5 606 63.5 608.5 73 596 80.5 591.5 90.5 596 102 619.5 120.5 619.5 134 590 137 585 142.5 579 168 507 168 423.5 164 372 168 110 164 104 178.5 98.5 177 96 172 93 168 91.5 162.5 87.5 150.5 89.5 145 89.5 133 85 124 68 124 57.5 121.5 55.5 100 55.5 89.5 62 89.5 72 84 91.5 70 101.5 51 101.5 43.5 96 36.5 80.5 25.5 62 22.5 59.5 18.5 52.5 12 49 1 43.5 1 42 12 31 13.5 15 13.5 13.5 25.5 1.5 34 5.5 51 18 75.5 40.5 89.5 43.5 118 40.5 121.5 25.5 127 25.5 140 11.5 140 10 149 1.5 166.5', { isStatic: true }, true)
@@ -296,7 +257,7 @@ export class GameScene extends Phaser.Scene {
                 if (this.eventZone == DOOR_ID) {
                     this.isInZone = false;
                     this.eventZone = null;
-                    socket.emit('switchScene', CST.SCENE.GAMESCENE2, 1024, 2000);
+                    socket.emit('switchScene', CST.SCENE.GAMESCENE2, 1024, 1770);
                     return;
                 }
 
@@ -687,7 +648,7 @@ function addPlayer(self, playerInfo) {
     const colliderWidth = 22; // 80% от ширины спрайта
     const colliderHeight = 25; // 80% от высоты спрайта
     newPlayer.setBody({
-        type: 'rectangle',
+        type: 'circle',
         width: colliderWidth,
         height: colliderHeight
     });
@@ -704,7 +665,7 @@ function addPlayer(self, playerInfo) {
 
 function addOtherPlayer(self, playerInfo) {
     const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`);
-    newPlayer.setScale(1.3);
+    otherPlayer.setScale(1.3);
     // const otherPlayer = self.matter.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`); //это если нужно будет взаимодействие
     otherPlayer.character = playerInfo.character;
     otherPlayer.name = playerInfo.name;

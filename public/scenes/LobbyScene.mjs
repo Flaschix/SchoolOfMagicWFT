@@ -17,6 +17,14 @@ export class LobbyScene extends Phaser.Scene {
         this.load.image('backgroundMenu', './assets/background/background-menu.png');
         this.load.image('createRoomBtn', './assets/button/create-room.png');
         this.load.image('joinRoomBtn', './assets/button/join.png');
+
+        //characters
+        this.load.spritesheet('character1', './assets/characterMap/character1.png', { frameWidth: 32, frameHeight: 64 });
+        this.load.spritesheet('character2', './assets/characterMap/character2.png', { frameWidth: 32, frameHeight: 64 });
+        this.load.spritesheet('character3', './assets/characterMap/character3.png', { frameWidth: 32, frameHeight: 64 });
+        this.load.spritesheet('character4', './assets/characterMap/character4.png', { frameWidth: 48, frameHeight: 64 });
+        this.load.spritesheet('character5', './assets/characterMap/character5.png', { frameWidth: 48, frameHeight: 64 });
+        this.load.spritesheet('character6', './assets/characterMap/character6.png', { frameWidth: 48, frameHeight: 64 });
     }
 
     createWelcomeContainer() {
@@ -248,6 +256,36 @@ export class LobbyScene extends Phaser.Scene {
             this.creatCodeText.textContent = roomCode;
         });
 
+        this.createAnimations();
 
+    }
+
+    createAnimations() {
+        for (let i = 1; i <= 6; i++) {
+            this.anims.create({
+                key: `walk_down${i}`,
+                frames: this.anims.generateFrameNumbers(`character${i}`, { start: 0, end: 2 }),
+                frameRate: 10,
+                repeat: -1
+            });
+            this.anims.create({
+                key: `walk_left${i}`,
+                frames: this.anims.generateFrameNumbers(`character${i}`, { start: 3, end: 5 }),
+                frameRate: 10,
+                repeat: -1
+            });
+            this.anims.create({
+                key: `walk_right${i}`,
+                frames: this.anims.generateFrameNumbers(`character${i}`, { start: 9, end: 11 }),
+                frameRate: 10,
+                repeat: -1
+            });
+            this.anims.create({
+                key: `walk_up${i}`,
+                frames: this.anims.generateFrameNumbers(`character${i}`, { start: 6, end: 8 }),
+                frameRate: 10,
+                repeat: -1
+            });
+        }
     }
 }

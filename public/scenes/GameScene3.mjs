@@ -164,22 +164,28 @@ export class GameScene3 extends Phaser.Scene {
         // // Создаем область, через которую игрок не может пройти
         // const body = this.matter.add.fromVertices(465 + 90, 930 + 90, '', { label: '1', isStatic: true });
         const bodyDoor = this.matter.add.fromVertices(892 + 120, 500 + 90, '0.5 91 0.5 328.5 168.5 328.5 168.5 78.5 139 28.5 84 1.5 27.5 33.5', {
-            label: `${DOOR_ID}`,
+            label: `${DOOR_FORWARD_ID}`,
             isStatic: true,
         });
         const bodyRightBottomTable = this.matter.add.fromVertices(1352 + 90, 1628 + 44, '92 144.5 34.5 133 1 99 1 71.5 11 38 34.5 10 72 1 125.5 10 164 51.5 149.5 118.5', { label: '1', isStatic: true });
         const bodyRightMiddleTable = this.matter.add.fromVertices(1286 + 160, 1189 + 112, '180 1.5 1.5 165.5 124.5 258.5 303 87.5', { label: '1', isStatic: true });
 
         const bodyRightMiddleShell = this.matter.add.fromVertices(1760 + 98, 990 + 220, '1 260 126.5 339 148.5 282 148.5 64 66 1.5 1 58.5', { label: `${FIVETH_KEY}`, isStatic: true });
-        const bodyRightTopShell = this.matter.add.fromVertices(1539 + 90, 760 + 90, '261.5 263.5 170 339.5 19.5 215 16 147 1.5 122.5 61 56.5 48.5 27.5 76 1.5 115 5 152 66.5 266 160', { label: '1', isStatic: true });
+        const bodyRightTopShell = this.matter.add.fromVertices(1539 + 146, 760 + 170, '1.5 83.5 11 170 169 302 259.5 226.5 259.5 126.5 89.5 1', { label: '1', isStatic: true });
         const bodyRightTopBookshell = this.matter.add.fromVertices(1200 + 125, 680 + 154, '254 1 254 327 1 327 1 98.8 18.5154 1', { label: '1', isStatic: true });
         const bodyLeftTopBookshell = this.matter.add.fromVertices(560 + 135, 770 + 122, '270.5 235.5 6 235.5 1 1 263.5 4.5', { label: '1', isStatic: true });
         const bodyLeftMiddleTable = this.matter.add.fromVertices(540 + 110, 1050 + 100, '97 26.5 1 132.5 1 207.5 48 221.5 107.5 207.5 220 103 205 26.5 153 1.5', { label: '1', isStatic: true });
-        const bodyLeftTopShell = this.matter.add.fromVertices(249 + 90, 811 + 90, '223.5 178 100 279.5 88 279.5 1 199 1 112 130 1 211 49.5 234.5 89.5', { label: '1', isStatic: true });
+        const bodyLeftTopShell = this.matter.add.fromVertices(249 + 100, 811 + 130, '223.5 178 100 279.5 88 279.5 1 199 1 112 130 1 211 49.5 234.5 89.5', { label: '1', isStatic: true });
         const bodyLeftMiddleShell = this.matter.add.fromVertices(125 + 65, 1020 + 195, '147.5 245 7 339.5 0.5 70 106.5 1.5 147.5 46.5', { label: '1', isStatic: true });
         const bodyLeftBottomTable = this.matter.add.fromVertices(450 + 80, 1622 + 52, '164.5 63.5 144 128.5 107.5 151 62 153.5 25.5 144 0.5 99 0.5 63.5 31.5 22.5 93.5 1 140 22.5', { label: `${CLUE_KEY}`, isStatic: true });
 
-        const arrBodies = [bodyDoor, bodyLeftBottomTable, bodyLeftMiddleShell, bodyLeftTopShell, bodyLeftMiddleTable, bodyLeftTopBookshell, bodyRightBottomTable, bodyRightMiddleTable, bodyRightMiddleShell, bodyRightTopShell, bodyRightTopBookshell];
+        const bodyDoorBack = this.matter.add.fromVertices(942 + 80, 1900 + 74, '8 130.5 1 190.5 544.5 190.5 508.5 142.5 422.5 62.5 309 0.5 217 0.5 115.5 56.5', {
+            label: `${DOOR_BACK_ID}`,
+            isStatic: true,
+            isSensor: true
+        })
+
+        const arrBodies = [bodyDoorBack, bodyDoor, bodyLeftBottomTable, bodyLeftMiddleShell, bodyLeftTopShell, bodyLeftMiddleTable, bodyLeftTopBookshell, bodyRightBottomTable, bodyRightMiddleTable, bodyRightMiddleShell, bodyRightTopShell, bodyRightTopBookshell];
 
         this.matterCollision.addOnCollideStart({
             objectA: player,
@@ -272,10 +278,16 @@ export class GameScene3 extends Phaser.Scene {
                 player.setVelocity(0);
                 console.log(this.eventZone);
 
-                if (this.eventZone == DOOR_ID) {
+                if (this.eventZone == DOOR_FORWARD_ID) {
                     this.isInZone = false;
                     this.eventZone = null;
                     socket.emit('switchScene', CST.SCENE.GAMESCENE4, 1024, 1850);
+                    return;
+                }
+                if (this.eventZone == DOOR_BACK_ID) {
+                    this.isInZone = false;
+                    this.eventZone = null;
+                    socket.emit('switchScene', CST.SCENE.GAMESCENE2, 1024, 850);
                     return;
                 }
 
@@ -670,7 +682,7 @@ function addPlayer(self, playerInfo) {
     const colliderWidth = 22; // 80% от ширины спрайта
     const colliderHeight = 25; // 80% от высоты спрайта
     newPlayer.setBody({
-        type: 'rectangle',
+        type: 'circle',
         width: colliderWidth,
         height: colliderHeight
     });
@@ -687,7 +699,7 @@ function addPlayer(self, playerInfo) {
 
 function addOtherPlayer(self, playerInfo) {
     const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`);
-    newPlayer.setScale(1.3);
+    otherPlayer.setScale(1.3);
     // const otherPlayer = self.matter.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`); //это если нужно будет взаимодействие
     otherPlayer.character = playerInfo.character;
     otherPlayer.name = playerInfo.name;
@@ -722,6 +734,7 @@ function updateAnimation(playerSprite, playerInfo) {
     playerSprite.nameText.setPosition(playerSprite.x, playerSprite.y - hieghtName);
 }
 
-const DOOR_ID = 11111111;
+const DOOR_FORWARD_ID = 11111111;
+const DOOR_BACK_ID = 1111112;
 const FIVETH_KEY = 6666666;
 const CLUE_KEY = 77777777;

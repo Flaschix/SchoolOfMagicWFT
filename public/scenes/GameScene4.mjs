@@ -127,66 +127,13 @@ export class GameScene4 extends Phaser.Scene {
     }
 
     createCollision() {
-        // const body1 = this.matter.add.fromVertices(600, 1200, '458.5 105.5 24 105.5 1.5 66.5 6 24.5', {
-        //     label: '1',
-        //     isStatic: true,
-        //     isSensor: true
-        // });
-
-        // const body2 = this.matter.add.fromVertices(900, 900, '458.5 105.5 24 105.5 1.5 66.5 6 24.5', {
-        //     label: '2',
-        //     isStatic: true,
-        //     isSensor: true
-        // });
-
-        // const specialZone = this.matter.add.fromVertices(900, 700, '70 80 24 105.5 1.5 66.5 6 24.5', {
-        //     label: '0',
-        //     isStatic: true,
-        //     isSensor: true
-        // });
-
-        // const bodyDoor = 
-
-
-        // Создаем графику для подсветки
         const highlightGraphics = this.add.graphics();
         highlightGraphics.lineStyle(2, 0x06ff01, 1);
 
-        // this.matterCollision.addOnCollideStart({
-        //     objectA: player,
-        //     objectB: [body1, body2, specialZone],
-        //     callback: function (eventData) {
-        //         this.isInZone = true;
-        //         this.eventZone = Number(eventData.bodyB.label);
-
-        //         // Подсвечиваем границы зоны
-        //         const vertices = eventData.bodyB.vertices;
-        //         highlightGraphics.beginPath();
-        //         highlightGraphics.moveTo(vertices[0].x, vertices[0].y);
-        //         for (let i = 1; i < vertices.length; i++) {
-        //             highlightGraphics.lineTo(vertices[i].x, vertices[i].y);
-        //         }
-        //         highlightGraphics.closePath();
-        //         highlightGraphics.strokePath();
-        //     },
-        //     context: this
-        // });
-
-        // this.matterCollision.addOnCollideEnd({
-        //     objectA: player,
-        //     objectB: [body1, body2, specialZone],
-        //     callback: function (eventData) {
-        //         this.isInZone = false;
-        //         this.eventZone = null;
-
-        //         highlightGraphics.clear();
-        //     },
-        //     context: this
-        // })
         const bodyMiddleTopTable = this.matter.add.fromVertices(804 + 225, 608, '1 1 1 181 454 181 454 1', { label: '0', isStatic: true });
 
 
-        const bodyLeftTopBookShell = this.matter.add.fromVertices(250 + 206, 392 + 120, '1.5 145 8 208 8 444.5 411.5 444.5 411.5 208 418 158 382.5 85.5 319 24.5 218.5 0.5 115.5 16 34.5 85.5', { label: '1', isStatic: true });
+        const bodyLeftTopBookShell = this.matter.add.fromVertices(250 + 206, 392 + 146, '374 409 1 409 1 165.5 51.5 59.5 191.5 1 338 59.5 374 165.5', { label: '1', isStatic: true });
         const bodyLeftTable1 = this.matter.add.fromVertices(250 + 192, 392 + 410, '190.5 95.5 1 91.5 1 0.5 190.5 0.5', { label: '1', isStatic: true });
         const bodyLeftTable2 = this.matter.add.fromVertices(250 + 200, 392 + 590, '252.5 1 4.5 1 1.5 90.5 248.5 87.5', { label: '1', isStatic: true });
         const bodyLeftTable3 = this.matter.add.fromVertices(250 + 214, 392 + 732, '272 0.5 1 0.5 1 82.5 267 87.5', { label: '1', isStatic: true });
@@ -196,7 +143,7 @@ export class GameScene4 extends Phaser.Scene {
         const bodyRightTable3 = this.matter.add.fromVertices(1500 + 116, 392 + 680, '412.5 71.5 1 71.5 5.5 0.5 412.5 0.5', { label: '1', isStatic: true });
         const bodyRightTable2 = this.matter.add.fromVertices(1500 + 48, 392 + 540, '309.5 42.5 251.5 80 26.5 80 1.5 42.5 26.5 0.5 256.5 0.5', { label: '1', isStatic: true });
         const bodyRightTable1 = this.matter.add.fromVertices(1500 + 112, 390 + 380, '275.5 70 1 70 11 1 275.5 1', { label: '1', isStatic: true });
-        const bodyRightTopBookshell = this.matter.add.fromVertices(1500 + 35, 392 + 90, '399.5 440 7 446.5 4 446.5 7 211.5 0.5 174.5 7 120.5 79 38.5 158.5 1 251 1 352 59.5 408.5 143.5 408.5 194.5 399.5 212', { label: '1', isStatic: true });
+        const bodyRightTopBookshell = this.matter.add.fromVertices(1500 + 96, 392 + 160, '1 162.5 1 395 384 395 384 162.5 328.5 54.5 188.5 1 61 54.5', { label: '1', isStatic: true });
 
         const bodyDoor = this.matter.add.fromVertices(942 + 86, 1900 + 80, '8 130.5 1 190.5 544.5 190.5 508.5 142.5 422.5 62.5 309 0.5 217 0.5 115.5 56.5', {
             label: `${DOOR_ID}`,
@@ -204,7 +151,7 @@ export class GameScene4 extends Phaser.Scene {
             isSensor: true
         })
 
-        const arrBodies = [bodyDoor, bodyMiddleTopTable, bodyRightTable3, bodyRightTable2, bodyRightTable1, bodyRightTopBookshell, bodyLeftMiddleBookshell, bodyLeftTable1, bodyLeftTable2, bodyLeftTable3, bodyLeftTable4]
+        const arrBodies = [bodyDoor, bodyLeftTopBookShell, bodyMiddleTopTable, bodyRightTable3, bodyRightTable2, bodyRightTable1, bodyRightTopBookshell, bodyLeftMiddleBookshell, bodyLeftTable1, bodyLeftTable2, bodyLeftTable3, bodyLeftTable4]
 
         this.matterCollision.addOnCollideStart({
             objectA: player,
@@ -683,7 +630,7 @@ function addPlayer(self, playerInfo) {
     const colliderWidth = 22; // 80% от ширины спрайта
     const colliderHeight = 25; // 80% от высоты спрайта
     newPlayer.setBody({
-        type: 'rectangle',
+        type: 'circle',
         width: colliderWidth,
         height: colliderHeight
     });
@@ -700,7 +647,7 @@ function addPlayer(self, playerInfo) {
 
 function addOtherPlayer(self, playerInfo) {
     const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`);
-    newPlayer.setScale(1.3);
+    otherPlayer.setScale(1.3);
     // const otherPlayer = self.matter.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`); //это если нужно будет взаимодействие
     otherPlayer.character = playerInfo.character;
     otherPlayer.name = playerInfo.name;
