@@ -258,6 +258,9 @@ export class LobbyScene extends Phaser.Scene {
 
         this.createAnimations();
 
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
     }
 
     createAnimations() {

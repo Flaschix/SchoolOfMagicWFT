@@ -32,6 +32,7 @@ io.on('connection', (socket) => {
     console.log('New client connected');
 
     socket.on('createRoom', async () => {
+        console.log('createRoom');
         // let preCode;
         // let check
 
@@ -41,6 +42,7 @@ io.on('connection', (socket) => {
         // } while (check != null)
 
         const roomCode = `${generateRoomCode(100000, 999999)}`;
+        console.log(roomCode);
         const roomId = uuidv4();
         try {
             await redisClient.set(roomCode, roomId, { EX: 400 }); // Устанавливаем срок действия 24 часа 86400
