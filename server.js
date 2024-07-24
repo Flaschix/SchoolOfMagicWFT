@@ -44,6 +44,17 @@ io.on('connection', (socket) => {
         const roomCode = `${generateRoomCode(100000, 999999)}`;
         console.log(roomCode);
         const roomId = uuidv4();
+
+        console.log('redis cheack1');
+        redisClient.on('error', (err) => {
+            console.log('Redis Client Error', err);
+        });
+
+        redisClient.on('connect', () => {
+            console.log('Connected to Redis');
+        });
+        console.log('redis cheack2');
+
         try {
             console.log('cheack 1');
             await redisClient.set(roomCode, roomId, { EX: 400 }); // Устанавливаем срок действия 24 часа 86400
