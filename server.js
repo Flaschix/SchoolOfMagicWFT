@@ -45,9 +45,13 @@ io.on('connection', (socket) => {
         console.log(roomCode);
         const roomId = uuidv4();
         try {
+            console.log('cheack 1');
             await redisClient.set(roomCode, roomId, { EX: 400 }); // Устанавливаем срок действия 24 часа 86400
+            console.log('cheack 2');
             rooms[roomId] = { levels: {} };
+            console.log('cheack 3');
             socket.join(roomId);
+            console.log('cheack 4');
             socket.emit('roomCreated', roomCode);
             console.log(`Room created with code: ${roomCode}`);
         } catch (err) {
