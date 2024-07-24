@@ -10,6 +10,14 @@ const redisClient = redis.createClient({
 
 redisClient.connect().catch(console.error);
 
+redisClient.on('error', (err) => {
+    console.log('Redis Client Error', err);
+});
+
+redisClient.on('connect', () => {
+    console.log('Connected to Redis');
+});
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
@@ -44,16 +52,6 @@ io.on('connection', (socket) => {
         const roomCode = `${generateRoomCode(100000, 999999)}`;
         console.log(roomCode);
         const roomId = uuidv4();
-
-        console.log('redis cheack1');
-        redisClient.on('error', (err) => {
-            console.log('Redis Client Error', err);
-        });
-
-        redisClient.on('connect', () => {
-            console.log('Connected to Redis');
-        });
-        console.log('redis cheack2');
 
         try {
             console.log('cheack 1');
