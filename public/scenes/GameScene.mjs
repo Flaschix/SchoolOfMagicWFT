@@ -2,6 +2,7 @@ import { CST } from "../CST.mjs";
 import { socket } from "../CST.mjs";
 
 let player;
+let oldPlayerPos;
 let otherPlayers = {};
 const hieghtName = 56;
 const heightPressX = 90;
@@ -615,14 +616,17 @@ export class GameScene extends Phaser.Scene {
         this.updatePressXVisibility();
 
         if (!fullMap) {
-            if (this.load.totalComplete === this.load.totalToLoad) {
-                this.map.setScale(1, 1);
+            if (this.textures.exists('mapFull')) {
+                fullMap = true;
+                // this.time.delayedCall(1000, () => {
+                this.map.setScale(4 / 3, 4 / 3);
 
                 this.map.setTexture('mapFull');
-                this.matter.world.setBounds(0, 0, this.map.width, this.map.height);
+                this.matter.world.setBounds(0, 0, this.map.width * 4 / 3, this.map.height * 4 / 3);
 
-                fullMap = true;
                 console.log("done");
+
+                // });
             }
         }
     }
@@ -649,6 +653,7 @@ export class GameScene extends Phaser.Scene {
         player.nameText.setPosition(player.x, player.y - hieghtName);
 
         //Передаем данные о передвижение игрока на сервер
+
         socket.emit(`playerMovement:${CST.SCENE.GAMESCENE}`, { x: player.x, y: player.y, velocityX: player.body.velocity.x, velocityY: player.body.velocity.y });
     }
 
