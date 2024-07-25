@@ -22,7 +22,7 @@ export class GameScene3 extends Phaser.Scene {
 
     preload() {
         //map
-        // this.load.image('map3', './assets/map/library_room_3.png');
+        this.load.image('map3', './assets/map/library_room_3.png');
         this.load.image('fiverthKey', 'assets/keyFrame/fiverthKey.png');
         this.load.image('clueKey', 'assets/keyFrame/clueKey.png');
     }
@@ -103,9 +103,10 @@ export class GameScene3 extends Phaser.Scene {
 
     createMap() {
         this.map = this.add.image(0, 0, 'map3').setOrigin(0, 0);
-        this.matter.world.setBounds(0, 0, this.map.width, this.map.height);
-        // this.map.setScale(2, 2);
-        // this.matter.world.setBounds(0, 0, this.map.width * 2, this.map.height * 2);
+        // this.matter.world.setBounds(0, 0, this.map.width, this.map.height);
+
+        this.map.setScale(2, 2);
+        this.matter.world.setBounds(0, 0, this.map.width * 2, this.map.height * 2);
     }
 
     createUnWalkedObjects() {
@@ -119,8 +120,8 @@ export class GameScene3 extends Phaser.Scene {
             if (id === socket.id) {
                 player = addPlayer(this, players[id]);
                 this.cameras.main.startFollow(player);
-                this.cameras.main.setBounds(-100, -12, this.map.width + 125, this.map.height + 24);
-                // this.cameras.main.setBounds(-100, -12, this.map.width * 2 + 125, this.map.height * 2 + 24);
+                // this.cameras.main.setBounds(-100, -12, this.map.width + 125, this.map.height + 24);
+                this.cameras.main.setBounds(-100, -12, this.map.width * 2 + 125, this.map.height * 2 + 24);
             } else {
                 addOtherPlayer(this, players[id]);
             }

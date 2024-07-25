@@ -5,6 +5,7 @@ let player;
 let otherPlayers = {};
 const hieghtName = 56;
 const heightPressX = 90;
+let fullMap = false;
 
 export class GameScene extends Phaser.Scene {
     constructor() {
@@ -102,9 +103,7 @@ export class GameScene extends Phaser.Scene {
             this.scene.start(data.scene, { players });
         });
 
-        this.load.image('map2', './assets/map/library_room_2.png');
-        this.load.image('map3', './assets/map/library_room_3.png');
-        this.load.image('map4', './assets/map/library_room_4.png');
+        this.load.image('mapFull', './assets/map/library_room_1_full.png');
 
         // Начало загрузки
         this.load.start();
@@ -118,12 +117,15 @@ export class GameScene extends Phaser.Scene {
     }
 
     createMap() {
-        this.map = this.add.image(0, 0, 'map').setOrigin(0, 0);
-        // this.map.setScale(2, 2);
-        this.matter.world.setBounds(0, 0, this.map.width, this.map.height);
+        if (this.textures.exists('mapFull')) {
+            this.map = this.add.image(0, 0, 'mapFull').setOrigin(0, 0);
+            this.matter.world.setBounds(0, 0, this.map.width, this.map.height);
+        } else {
+            this.map = this.add.image(0, 0, 'map').setOrigin(0, 0);
+            this.map.setScale(2, 2);
+            this.matter.world.setBounds(0, 0, this.map.width * 2, this.map.height * 2);
+        }
     }
-
-
 
     createUnWalkedObjects() {
         const bodyRightDownWall = this.matter.add.fromVertices(1350 + 290, 1722 + 124, '1.5 180 10 327.5 699 326.5 699 156 652.5 156 650.5 145.5 643 142.5 638.5 139 627.5 134 627.5 120.5 634.5 116.5 641 109 651.5 101.5 656.5 92 655.5 84 650.5 77.5 641 71 634.5 67 631.5 63.5 629 60 624 55 616.5 55 615 63.5 606 63.5 608.5 73 596 80.5 591.5 90.5 596 102 619.5 120.5 619.5 134 590 137 585 142.5 579 168 507 168 423.5 164 372 168 110 164 104 178.5 98.5 177 96 172 93 168 91.5 162.5 87.5 150.5 89.5 145 89.5 133 85 124 68 124 57.5 121.5 55.5 100 55.5 89.5 62 89.5 72 84 91.5 70 101.5 51 101.5 43.5 96 36.5 80.5 25.5 62 22.5 59.5 18.5 52.5 12 49 1 43.5 1 42 12 31 13.5 15 13.5 13.5 25.5 1.5 34 5.5 51 18 75.5 40.5 89.5 43.5 118 40.5 121.5 25.5 127 25.5 140 11.5 140 10 149 1.5 166.5', { isStatic: true }, true)
@@ -138,8 +140,8 @@ export class GameScene extends Phaser.Scene {
             if (id === socket.id) {
                 player = addPlayer(this, players[id]);
                 this.cameras.main.startFollow(player);
-                this.cameras.main.setBounds(-100, -12, this.map.width + 125, this.map.height + 24);
-                // this.cameras.main.setBounds(-100, -12, this.map.width * 2 + 125, this.map.height * 2 + 24);
+                // this.cameras.main.setBounds(-100, -12, this.map.width + 125, this.map.height + 24);
+                this.cameras.main.setBounds(-100, -12, this.map.width * 2 + 125, this.map.height * 2 + 24);
             } else {
                 console.log('from create');
                 addOtherPlayer(this, players[id]);
@@ -270,13 +272,10 @@ export class GameScene extends Phaser.Scene {
                 console.log(this.eventZone);
 
                 if (this.eventZone == DOOR_ID) {
-                    if (this.load.totalComplete === this.load.totalToLoad) {
-                        this.isInZone = false;
-                        this.eventZone = null;
-                        socket.emit('switchScene', CST.SCENE.GAMESCENE2, 1024, 1770);
-                        return;
-                    }
-                    console.log("Wait pls");
+                    this.isInZone = false;
+                    this.eventZone = null;
+                    socket.emit('switchScene', CST.SCENE.GAMESCENE2, 1024, 1770);
+                    return;
                 }
 
                 if (!this.isOverlayVisible) {
@@ -614,6 +613,18 @@ export class GameScene extends Phaser.Scene {
         this.updatePlayerPosition();
 
         this.updatePressXVisibility();
+
+        if (!fullMap) {
+            if (this.load.totalComplete === this.load.totalToLoad) {
+                this.map.setScale(1, 1);
+
+                this.map.setTexture('mapFull');
+                this.matter.world.setBounds(0, 0, this.map.width, this.map.height);
+
+                fullMap = true;
+                console.log("done");
+            }
+        }
     }
 
     updatePlayerPosition() {
