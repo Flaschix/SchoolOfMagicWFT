@@ -110,7 +110,8 @@ export class GameScene4 extends Phaser.Scene {
         this.map = this.add.image(0, 0, 'map4').setOrigin(0, 0);
         this.add.image(1040, 1960, 'doorRoom4');
         this.add.image(1024, 596, 'tableRoom4');
-        this.matter.world.setBounds(0, 0, this.map.width, this.map.height);
+        this.map.setScale(2, 2);
+        this.matter.world.setBounds(0, 0, this.map.width * 2, this.map.height * 2);
     }
 
     createUnWalkedObjects() {
@@ -126,7 +127,7 @@ export class GameScene4 extends Phaser.Scene {
             if (id === socket.id) {
                 player = addPlayer(this, players[id]);
                 this.cameras.main.startFollow(player);
-                this.cameras.main.setBounds(-100, -12, this.map.width + 125, this.map.height + 24);
+                this.cameras.main.setBounds(-100, -12, this.map.width * 2 + 125, this.map.height * 2 + 24);
             } else {
                 addOtherPlayer(this, players[id]);
             }
