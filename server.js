@@ -5,8 +5,7 @@ const redis = require('redis');
 const { v4: uuidv4 } = require('uuid');
 
 const redisClient = redis.createClient({
-    // url: process.env.REDIS_URL
-    url: 'redis://localhost:6379'
+    url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
 
 redisClient.connect().catch(console.error);
