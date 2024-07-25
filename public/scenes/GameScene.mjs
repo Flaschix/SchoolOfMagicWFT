@@ -22,7 +22,7 @@ export class GameScene extends Phaser.Scene {
 
     preload() {
         //map
-        // this.load.image('map', './assets/map/library_room_1.png');
+        this.load.image('map', './assets/map/library_room_1.png');
 
         //helpIcons
 
@@ -101,6 +101,13 @@ export class GameScene extends Phaser.Scene {
             let players = data.players;
             this.scene.start(data.scene, { players });
         });
+
+        this.load.image('map2', './assets/map/library_room_2.png');
+        this.load.image('map3', './assets/map/library_room_3.png');
+        this.load.image('map4', './assets/map/library_room_4.png');
+
+        // Начало загрузки
+        this.load.start();
     }
 
     removeAllListerners() {
@@ -263,10 +270,13 @@ export class GameScene extends Phaser.Scene {
                 console.log(this.eventZone);
 
                 if (this.eventZone == DOOR_ID) {
-                    this.isInZone = false;
-                    this.eventZone = null;
-                    socket.emit('switchScene', CST.SCENE.GAMESCENE2, 1024, 1770);
-                    return;
+                    if (this.load.totalComplete === this.load.totalToLoad) {
+                        this.isInZone = false;
+                        this.eventZone = null;
+                        socket.emit('switchScene', CST.SCENE.GAMESCENE2, 1024, 1770);
+                        return;
+                    }
+                    console.log("Wait pls");
                 }
 
                 if (!this.isOverlayVisible) {
