@@ -30,7 +30,7 @@ export class GameScene2 extends Phaser.Scene {
 
     create(data) {
         const { players } = data;
-
+        // this.removeAllListerners();
         // Добавляем карту
         this.createMap();
 
@@ -85,6 +85,7 @@ export class GameScene2 extends Phaser.Scene {
         this.createEnterCodeContainer();
 
         socket.on('sceneSwitched', (data) => {
+            this.removeAllListerners();
             this.map.destroy();
             this.avatarDialog.destroy();
             this.exitContainer.destroy();
@@ -92,6 +93,13 @@ export class GameScene2 extends Phaser.Scene {
             let players = data.players;
             this.scene.start(data.scene, { players });
         });
+    }
+
+    removeAllListerners() {
+        socket.removeAllListeners('playerDisconnected');
+        socket.removeAllListeners('sceneSwitched');
+        socket.removeAllListeners(`newPlayer:${this.scene.key}`);
+        socket.removeAllListeners(`playerMoved:${this.scene.key}`);
     }
 
     createMap() {

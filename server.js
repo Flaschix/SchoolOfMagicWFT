@@ -5,7 +5,8 @@ const redis = require('redis');
 const { v4: uuidv4 } = require('uuid');
 
 const redisClient = redis.createClient({
-    url: process.env.REDIS_URL // Укажите правильный адрес и порт
+    // url: process.env.REDIS_URL
+    url: 'redis://localhost:6379'
 });
 
 redisClient.connect().catch(console.error);
@@ -41,26 +42,15 @@ io.on('connection', (socket) => {
 
     socket.on('createRoom', async () => {
         console.log('createRoom');
-        // let preCode;
-        // let check
-
-        // do {
-        //     preCode = 
-        //     check = await redisClient.get(preCode);
-        // } while (check != null)
 
         const roomCode = `${generateRoomCode(100000, 999999)}`;
         console.log(roomCode);
         const roomId = uuidv4();
 
         try {
-            console.log('cheack 1');
             await redisClient.set(roomCode, roomId, { EX: 400 }); // Устанавливаем срок действия 24 часа 86400
-            console.log('cheack 2');
             rooms[roomId] = { levels: {} };
-            console.log('cheack 3');
             socket.join(roomId);
-            console.log('cheack 4');
             socket.emit('roomCreated', roomCode);
             console.log(`Room created with code: ${roomCode}`);
         } catch (err) {
@@ -166,10 +156,12 @@ io.on('connection', (socket) => {
                         io.to(`${roomId}:${newScene}`).emit(`playerMoved:${newScene}`, { id: socket.id, ...movementData });
                     }
                 });
+
             });
 
             socket.on('playerReconnect', (newSettings) => {
                 if (rooms[roomId].levels[socket.currentLevel][socket.id]) {
+                    // delete rooms[roomId].levels[socket.currentLevel][socket.id];
                     io.to(`${roomId}:${socket.currentLevel}`).emit('playerDisconnected', socket.id);
 
                     rooms[roomId].levels[socket.currentLevel][socket.id] = { id: socket.id, x: newSettings.x, y: newSettings.y, character: newSettings.avatar, name: newSettings.name };

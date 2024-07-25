@@ -89,6 +89,7 @@ export class GameScene4 extends Phaser.Scene {
         this.createEnterCodeContainer();
 
         socket.on('sceneSwitched', (data) => {
+            this.removeAllListerners();
             this.map.destroy();
             this.avatarDialog.destroy();
             this.exitContainer.destroy();
@@ -96,6 +97,13 @@ export class GameScene4 extends Phaser.Scene {
             let players = data.players;
             this.scene.start(data.scene, { players });
         });
+    }
+
+    removeAllListerners() {
+        socket.removeAllListeners('playerDisconnected');
+        socket.removeAllListeners('sceneSwitched');
+        socket.removeAllListeners(`newPlayer:${this.scene.key}`);
+        socket.removeAllListeners(`playerMoved:${this.scene.key}`);
     }
 
     createMap() {
@@ -405,7 +413,7 @@ export class GameScene4 extends Phaser.Scene {
             this.isOverlayVisible = false
         });
 
-        this.exitContainer.setOrigin(2, 1);
+        // this.exitContainer.setOrigin(2, 1);
         this.exitContainer.setVisible(false);
     }
 

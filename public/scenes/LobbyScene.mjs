@@ -15,8 +15,12 @@ export class LobbyScene extends Phaser.Scene {
 
     preload() {
         this.load.image('backgroundMenu', './assets/background/background-menu.png');
-        this.load.image('createRoomBtn', './assets/button/create-room.png');
-        this.load.image('joinRoomBtn', './assets/button/join.png');
+
+        this.load.image('pressX', 'assets/icon/pressX.png');
+        this.load.image('closeIcon', 'assets/icon/closeIcon.png');
+
+        this.load.image('empty', 'assets/keyFrame/Empty.png')
+        this.load.image('overlayBackground', 'assets/overlay/overlayBackground.png');
 
         //characters
         this.load.spritesheet('character1', './assets/characterMap/character1.png', { frameWidth: 32, frameHeight: 64 });

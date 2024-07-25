@@ -25,17 +25,15 @@ export class GameScene extends Phaser.Scene {
         this.load.image('map', './assets/map/library_room_1.png');
 
         //helpIcons
-        this.load.image('pressX', 'assets/icon/pressX.png');
-        this.load.image('closeIcon', 'assets/icon/closeIcon.png');
+
 
         //overlayImages
-        this.load.image('overlayBackground', 'assets/overlay/overlayBackground.png');
-        this.load.image('overlay', 'assets/overlay/overlay.png');
+
 
         //ключи
         this.load.image('firstKey', 'assets/keyFrame/firstKey.png');
         this.load.image('secondKey', 'assets/keyFrame/secondKey.png');
-        this.load.image('empty', 'assets/keyFrame/Empty.png')
+
     }
 
     create(data) {
@@ -44,15 +42,11 @@ export class GameScene extends Phaser.Scene {
         // Добавляем карту
         this.createMap();
 
-
         this.createUIRight();
         this.createUITop();
         this.createUIBottom();
         this.createUI();
         this.createExitButton();
-
-        //Создаём анимации
-        // this.createAnimations();
 
         //Создаём стены и остальные непроходимые объекты
         this.createUnWalkedObjects();
@@ -72,9 +66,8 @@ export class GameScene extends Phaser.Scene {
         //Создание слушателей нажатия кнопок
         this.createInputHandlers();
 
-
-
         socket.on(`newPlayer:${this.scene.key}`, (playerInfo) => {
+            console.log('from new player');
             addOtherPlayer(this, playerInfo);
         });
 
@@ -98,17 +91,28 @@ export class GameScene extends Phaser.Scene {
         this.createEnterCodeContainer();
 
         socket.on('sceneSwitched', (data) => {
+            this.removeAllListerners();
+
             this.map.destroy();
             this.avatarDialog.destroy();
             this.exitContainer.destroy();
             this.enterCodeContainer.destroy();
+            otherPlayers = {};
             let players = data.players;
             this.scene.start(data.scene, { players });
         });
     }
 
+    removeAllListerners() {
+        socket.removeAllListeners('playerDisconnected');
+        socket.removeAllListeners('sceneSwitched');
+        socket.removeAllListeners(`newPlayer:${this.scene.key}`);
+        socket.removeAllListeners(`playerMoved:${this.scene.key}`);
+    }
+
     createMap() {
         this.map = this.add.image(0, 0, 'map').setOrigin(0, 0);
+        // this.map.setScale(2, 2);
         this.matter.world.setBounds(0, 0, this.map.width, this.map.height);
     }
 
@@ -121,12 +125,15 @@ export class GameScene extends Phaser.Scene {
     }
 
     createPlayers(players) {
+        console.log('from create BGIND');
+        console.log(otherPlayers);
         Object.keys(players).forEach((id) => {
             if (id === socket.id) {
                 player = addPlayer(this, players[id]);
                 this.cameras.main.startFollow(player);
                 this.cameras.main.setBounds(-100, -12, this.map.width + 125, this.map.height + 24);
             } else {
+                console.log('from create');
                 addOtherPlayer(this, players[id]);
             }
         });
@@ -627,6 +634,7 @@ export class GameScene extends Phaser.Scene {
         if (this.isInZone) {
             this.pressX.setPosition(player.x, player.y - heightPressX);
             this.pressX.setVisible(true);
+            // console.log(otherPlayers);
         } else {
             this.pressX.setVisible(false);
         }
@@ -680,6 +688,8 @@ function addOtherPlayer(self, playerInfo) {
     // otherPlayer.setFixedRotation();
 
     otherPlayers[playerInfo.id] = otherPlayer;
+
+    console.log(otherPlayer);
 }
 
 
