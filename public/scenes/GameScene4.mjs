@@ -5,6 +5,7 @@ let player;
 let otherPlayers = {};
 const hieghtName = 56;
 const heightPressX = 90;
+let fullMap = true;
 
 export class GameScene4 extends Phaser.Scene {
     constructor() {
@@ -24,8 +25,20 @@ export class GameScene4 extends Phaser.Scene {
     }
 
     preload() {
+
+        this.anims.create({
+            key: 'loadingAnimation',
+            frames: this.anims.generateFrameNumbers('loading', { start: 0, end: 11 }), // Предполагаем, что у вас 60 кадров
+            frameRate: 24, // Скорость анимации (кадров в секунду)
+            repeat: -1 // Бесконечный повтор
+        });
+
+        // Создание спрайта и запуск анимации
+        this.loadingSprite = this.add.sprite(1280 / 2, 720 / 2, 'loading'); // Центрирование спрайта
+        this.loadingSprite.play('loadingAnimation');
+
         //map
-        // this.load.image('map4', './assets/map/library_room_4.png');
+        this.load.image('map4', './assets/map/library_room_4.png');
         this.load.image('doorRoom4', './assets/map/door_room_4.png');
         this.load.image('tableRoom4', './assets/map/table_room_4.png');
         this.load.image('sixethKey', 'assets/keyFrame/sixethKey.png');
@@ -34,6 +47,9 @@ export class GameScene4 extends Phaser.Scene {
 
     create(data) {
         const { players } = data;
+
+        this.loadingSprite.stop();
+        this.loadingSprite.destroy();
 
         // Добавляем карту
         this.createMap();
@@ -97,6 +113,15 @@ export class GameScene4 extends Phaser.Scene {
             let players = data.players;
             this.scene.start(data.scene, { players });
         });
+
+        if (!this.textures.exists('mapFull4')) {
+            this.load.image('mapFull4', './assets/map/library_room_4_full.png');
+
+            // Начало загрузки
+            this.load.start();
+
+            fullMap = false;
+        }
     }
 
     removeAllListerners() {
@@ -107,10 +132,18 @@ export class GameScene4 extends Phaser.Scene {
     }
 
     createMap() {
-        this.map = this.add.image(0, 0, 'map4').setOrigin(0, 0);
+        if (this.textures.exists('mapFull4')) {
+            this.map = this.add.image(0, 0, 'mapFull4').setOrigin(0, 0);
+            this.map.setScale(4 / 3, 4 / 3);
+            this.matter.world.setBounds(0, 0, this.map.width * 4 / 3, this.map.height * 4 / 3);
+        } else {
+            this.map = this.add.image(0, 0, 'map4').setOrigin(0, 0);
+            this.map.setScale(2, 2);
+            this.matter.world.setBounds(0, 0, this.map.width * 2, this.map.height * 2);
+        }
         this.add.image(1040, 1960, 'doorRoom4');
         this.add.image(1024, 596, 'tableRoom4');
-        this.matter.world.setBounds(0, 0, this.map.width, this.map.height);
+        // this.matter.world.setBounds(0, 0, this.map.width, this.map.height);
         // this.map.setScale(2, 2);
         // this.matter.world.setBounds(0, 0, this.map.width * 2, this.map.height * 2);
     }
@@ -128,8 +161,8 @@ export class GameScene4 extends Phaser.Scene {
             if (id === socket.id) {
                 player = addPlayer(this, players[id]);
                 this.cameras.main.startFollow(player);
-                this.cameras.main.setBounds(-100, -12, this.map.width + 125, this.map.height + 24);
-                // this.cameras.main.setBounds(-100, -12, this.map.width * 2 + 125, this.map.height * 2 + 24);
+                if (this.textures.exists('mapFull4')) this.cameras.main.setBounds(-100, -12, this.map.width * 4 / 3 + 125, this.map.height * 4 / 3 + 24);
+                else this.cameras.main.setBounds(-100, -12, this.map.width * 2 + 125, this.map.height * 2 + 24);
             } else {
                 addOtherPlayer(this, players[id]);
             }
@@ -590,6 +623,16 @@ export class GameScene4 extends Phaser.Scene {
         this.updatePlayerPosition();
 
         this.updatePressXVisibility();
+
+        if (!fullMap) {
+            if (this.textures.exists('mapFull4')) {
+                fullMap = true;
+                this.map.setScale(4 / 3, 4 / 3);
+
+                this.map.setTexture('mapFull4');
+                this.matter.world.setBounds(0, 0, this.map.width * 4 / 3, this.map.height * 4 / 3);
+            }
+        }
     }
 
     updatePlayerPosition() {

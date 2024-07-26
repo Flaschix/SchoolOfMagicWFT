@@ -14,6 +14,18 @@ export class LobbyScene extends Phaser.Scene {
     }
 
     preload() {
+        this.anims.create({
+            key: 'loadingAnimation',
+            frames: this.anims.generateFrameNumbers('loading', { start: 0, end: 11 }), // Предполагаем, что у вас 60 кадров
+            frameRate: 24, // Скорость анимации (кадров в секунду)
+            repeat: -1 // Бесконечный повтор
+        });
+
+        // Создание спрайта и запуск анимации
+        this.loadingSprite = this.add.sprite(1280 / 2, 720 / 2, 'loading'); // Центрирование спрайта
+        this.loadingSprite.play('loadingAnimation');
+
+
         this.load.image('backgroundMenu', './assets/background/background-menu.png');
 
         this.load.image('pressX', 'assets/icon/pressX.png');
@@ -225,6 +237,9 @@ export class LobbyScene extends Phaser.Scene {
     }
 
     create() {
+        this.loadingSprite.stop();
+        this.loadingSprite.destroy();
+
         // Добавляем фон
         this.add.image(this.scale.width / 2, this.scale.height / 2, 'backgroundMenu').setDisplaySize(this.scale.width, this.scale.height);
 

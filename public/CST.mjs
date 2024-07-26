@@ -1,5 +1,6 @@
 export const CST = {
     SCENE: {
+        LOADINGSCENE: "LoadingScene",
         LOBBYSCENE: "LobbyScene",
         GAMESCENE: "GameScene",
         GAMESCENE2: "GameScene2",

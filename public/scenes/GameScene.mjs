@@ -6,7 +6,7 @@ let oldPlayerPos;
 let otherPlayers = {};
 const hieghtName = 56;
 const heightPressX = 90;
-let fullMap = false;
+let fullMap = true;
 
 export class GameScene extends Phaser.Scene {
     constructor() {
@@ -23,14 +23,20 @@ export class GameScene extends Phaser.Scene {
     }
 
     preload() {
+        this.anims.create({
+            key: 'loadingAnimation',
+            frames: this.anims.generateFrameNumbers('loading', { start: 0, end: 11 }), // Предполагаем, что у вас 60 кадров
+            frameRate: 24, // Скорость анимации (кадров в секунду)
+            repeat: -1 // Бесконечный повтор
+        });
+
+        // Создание спрайта и запуск анимации
+        this.loadingSprite = this.add.sprite(1280 / 2, 720 / 2, 'loading'); // Центрирование спрайта
+        this.loadingSprite.play('loadingAnimation');
+
+
         //map
         this.load.image('map', './assets/map/library_room_1.png');
-
-        //helpIcons
-
-
-        //overlayImages
-
 
         //ключи
         this.load.image('firstKey', 'assets/keyFrame/firstKey.png');
@@ -40,6 +46,9 @@ export class GameScene extends Phaser.Scene {
 
     create(data) {
         const { players } = data;
+
+        this.loadingSprite.stop();
+        this.loadingSprite.destroy();
 
         // Добавляем карту
         this.createMap();
@@ -104,10 +113,14 @@ export class GameScene extends Phaser.Scene {
             this.scene.start(data.scene, { players });
         });
 
-        this.load.image('mapFull', './assets/map/library_room_1_full.png');
+        if (!this.textures.exists('mapFull')) {
+            this.load.image('mapFull', './assets/map/library_room_1_full.png');
 
-        // Начало загрузки
-        this.load.start();
+            // Начало загрузки
+            this.load.start();
+
+            fullMap = false;
+        }
     }
 
     removeAllListerners() {
@@ -120,7 +133,8 @@ export class GameScene extends Phaser.Scene {
     createMap() {
         if (this.textures.exists('mapFull')) {
             this.map = this.add.image(0, 0, 'mapFull').setOrigin(0, 0);
-            this.matter.world.setBounds(0, 0, this.map.width, this.map.height);
+            this.map.setScale(4 / 3, 4 / 3);
+            this.matter.world.setBounds(0, 0, this.map.width * 4 / 3, this.map.height * 4 / 3);
         } else {
             this.map = this.add.image(0, 0, 'map').setOrigin(0, 0);
             this.map.setScale(2, 2);
@@ -142,7 +156,8 @@ export class GameScene extends Phaser.Scene {
                 player = addPlayer(this, players[id]);
                 this.cameras.main.startFollow(player);
                 // this.cameras.main.setBounds(-100, -12, this.map.width + 125, this.map.height + 24);
-                this.cameras.main.setBounds(-100, -12, this.map.width * 2 + 125, this.map.height * 2 + 24);
+                if (this.textures.exists('mapFull')) this.cameras.main.setBounds(-100, -12, this.map.width * 4 / 3 + 125, this.map.height * 4 / 3 + 24);
+                else this.cameras.main.setBounds(-100, -12, this.map.width * 2 + 125, this.map.height * 2 + 24);
             } else {
                 console.log('from create');
                 addOtherPlayer(this, players[id]);
@@ -618,15 +633,10 @@ export class GameScene extends Phaser.Scene {
         if (!fullMap) {
             if (this.textures.exists('mapFull')) {
                 fullMap = true;
-                // this.time.delayedCall(1000, () => {
                 this.map.setScale(4 / 3, 4 / 3);
 
                 this.map.setTexture('mapFull');
                 this.matter.world.setBounds(0, 0, this.map.width * 4 / 3, this.map.height * 4 / 3);
-
-                console.log("done");
-
-                // });
             }
         }
     }

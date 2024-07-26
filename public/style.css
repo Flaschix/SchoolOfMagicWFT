@@ -6,6 +6,12 @@ body {
     font-family: Arial, sans-serif;
 }
 
+#lottieGif {
+    min-width: 500px;
+    min-height: 500px;
+    background-color: white;
+}
+
 /* Начальная страница */
 .container-welcome {
     background-color: #221C3E;

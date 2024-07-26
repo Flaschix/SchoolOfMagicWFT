@@ -1,6 +1,7 @@
 /** @type {import("../typings/phaser")} */
 /** @type {import("../typings/PhaserMatterCollisionPlugin")} */
 
+import { LoadingScene } from "./scenes/LoadingScene.mjs"
 import { LobbyScene } from "./scenes/LobbyScene.mjs";
 import { GameScene } from "./scenes/GameScene.mjs";
 import { GameScene2 } from "./scenes/GameScene2.mjs";
@@ -25,7 +26,7 @@ const config = {
             gravity: { y: 0 }
         }
     },
-    scene: [LobbyScene, GameScene, GameScene2, GameScene3, GameScene4],
+    scene: [LoadingScene, LobbyScene, GameScene, GameScene2, GameScene3, GameScene4],
     dom: {
         createContainer: true
     },
