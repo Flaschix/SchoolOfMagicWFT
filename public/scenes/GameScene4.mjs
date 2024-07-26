@@ -26,13 +26,6 @@ export class GameScene4 extends Phaser.Scene {
 
     preload() {
 
-        this.anims.create({
-            key: 'loadingAnimation',
-            frames: this.anims.generateFrameNumbers('loading', { start: 0, end: 11 }), // Предполагаем, что у вас 60 кадров
-            frameRate: 24, // Скорость анимации (кадров в секунду)
-            repeat: -1 // Бесконечный повтор
-        });
-
         // Создание спрайта и запуск анимации
         this.loadingSprite = this.add.sprite(1280 / 2, 720 / 2, 'loading'); // Центрирование спрайта
         this.loadingSprite.setScale(0.3, 0.3);
@@ -256,6 +249,11 @@ export class GameScene4 extends Phaser.Scene {
         this.emptySign.setVisible(false);
         this.emptySign.setDepth(2);
 
+        this.answer = this.add.image(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360, 'answer');
+        this.answer.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
+        this.answer.setVisible(false);
+        this.answer.setDepth(2);
+
         this.closeButton = this.add.image(0, 0, 'closeIcon');
         this.closeButton.setDisplaySize(this.overlayBackground.displayWidth * 0.05, this.overlayBackground.displayHeight * 0.07);
         this.closeButton.setInteractive();
@@ -266,7 +264,7 @@ export class GameScene4 extends Phaser.Scene {
         this.closeButton.on('pointerdown', () => {
             this.isOverlayVisible = false;
             this.tweens.add({
-                targets: [this.closeButton, this.overlayBackground, this.sixethKey, this.emptySign],
+                targets: [this.closeButton, this.overlayBackground, this.sixethKey, this.emptySign, this.answer],
                 alpha: 0,
                 duration: 500,
                 onComplete: () => {
@@ -297,14 +295,14 @@ export class GameScene4 extends Phaser.Scene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySign],
+                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySig],
                         alpha: 1,
                         duration: 500
                     });
                 }
                 else {
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySign],
+                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySign, this.answer],
                         alpha: 0,
                         duration: 500,
                         onComplete: () => {
@@ -344,6 +342,11 @@ export class GameScene4 extends Phaser.Scene {
         this.isOverlayVisible = false
         if (this.eventZone == 0) {
             this.enterCodeContainer.setVisible(false);
+            if (this.answer.visible) {
+                this.answer.setVisible(false);
+                this.overlayBackground.setVisible(false);
+                this.closeButton.setVisible(false);
+            }
             return;
         }
         else if (this.eventZone == SIXETH_KEY) this.sixethKey.setVisible(false);
@@ -438,7 +441,7 @@ export class GameScene4 extends Phaser.Scene {
         leaveBtn.addEventListener('click', () => {
 
             //Поменяй на нормальный способ
-            window.location.replace("http://localhost:3000/");
+            window.location.reload();
         });
 
 
@@ -542,7 +545,7 @@ export class GameScene4 extends Phaser.Scene {
                 <input class="connect-space-input" type="text" maxlength="1">
                 <input class="connect-space-input" type="text" maxlength="1">
             </div>
-            <input id="join-room-connect" class="connect-space-button" type="image" src="./assets/button/join2.png" alt="Connect">
+            <input id="join-room-connect" class="connect-space-button" type="image" src="./assets/button/enter.png" alt="Connect">
             <input id="join-room-cancel" class="connect-space-button" type="image" src="./assets/button/cancel.png" alt="Cancel">
         </div>
     </div>
@@ -578,14 +581,18 @@ export class GameScene4 extends Phaser.Scene {
 
                 if (code == correctCode) {
                     this.overlayBackground.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
-
-                    const answer = this.add.image(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360, 'answer');
-                    answer.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
-                    answer.setDepth(2);
-
+                    this.answer.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
+                    this.closeButton.setPosition(
+                        this.cameras.main.scrollX + 640 + this.overlayBackground.displayWidth / 2 - this.overlayBackground.displayWidth * 0.1 / 2 + 10,
+                        this.cameras.main.scrollY + 360 - this.overlayBackground.displayHeight / 2 + this.overlayBackground.displayHeight * 0.1 / 2,
+                    ).setVisible(true);
                     this.enterCodeContainer.setVisible(false);
                 }
                 else {
+                    inputs.forEach(input => {
+                        input.value = "";
+                    });
+
                     inputsContainer.style.display = 'none';
                     titleContainer.innerHTML = 'Incorrect code';
                     titleContainer.style.color = 'red';
@@ -596,7 +603,7 @@ export class GameScene4 extends Phaser.Scene {
                 inputsContainer.style.display = 'flex';
                 titleContainer.innerHTML = 'Enter code';
                 titleContainer.style.color = '#F2F0FF';
-                joinRoomConnect.src = './assets/button/join2.png';
+                joinRoomConnect.src = './assets/button/enter.png';
                 correctFlag = true
             }
 

@@ -14,12 +14,6 @@ export class LobbyScene extends Phaser.Scene {
     }
 
     preload() {
-        this.anims.create({
-            key: 'loadingAnimation',
-            frames: this.anims.generateFrameNumbers('loading', { start: 0, end: 11 }), // Предполагаем, что у вас 60 кадров
-            frameRate: 24, // Скорость анимации (кадров в секунду)
-            repeat: -1 // Бесконечный повтор
-        });
 
         // Создание спрайта и запуск анимации
         this.loadingSprite = this.add.sprite(1280 / 2, 720 / 2, 'loading'); // Центрирование спрайта
@@ -133,6 +127,10 @@ export class LobbyScene extends Phaser.Scene {
         this.joinRoomContainer.setVisible(false);
 
         socket.on('roomNotFound', () => {
+            inputs.forEach(input => {
+                input.value = "";
+            });
+
             correctFlag = false;
             inputsContainer.style.display = 'none';
             titleContainer.innerHTML = 'Incorrect code';

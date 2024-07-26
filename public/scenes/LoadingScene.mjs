@@ -14,6 +14,12 @@ export class LoadingScene extends Phaser.Scene {
     }
 
     create() {
+        this.anims.create({
+            key: 'loadingAnimation',
+            frames: this.anims.generateFrameNumbers('loading', { start: 0, end: 11 }), // Предполагаем, что у вас 60 кадров
+            frameRate: 24, // Скорость анимации (кадров в секунду)
+            repeat: -1 // Бесконечный повтор
+        });
         this.scene.start(CST.SCENE.LOBBYSCENE);
     }
 }

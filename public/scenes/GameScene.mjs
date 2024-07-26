@@ -24,12 +24,6 @@ export class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        this.anims.create({
-            key: 'loadingAnimation',
-            frames: this.anims.generateFrameNumbers('loading', { start: 0, end: 11 }), // Предполагаем, что у вас 60 кадров
-            frameRate: 24, // Скорость анимации (кадров в секунду)
-            repeat: -1 // Бесконечный повтор
-        });
 
         // Создание спрайта и запуск анимации
         this.loadingSprite = this.add.sprite(1280 / 2, 720 / 2, 'loading'); // Центрирование спрайта
@@ -176,6 +170,7 @@ export class GameScene extends Phaser.Scene {
         // Создаем графику для подсветки
         const highlightGraphics = this.add.graphics();
         highlightGraphics.lineStyle(2, 0x06ff01, 1);
+        highlightGraphics.setDepth(0);
 
         // Создаем область, через которую игрок не может пройти
         const bodyTableTopLeft = this.matter.add.fromVertices(465, 930, '458.5 105.5 24 105.5 1.5 66.5 6 24.5 43.5 0.5 424.5 0.5 483.5 43.5 483.5 77.5', { label: '1', isStatic: true });
@@ -435,7 +430,7 @@ export class GameScene extends Phaser.Scene {
         leaveBtn.addEventListener('click', () => {
 
             //Поменяй на нормальный способ
-            window.location.replace("http://localhost:3000/");
+            window.location.reload();
         });
 
 
@@ -593,6 +588,7 @@ function addPlayer(self, playerInfo) {
     console.log(playerInfo.character);
     const newPlayer = self.matter.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`);
     newPlayer.setScale(1.3);
+    newPlayer.setDepth(1);
     newPlayer.character = playerInfo.character;
     newPlayer.name = playerInfo.name;
     newPlayer.setBounce(0); // настройка упругости
@@ -610,7 +606,7 @@ function addPlayer(self, playerInfo) {
 
 
     // Добавляем текст с именем игрока
-    newPlayer.nameText = self.add.text(newPlayer.x, newPlayer.y - hieghtName, newPlayer.name, { fontSize: '16px', fill: '#fff' }).setOrigin(0.5);
+    newPlayer.nameText = self.add.text(newPlayer.x, newPlayer.y - hieghtName, newPlayer.name, { fontSize: '17px', fill: '#fff' }).setOrigin(0.5);
     newPlayer.setFixedRotation();
     //////////////////////////////////////////////////////
 
