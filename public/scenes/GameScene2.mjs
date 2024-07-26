@@ -31,6 +31,7 @@ export class GameScene2 extends Phaser.Scene {
 
         // Создание спрайта и запуск анимации
         this.loadingSprite = this.add.sprite(1280 / 2, 720 / 2, 'loading'); // Центрирование спрайта
+        this.loadingSprite.setScale(0.3, 0.3);
         this.loadingSprite.play('loadingAnimation');
 
         //map
@@ -97,14 +98,11 @@ export class GameScene2 extends Phaser.Scene {
 
         this.createAvatarDialog();
 
-        this.createEnterCodeContainer();
-
         socket.on('sceneSwitched', (data) => {
             this.removeAllListerners();
             this.map.destroy();
             this.avatarDialog.destroy();
             this.exitContainer.destroy();
-            this.enterCodeContainer.destroy();
             let players = data.players;
             this.scene.start(data.scene, { players });
         });
@@ -302,14 +300,14 @@ export class GameScene2 extends Phaser.Scene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer],
+                        targets: [this.closeButton, this.overlayBackground, this.emptySign],
                         alpha: 1,
                         duration: 500
                     });
                 }
                 else {
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer],
+                        targets: [this.closeButton, this.overlayBackground, this.emptySign],
                         alpha: 0,
                         duration: 500,
                         onComplete: () => {
@@ -327,10 +325,7 @@ export class GameScene2 extends Phaser.Scene {
     showOverlay() {
         this.isOverlayVisible = true
 
-        if (this.eventZone == 0) {
-            this.enterCodeContainer.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360);
-            this.enterCodeContainer.setVisible(true);
-        } else if (this.eventZone == THIRD_KEY) {
+        if (this.eventZone == THIRD_KEY) {
             this.thirdKey.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
         }
         else if (this.eventZone == FOURTH_KEY) {
@@ -349,8 +344,7 @@ export class GameScene2 extends Phaser.Scene {
 
     hideOverlay() {
         this.isOverlayVisible = false
-        if (this.eventZone == 0) this.enterCodeContainer.setVisible(false);
-        else if (this.eventZone == THIRD_KEY) this.thirdKey.setVisible(false);
+        if (this.eventZone == THIRD_KEY) this.thirdKey.setVisible(false);
         else if (this.eventZone == FOURTH_KEY) this.fourthKey.setVisible(false);
         else {
             this.emptySign.setVisible(false);
@@ -532,93 +526,6 @@ export class GameScene2 extends Phaser.Scene {
             this.isOverlayVisible = false;
         });
 
-    }
-
-    createEnterCodeContainer() {
-        this.enterCodeContainer = this.add.dom(this.scale.width / 2, this.scale.height / 2).createFromHTML(`
-    <div class="enterCodeContainer">
-        <div id="enterCodeDialog">
-            <h2 id="enterCodeTitle">Enter code</h2>
-            <div id="codeInputs">
-                <input class="connect-space-input" type="text" maxlength="1">
-                <input class="connect-space-input" type="text" maxlength="1">
-                <input class="connect-space-input" type="text" maxlength="1">
-                <input class="connect-space-input" type="text" maxlength="1">
-                <input class="connect-space-input" type="text" maxlength="1">
-                <input class="connect-space-input" type="text" maxlength="1">
-            </div>
-            <input id="join-room-connect" class="connect-space-button" type="image" src="./assets/button/join2.png" alt="Connect">
-            <input id="join-room-cancel" class="connect-space-button" type="image" src="./assets/button/cancel.png" alt="Cancel">
-        </div>
-    </div>
-                `);
-
-        this.enterCodeContainer.setOrigin(0.5, 0.5);
-        const inputsContainer = document.getElementById('codeInputs')
-        const titleContainer = document.getElementById('enterCodeTitle')
-
-        const inputs = document.querySelectorAll('#codeInputs input');
-
-        inputs.forEach((input, index) => {
-            input.addEventListener('input', () => {
-                if (input.value.length === 1 && index < inputs.length - 1) {
-                    inputs[index + 1].focus();
-                }
-            });
-        });
-
-        const correctCode = '111111';
-        let correctFlag = true;
-
-        const joinRoomConnect = document.getElementById('join-room-connect');
-        joinRoomConnect.addEventListener('click', () => {
-            if (correctFlag) {
-                let code = '';
-
-                inputs.forEach(input => {
-                    code += input.value;
-                });
-
-                if (code == correctCode) console.log(code);
-                else {
-                    inputsContainer.style.display = 'none';
-                    titleContainer.innerHTML = 'Incorrect code';
-                    titleContainer.style.color = 'red';
-                    joinRoomConnect.src = './assets/button/try-again.png';
-                    correctFlag = false
-                }
-            } else {
-                inputsContainer.style.display = 'flex';
-                titleContainer.innerHTML = 'Enter code';
-                titleContainer.style.color = '#F2F0FF';
-                joinRoomConnect.src = './assets/button/join2.png';
-                correctFlag = true
-            }
-
-
-
-            // socket.emit('checkRoom', code);
-        });
-
-        const joinRoomCancel = document.getElementById('join-room-cancel');
-        joinRoomCancel.addEventListener('click', () => {
-            // this.enterCodeContainer.setVisible(false);
-            this.isOverlayVisible = false;
-            this.tweens.add({
-                targets: [this.enterCodeContainer],
-                alpha: 0,
-                duration: 500,
-                onComplete: () => {
-                    try {
-                        this.hideOverlay();
-                    }
-                    catch (e) { }
-                }
-            });
-            // this.welcomeContainer.setVisible(true);
-        });
-
-        this.enterCodeContainer.setVisible(false);
     }
 
     update() {

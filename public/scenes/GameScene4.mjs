@@ -35,6 +35,7 @@ export class GameScene4 extends Phaser.Scene {
 
         // Создание спрайта и запуск анимации
         this.loadingSprite = this.add.sprite(1280 / 2, 720 / 2, 'loading'); // Центрирование спрайта
+        this.loadingSprite.setScale(0.3, 0.3);
         this.loadingSprite.play('loadingAnimation');
 
         //map
@@ -312,11 +313,6 @@ export class GameScene4 extends Phaser.Scene {
                     });
                 }
             }
-        });
-
-        this.input.keyboard.on('keydown-C', () => {
-            // console.log(player.x + " " + player.y)
-            socket.emit('switchScene', CST.SCENE.GAMESCENE3, 1024, 1024);
         });
     }
 

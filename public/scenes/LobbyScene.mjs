@@ -23,6 +23,7 @@ export class LobbyScene extends Phaser.Scene {
 
         // Создание спрайта и запуск анимации
         this.loadingSprite = this.add.sprite(1280 / 2, 720 / 2, 'loading'); // Центрирование спрайта
+        this.loadingSprite.setScale(0.3, 0.3);
         this.loadingSprite.play('loadingAnimation');
 
 
@@ -72,7 +73,7 @@ export class LobbyScene extends Phaser.Scene {
         this.joinRoomContainer = this.add.dom(this.scale.width / 2, this.scale.height / 2).createFromHTML(`
     <div class="joinRoomContainer">
         <div id="joinRoomDialog">
-            <h2>Enter code a room</h2>
+            <h2 id="enterCodeTitle">Enter code a room</h2>
             <div id="codeInputs">
                 <input class="connect-space-input" type="text" maxlength="1">
                 <input class="connect-space-input" type="text" maxlength="1">
@@ -88,8 +89,12 @@ export class LobbyScene extends Phaser.Scene {
                 `);
 
         this.joinRoomContainer.setOrigin(0.5, 0.5);
+        const inputsContainer = document.getElementById('codeInputs')
+        const titleContainer = document.getElementById('enterCodeTitle')
 
         const inputs = document.querySelectorAll('#codeInputs input');
+
+        let correctFlag = true;
 
         inputs.forEach((input, index) => {
             input.addEventListener('input', () => {
@@ -101,13 +106,22 @@ export class LobbyScene extends Phaser.Scene {
 
         const joinRoomConnect = document.getElementById('join-room-connect');
         joinRoomConnect.addEventListener('click', () => {
-            let code = '';
+            if (correctFlag) {
+                let code = '';
 
-            inputs.forEach(input => {
-                code += input.value;
-            });
-            console.log(code);
-            socket.emit('checkRoom', code);
+                inputs.forEach(input => {
+                    code += input.value;
+                });
+                console.log(code);
+                socket.emit('checkRoom', code);
+            } else {
+                inputsContainer.style.display = 'flex';
+                titleContainer.innerHTML = 'Enter code';
+                titleContainer.style.color = '#F2F0FF';
+                joinRoomConnect.src = './assets/button/join2.png';
+                correctFlag = true
+            }
+
         });
 
         const joinRoomCancel = document.getElementById('join-room-cancel');
@@ -117,6 +131,10 @@ export class LobbyScene extends Phaser.Scene {
         });
 
         this.joinRoomContainer.setVisible(false);
+
+        socket.on('roomNotFound', (roomCode) => {
+            correctFlag = false;
+        });
     }
 
     createAvatarDialog() {
