@@ -70,7 +70,7 @@ export class GameScene2 extends Phaser.Scene {
         this.createCollision();
 
         //Создание оверлея
-        this.createOverlays(2);
+        this.createOverlays();
 
         //Создание слушателей нажатия кнопок
         this.createInputHandlers();
@@ -224,7 +224,7 @@ export class GameScene2 extends Phaser.Scene {
         });
     }
 
-    createOverlays(N) {
+    createOverlays() {
         this.pressX = this.add.image(player.x, player.y - 50, 'pressX');
         this.pressX.setDisplaySize(this.pressX.width, this.pressX.height);
         this.pressX.setVisible(false);
@@ -234,6 +234,7 @@ export class GameScene2 extends Phaser.Scene {
         this.overlayBackground.setOrigin(0.5, 0.5);
         this.overlayBackground.setDisplaySize(this.cameras.main.width * 0.7, this.cameras.main.height * 0.73);
         this.overlayBackground.setVisible(false);
+        this.overlayBackground.setDepth(2);
         this.overlayBackground.setAlpha(0); // Начальное значение прозрачности
 
         //Первый ключ
@@ -257,6 +258,7 @@ export class GameScene2 extends Phaser.Scene {
         this.closeButton.setDisplaySize(this.overlayBackground.displayWidth * 0.05, this.overlayBackground.displayHeight * 0.07);
         this.closeButton.setInteractive();
         this.closeButton.setVisible(false);
+        this.closeButton.setDepth(2);
         this.closeButton.setAlpha(0); // Начальное значение прозрачности
 
         this.closeButton.on('pointerdown', () => {
@@ -613,6 +615,7 @@ function addPlayer(self, playerInfo) {
 function addOtherPlayer(self, playerInfo) {
     const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`);
     otherPlayer.setScale(1.3);
+    otherPlayer.setOrigin(0.5, 0.7);
     // const otherPlayer = self.matter.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`); //это если нужно будет взаимодействие
     otherPlayer.character = playerInfo.character;
     otherPlayer.name = playerInfo.name;

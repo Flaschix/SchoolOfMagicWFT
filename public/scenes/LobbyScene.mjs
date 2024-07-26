@@ -38,7 +38,7 @@ export class LobbyScene extends Phaser.Scene {
         //characters
         this.load.spritesheet('character1', './assets/characterMap/character1.png', { frameWidth: 32, frameHeight: 64 });
         this.load.spritesheet('character2', './assets/characterMap/character2.png', { frameWidth: 32, frameHeight: 64 });
-        this.load.spritesheet('character3', './assets/characterMap/character3.png', { frameWidth: 32, frameHeight: 64 });
+        this.load.spritesheet('character3', './assets/characterMap/character3.png', { frameWidth: 29, frameHeight: 45 });
         this.load.spritesheet('character4', './assets/characterMap/character4.png', { frameWidth: 48, frameHeight: 64 });
         this.load.spritesheet('character5', './assets/characterMap/character5.png', { frameWidth: 48, frameHeight: 64 });
         this.load.spritesheet('character6', './assets/characterMap/character6.png', { frameWidth: 48, frameHeight: 64 });
@@ -132,8 +132,13 @@ export class LobbyScene extends Phaser.Scene {
 
         this.joinRoomContainer.setVisible(false);
 
-        socket.on('roomNotFound', (roomCode) => {
+        socket.on('roomNotFound', () => {
             correctFlag = false;
+            inputsContainer.style.display = 'none';
+            titleContainer.innerHTML = 'Incorrect code';
+            titleContainer.style.color = 'red';
+            joinRoomConnect.src = './assets/button/try-again.png';
+            correctFlag = false
         });
     }
 

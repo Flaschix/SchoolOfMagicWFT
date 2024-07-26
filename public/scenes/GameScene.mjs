@@ -7,6 +7,7 @@ let otherPlayers = {};
 const hieghtName = 56;
 const heightPressX = 90;
 let fullMap = true;
+let moved = false;
 
 export class GameScene extends Phaser.Scene {
     constructor() {
@@ -544,6 +545,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     updatePlayerPosition() {
+
         player.setVelocity(0);
         if (this.cursors.left.isDown) {
             player.setVelocityX(-5);
@@ -564,9 +566,14 @@ export class GameScene extends Phaser.Scene {
         //Рисуем ник игрока
         player.nameText.setPosition(player.x, player.y - hieghtName);
 
-        //Передаем данные о передвижение игрока на сервер
-
-        socket.emit(`playerMovement:${CST.SCENE.GAMESCENE}`, { x: player.x, y: player.y, velocityX: player.body.velocity.x, velocityY: player.body.velocity.y });
+        if (player.body.velocity.x != 0 || player.body.velocity.y != 0) {
+            socket.emit(`playerMovement:${CST.SCENE.GAMESCENE}`, { x: player.x, y: player.y, velocityX: player.body.velocity.x, velocityY: player.body.velocity.y });
+            moved = true;
+            console.log('move');
+        } else if (moved) {
+            socket.emit(`playerMovement:${CST.SCENE.GAMESCENE}`, { x: player.x, y: player.y, velocityX: player.body.velocity.x, velocityY: player.body.velocity.y });
+            moved = false;
+        }
     }
 
     updatePressXVisibility() {

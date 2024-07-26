@@ -41,9 +41,15 @@ io.on('connection', (socket) => {
 
     socket.on('createRoom', async () => {
         console.log('createRoom');
+        let preCode;
+        let check
 
-        const roomCode = `${generateRoomCode(100000, 999999)}`;
-        console.log(roomCode);
+        do {
+            preCode = `${generateRoomCode(100000, 999999)}`
+            check = await redisClient.get(preCode);
+        } while (check != null)
+
+        const roomCode = preCode;
         const roomId = uuidv4();
 
         try {

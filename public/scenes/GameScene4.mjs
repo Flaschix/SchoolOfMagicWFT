@@ -43,6 +43,7 @@ export class GameScene4 extends Phaser.Scene {
         this.load.image('doorRoom4', './assets/map/door_room_4.png');
         this.load.image('tableRoom4', './assets/map/table_room_4.png');
         this.load.image('sixethKey', 'assets/keyFrame/sixethKey.png');
+        this.load.image('answer', 'assets/keyFrame/answer.png');
 
     }
 
@@ -75,7 +76,7 @@ export class GameScene4 extends Phaser.Scene {
         this.createCollision();
 
         //Создание оверлея
-        this.createOverlays(2);
+        this.createOverlays();
 
         //Создание слушателей нажатия кнопок
         this.createInputHandlers();
@@ -241,6 +242,7 @@ export class GameScene4 extends Phaser.Scene {
         this.overlayBackground.setOrigin(0.5, 0.5);
         this.overlayBackground.setDisplaySize(this.cameras.main.width * 0.7, this.cameras.main.height * 0.73);
         this.overlayBackground.setVisible(false);
+        this.overlayBackground.setDepth(2);
         this.overlayBackground.setAlpha(0); // Начальное значение прозрачности
 
         //Шестой ключ
@@ -258,6 +260,7 @@ export class GameScene4 extends Phaser.Scene {
         this.closeButton.setDisplaySize(this.overlayBackground.displayWidth * 0.05, this.overlayBackground.displayHeight * 0.07);
         this.closeButton.setInteractive();
         this.closeButton.setVisible(false);
+        this.closeButton.setDepth(2);
         this.closeButton.setAlpha(0); // Начальное значение прозрачности
 
         this.closeButton.on('pointerdown', () => {
@@ -559,7 +562,7 @@ export class GameScene4 extends Phaser.Scene {
             });
         });
 
-        const correctCode = '111111';
+        const correctCode = 'OKOLIZ';
         let correctFlag = true;
 
         const joinRoomConnect = document.getElementById('join-room-connect');
@@ -571,7 +574,17 @@ export class GameScene4 extends Phaser.Scene {
                     code += input.value;
                 });
 
-                if (code == correctCode) console.log(code);
+                code = code.toUpperCase();
+
+                if (code == correctCode) {
+                    this.overlayBackground.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
+
+                    const answer = this.add.image(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360, 'answer');
+                    answer.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
+                    answer.setDepth(2);
+
+                    this.enterCodeContainer.setVisible(false);
+                }
                 else {
                     inputsContainer.style.display = 'none';
                     titleContainer.innerHTML = 'Incorrect code';
@@ -698,6 +711,7 @@ function addPlayer(self, playerInfo) {
 function addOtherPlayer(self, playerInfo) {
     const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`);
     otherPlayer.setScale(1.3);
+    otherPlayer.setOrigin(0.5, 0.7);
     // const otherPlayer = self.matter.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`); //это если нужно будет взаимодействие
     otherPlayer.character = playerInfo.character;
     otherPlayer.name = playerInfo.name;
