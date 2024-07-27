@@ -1,5 +1,6 @@
 import { CST } from "../CST.mjs";
 import { socket } from "../CST.mjs";
+import { LABEL_ID } from "../CST.mjs";
 
 let player;
 let otherPlayers = {};
@@ -176,7 +177,7 @@ export class GameScene4 extends Phaser.Scene {
         const bodyLeftTable1 = this.matter.add.fromVertices(250 + 192, 392 + 410, '190.5 95.5 1 91.5 1 0.5 190.5 0.5', { label: '1', isStatic: true });
         const bodyLeftTable2 = this.matter.add.fromVertices(250 + 200, 392 + 590, '252.5 1 4.5 1 1.5 90.5 248.5 87.5', { label: '1', isStatic: true });
         const bodyLeftTable3 = this.matter.add.fromVertices(250 + 214, 392 + 732, '272 0.5 1 0.5 1 82.5 267 87.5', { label: '1', isStatic: true });
-        const bodyLeftTable4 = this.matter.add.fromVertices(250 + 196, 392 + 880, '243 1 1 1 1 87.5 246.5 87.5', { label: `${SIXETH_KEY}`, isStatic: true });
+        const bodyLeftTable4 = this.matter.add.fromVertices(250 + 196, 392 + 880, '243 1 1 1 1 87.5 246.5 87.5', { label: `${LABEL_ID.SIXETH_KEY}`, isStatic: true });
 
         const bodyLeftMiddleBookshell = this.matter.add.fromVertices(1500 + 168, 392 + 950, '189 2 0.5 0.5 2 125.5 191.5 125.5', { label: '1', isStatic: true });
         const bodyRightTable3 = this.matter.add.fromVertices(1500 + 116, 392 + 680, '412.5 71.5 1 71.5 5.5 0.5 412.5 0.5', { label: '1', isStatic: true });
@@ -185,7 +186,7 @@ export class GameScene4 extends Phaser.Scene {
         const bodyRightTopBookshell = this.matter.add.fromVertices(1500 + 96, 392 + 160, '1 162.5 1 395 384 395 384 162.5 328.5 54.5 188.5 1 61 54.5', { label: '1', isStatic: true });
 
         const bodyDoor = this.matter.add.fromVertices(942 + 86, 1900 + 80, '8 130.5 1 190.5 544.5 190.5 508.5 142.5 422.5 62.5 309 0.5 217 0.5 115.5 56.5', {
-            label: `${DOOR_ID}`,
+            label: `${LABEL_ID.DOOR_BACK_ID}`,
             isStatic: true,
             isSensor: true
         })
@@ -283,7 +284,7 @@ export class GameScene4 extends Phaser.Scene {
                 player.setVelocity(0);
                 console.log(this.eventZone);
 
-                if (this.eventZone == DOOR_ID) {
+                if (this.eventZone == DOOR_BACK_ID) {
                     this.isInZone = false;
                     this.eventZone = null;
                     socket.emit('switchScene', CST.SCENE.GAMESCENE3, 1024, 800);
@@ -324,7 +325,7 @@ export class GameScene4 extends Phaser.Scene {
             this.enterCodeContainer.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360);
             this.enterCodeContainer.setVisible(true);
             return;
-        } else if (this.eventZone == SIXETH_KEY) {
+        } else if (this.eventZone == LABEL_ID.SIXETH_KEY) {
             this.sixethKey.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
         }
         else {
@@ -349,7 +350,7 @@ export class GameScene4 extends Phaser.Scene {
             }
             return;
         }
-        else if (this.eventZone == SIXETH_KEY) this.sixethKey.setVisible(false);
+        else if (this.eventZone == LABEL_ID.SIXETH_KEY) this.sixethKey.setVisible(false);
         else {
             this.emptySign.setVisible(false);
         }
@@ -752,6 +753,3 @@ function updateAnimation(playerSprite, playerInfo) {
     // Обновляем позицию текста с именем
     playerSprite.nameText.setPosition(playerSprite.x, playerSprite.y - hieghtName);
 }
-
-const DOOR_ID = 11111111;
-const SIXETH_KEY = 77777777;
