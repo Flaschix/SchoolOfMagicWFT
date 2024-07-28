@@ -143,7 +143,6 @@ export class GameScene extends Phaser.Scene {
                 this.playersController.createOtherPlayer(this, players[id], otherPlayers);
             }
         });
-
     }
 
     checkOtherPlayer(self, playerInfo) {

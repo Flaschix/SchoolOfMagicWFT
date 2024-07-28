@@ -250,10 +250,11 @@ export class GameScene4 extends Phaser.Scene {
         this.emptySign.setVisible(false);
         this.emptySign.setDepth(2);
 
-        this.answer = this.add.image(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360, 'answer');
+        this.answer = this.add.image(0, 0, 'answer');
         this.answer.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
         this.answer.setVisible(false);
-        this.answer.setDepth(2);
+        this.answer.setDepth(3);
+        this.answer.setAlpha(0); // Начальное значение прозрачности
 
         this.closeButton = this.add.image(0, 0, 'closeIcon');
         this.closeButton.setDisplaySize(this.overlayBackground.displayWidth * 0.05, this.overlayBackground.displayHeight * 0.07);
@@ -284,7 +285,7 @@ export class GameScene4 extends Phaser.Scene {
                 player.setVelocity(0);
                 console.log(this.eventZone);
 
-                if (this.eventZone == DOOR_BACK_ID) {
+                if (this.eventZone == LABEL_ID.DOOR_BACK_ID) {
                     this.isInZone = false;
                     this.eventZone = null;
                     socket.emit('switchScene', CST.SCENE.GAMESCENE3, 1024, 800);
@@ -582,11 +583,13 @@ export class GameScene4 extends Phaser.Scene {
 
                 if (code == correctCode) {
                     this.overlayBackground.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
-                    this.answer.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
+                    this.answer.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 370).setVisible(true);
+                    this.answer.setAlpha(1);
                     this.closeButton.setPosition(
                         this.cameras.main.scrollX + 640 + this.overlayBackground.displayWidth / 2 - this.overlayBackground.displayWidth * 0.1 / 2 + 10,
                         this.cameras.main.scrollY + 360 - this.overlayBackground.displayHeight / 2 + this.overlayBackground.displayHeight * 0.1 / 2,
                     ).setVisible(true);
+
                     this.enterCodeContainer.setVisible(false);
                 }
                 else {
