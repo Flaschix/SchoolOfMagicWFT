@@ -108,7 +108,7 @@ export class GameScene4 extends Phaser.Scene {
 
         if (!this.textures.exists(MAP_SETTINGS.MAP_FULL4)) {
 
-            this.loadPlusTexture(MAP_SETTINGS.MAP_FULL3, './assets/map/library_room_4_full.png');
+            this.loadPlusTexture(MAP_SETTINGS.MAP_FULL4, './assets/map/library_room_4_full.png');
 
             fullMap = false;
         }
