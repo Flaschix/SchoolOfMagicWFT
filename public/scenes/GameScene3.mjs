@@ -1,11 +1,32 @@
-import { CST } from "../CST.mjs";
+import { CST, LABEL_ID } from "../CST.mjs";
 import { socket } from "../CST.mjs";
+
+import { SocketWorker } from "../share/SocketWorker.mjs";
+
+import { createUIBottom } from "../share/UICreator.mjs";
+import { createUITop } from "../share/UICreator.mjs";
+import { createUIRight } from "../share/UICreator.mjs";
+import { createUI } from "../share/UICreator.mjs";
+import { createExitMenu } from "../share/UICreator.mjs";
+import { createAvatarDialog } from "../share/UICreator.mjs";
+import { HEIGHT_PRESS_X } from "../share/UICreator.mjs";
+import { MAP_SETTINGS } from "../share/UICreator.mjs";
+
+import { AnimationControl } from "../share/AnimationControl.mjs";
+
+import { PlayersController } from "../share/PlayerController.mjs";
 
 let player;
 let otherPlayers = {};
-const hieghtName = 56;
-const heightPressX = 90;
 let fullMap = true;
+let moved = false;
+
+const CAMERA_MARGIN = {
+    right: 125,
+    left: -100,
+    top: -12,
+    bottom: 24
+}
 
 export class GameScene3 extends Phaser.Scene {
     constructor() {
@@ -22,11 +43,8 @@ export class GameScene3 extends Phaser.Scene {
     }
 
     preload() {
-
-        // Создание спрайта и запуск анимации
-        this.loadingSprite = this.add.sprite(1280 / 2, 720 / 2, 'loading'); // Центрирование спрайта
-        this.loadingSprite.setScale(0.3, 0.3);
-        this.loadingSprite.play('loadingAnimation');
+        this.loding = new AnimationControl(AnimationControl.LOADING);
+        this.loding.addLoadOnScreen(this, 1280 / 2, 720 / 2, 0.3, 0.3);
 
 
         //map
@@ -36,29 +54,25 @@ export class GameScene3 extends Phaser.Scene {
     }
 
     create(data) {
+        this.mySocket = new SocketWorker(socket);
+
         const { players } = data;
 
-        this.loadingSprite.stop();
-        this.loadingSprite.destroy();
+        this.loding.deleteLoadFromScreen(this);
+
+        this.playersController = new PlayersController();
 
         // Добавляем карту
-        this.createMap();
+        this.createMap('map3', MAP_SETTINGS.MAP_FULL3);
 
-
-        this.createUIRight();
-        this.createUITop();
-        this.createUIBottom();
-        this.createUI();
-        this.createExitButton();
+        //Создаём курсор для обработки инпутов пользователя
+        this.cursors = this.input.keyboard.createCursorKeys();
 
         //Создаём стены и остальные непроходимые объекты
         this.createUnWalkedObjects();
 
         //Создаём игроков
         this.createPlayers(players);
-
-        //Создаём курсор для обработки инпутов пользователя
-        this.cursors = this.input.keyboard.createCursorKeys();
 
         //Создаём объект с которыми будем взаимодействовать
         this.createCollision();
@@ -70,63 +84,38 @@ export class GameScene3 extends Phaser.Scene {
         this.createInputHandlers();
 
 
+        //Создаём пользовательский UI для сцен
+        createUIRight(this);
+        createUITop(this);
+        createUIBottom(this);
+        createUI(this, this.showSettings, this.showExitMenu);
+        createExitMenu(this, this.leaveGame, this.closeExitMenu);
+        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room);
 
-        socket.on(`newPlayer:${this.scene.key}`, (playerInfo) => {
-            addOtherPlayer(this, playerInfo);
-        });
+        //Подключение слушателей
+        this.mySocket.subscribeNewPlayer(this, this.scene.key, otherPlayers, this.playersController.createOtherPlayer);
+        this.mySocket.subscribePlayerMoved(this, this.scene.key, this.checkOtherPlayer);
+        this.mySocket.subscribePlayerDisconected(this.deletePlayer);
+        this.mySocket.subscribeSceneSwitched(this, this.scene.key, sceneSwitched)
 
-        socket.on(`playerMoved:${this.scene.key}`, (playerInfo) => {
-            if (otherPlayers[playerInfo.id]) {
-                otherPlayers[playerInfo.id].setPosition(playerInfo.x, playerInfo.y);
-                updateAnimation(otherPlayers[playerInfo.id], playerInfo);
-            }
-        });
 
-        socket.on('playerDisconnected', (id) => {
-            if (otherPlayers[id]) {
-                otherPlayers[id].nameText.destroy();
-                otherPlayers[id].destroy();
-                delete otherPlayers[id];
-            }
-        });
+        if (!this.textures.exists(MAP_SETTINGS.MAP_FULL3)) {
 
-        this.createAvatarDialog();
-
-        socket.on('sceneSwitched', (data) => {
-            this.removeAllListerners();
-            this.map.destroy();
-            this.avatarDialog.destroy();
-            this.exitContainer.destroy();
-            let players = data.players;
-            this.scene.start(data.scene, { players });
-        });
-
-        if (!this.textures.exists('mapFull3')) {
-            this.load.image('mapFull3', './assets/map/library_room_3_full.png');
-
-            // Начало загрузки
-            this.load.start();
+            this.loadPlusTexture(MAP_SETTINGS.MAP_FULL3, './assets/map/library_room_3_full.png');
 
             fullMap = false;
         }
     }
 
-    removeAllListerners() {
-        socket.removeAllListeners('playerDisconnected');
-        socket.removeAllListeners('sceneSwitched');
-        socket.removeAllListeners(`newPlayer:${this.scene.key}`);
-        socket.removeAllListeners(`playerMoved:${this.scene.key}`);
-    }
-
-    createMap() {
-        if (this.textures.exists('mapFull3')) {
-            this.map = this.add.image(0, 0, 'mapFull3').setOrigin(0, 0);
-            this.map.setScale(4 / 3, 4 / 3);
-            this.matter.world.setBounds(0, 0, this.map.width * 4 / 3, this.map.height * 4 / 3);
+    createMap(map, mapFull) {
+        if (this.textures.exists(mapFull)) {
+            this.map = this.add.image(0, 0, mapFull).setOrigin(0, 0);
+            this.map.setScale(MAP_SETTINGS.MAP_SCALE_4_3, MAP_SETTINGS.MAP_SCALE_4_3);
+            this.matter.world.setBounds(0, 0, this.map.width * MAP_SETTINGS.MAP_SCALE_4_3, this.map.height * MAP_SETTINGS.MAP_SCALE_4_3);
         } else {
-            this.map = this.add.image(0, 0, 'map3').setOrigin(0, 0);
+            this.map = this.add.image(0, 0, map).setOrigin(0, 0);
             this.map.setScale(2, 2);
-            this.matter.world.setBounds(0, 0, this.map.width * 2, this.map.height * 2);
+            this.matter.world.setBounds(0, 0, this.map.width * MAP_SETTINGS.MAP_SCALE_2, this.map.height * MAP_SETTINGS.MAP_SCALE_2);
         }
     }
 
@@ -139,82 +128,58 @@ export class GameScene3 extends Phaser.Scene {
     createPlayers(players) {
         Object.keys(players).forEach((id) => {
             if (id === socket.id) {
-                player = addPlayer(this, players[id]);
+                //добовляем игрока
+                player = this.playersController.createMainPlayer(this, players[id]);
+
+                //настраиваем камеру игрока
                 this.cameras.main.startFollow(player);
-                // this.cameras.main.setBounds(-100, -12, this.map.width + 125, this.map.height + 24);
-                if (this.textures.exists('mapFull3')) this.cameras.main.setBounds(-100, -12, this.map.width * 4 / 3 + 125, this.map.height * 4 / 3 + 24);
-                else this.cameras.main.setBounds(-100, -12, this.map.width * 2 + 125, this.map.height * 2 + 24);
+                if (this.textures.exists(MAP_SETTINGS.MAP_FULL3)) this.cameras.main.setBounds(CAMERA_MARGIN.left, CAMERA_MARGIN.top, this.map.width * MAP_SETTINGS.MAP_SCALE_4_3 + CAMERA_MARGIN.right, this.map.height * MAP_SETTINGS.MAP_SCALE_4_3 + CAMERA_MARGIN.bottom);
+                else this.cameras.main.setBounds(CAMERA_MARGIN.left, CAMERA_MARGIN.top, this.map.width * MAP_SETTINGS.MAP_SCALE_2 + CAMERA_MARGIN.right, this.map.height * MAP_SETTINGS.MAP_SCALE_2 + CAMERA_MARGIN.bottom);
             } else {
-                addOtherPlayer(this, players[id]);
+                this.playersController.createOtherPlayer(this, players[id], otherPlayers);
             }
         });
+    }
 
+    checkOtherPlayer(self, playerInfo) {
+        if (otherPlayers[playerInfo.id]) {
+            otherPlayers[playerInfo.id].setPosition(playerInfo.x, playerInfo.y);
+            self.playersController.updateAnimOtherPlayer(otherPlayers[playerInfo.id], playerInfo);
+        }
+    }
+
+    deletePlayer(id) {
+        if (otherPlayers[id]) {
+            otherPlayers[id].nameText.destroy();
+            otherPlayers[id].destroy();
+            delete otherPlayers[id];
+        }
     }
 
     createCollision() {
-        // const body1 = this.matter.add.fromVertices(600, 1200, '458.5 105.5 24 105.5 1.5 66.5 6 24.5', {
-        //     label: '1',
-        //     isStatic: true,
-        //     isSensor: true
-        // });
-
 
         // Создаем графику для подсветки
         const highlightGraphics = this.add.graphics();
         highlightGraphics.lineStyle(2, 0x06ff01, 1);
 
-        // this.matterCollision.addOnCollideStart({
-        //     objectA: player,
-        //     objectB: [body1, body2, specialZone],
-        //     callback: function (eventData) {
-        //         this.isInZone = true;
-        //         this.eventZone = Number(eventData.bodyB.label);
-
-        //         // Подсвечиваем границы зоны
-        //         const vertices = eventData.bodyB.vertices;
-        //         highlightGraphics.beginPath();
-        //         highlightGraphics.moveTo(vertices[0].x, vertices[0].y);
-        //         for (let i = 1; i < vertices.length; i++) {
-        //             highlightGraphics.lineTo(vertices[i].x, vertices[i].y);
-        //         }
-        //         highlightGraphics.closePath();
-        //         highlightGraphics.strokePath();
-        //     },
-        //     context: this
-        // });
-
-        // this.matterCollision.addOnCollideEnd({
-        //     objectA: player,
-        //     objectB: [body1, body2, specialZone],
-        //     callback: function (eventData) {
-        //         this.isInZone = false;
-        //         this.eventZone = null;
-
-        //         highlightGraphics.clear();
-        //     },
-        //     context: this
-        // })
-
-        // // Создаем область, через которую игрок не может пройти
-        // const body = this.matter.add.fromVertices(465 + 90, 930 + 90, '', { label: '1', isStatic: true });
         const bodyDoor = this.matter.add.fromVertices(892 + 120, 500 + 90, '0.5 91 0.5 328.5 168.5 328.5 168.5 78.5 139 28.5 84 1.5 27.5 33.5', {
-            label: `${DOOR_FORWARD_ID}`,
+            label: `${LABEL_ID.DOOR_FORWARD_ID}`,
             isStatic: true,
         });
         const bodyRightBottomTable = this.matter.add.fromVertices(1352 + 90, 1628 + 44, '92 144.5 34.5 133 1 99 1 71.5 11 38 34.5 10 72 1 125.5 10 164 51.5 149.5 118.5', { label: '1', isStatic: true });
         const bodyRightMiddleTable = this.matter.add.fromVertices(1286 + 160, 1189 + 112, '180 1.5 1.5 165.5 124.5 258.5 303 87.5', { label: '1', isStatic: true });
 
-        const bodyRightMiddleShell = this.matter.add.fromVertices(1760 + 98, 990 + 220, '1 260 126.5 339 148.5 282 148.5 64 66 1.5 1 58.5', { label: `${FIVETH_KEY}`, isStatic: true });
+        const bodyRightMiddleShell = this.matter.add.fromVertices(1760 + 98, 990 + 220, '1 260 126.5 339 148.5 282 148.5 64 66 1.5 1 58.5', { label: `${LABEL_ID.FIVETH_KEY}`, isStatic: true });
         const bodyRightTopShell = this.matter.add.fromVertices(1539 + 146, 760 + 170, '1.5 83.5 11 170 169 302 259.5 226.5 259.5 126.5 89.5 1', { label: '1', isStatic: true });
         const bodyRightTopBookshell = this.matter.add.fromVertices(1200 + 125, 680 + 154, '254 1 254 327 1 327 1 98.8 18.5154 1', { label: '1', isStatic: true });
         const bodyLeftTopBookshell = this.matter.add.fromVertices(560 + 135, 770 + 122, '270.5 235.5 6 235.5 1 1 263.5 4.5', { label: '1', isStatic: true });
         const bodyLeftMiddleTable = this.matter.add.fromVertices(540 + 110, 1050 + 100, '97 26.5 1 132.5 1 207.5 48 221.5 107.5 207.5 220 103 205 26.5 153 1.5', { label: '1', isStatic: true });
         const bodyLeftTopShell = this.matter.add.fromVertices(249 + 100, 811 + 130, '223.5 178 100 279.5 88 279.5 1 199 1 112 130 1 211 49.5 234.5 89.5', { label: '1', isStatic: true });
         const bodyLeftMiddleShell = this.matter.add.fromVertices(125 + 65, 1020 + 195, '147.5 245 7 339.5 0.5 70 106.5 1.5 147.5 46.5', { label: '1', isStatic: true });
-        const bodyLeftBottomTable = this.matter.add.fromVertices(450 + 80, 1622 + 52, '164.5 63.5 144 128.5 107.5 151 62 153.5 25.5 144 0.5 99 0.5 63.5 31.5 22.5 93.5 1 140 22.5', { label: `${CLUE_KEY}`, isStatic: true });
+        const bodyLeftBottomTable = this.matter.add.fromVertices(450 + 80, 1622 + 52, '164.5 63.5 144 128.5 107.5 151 62 153.5 25.5 144 0.5 99 0.5 63.5 31.5 22.5 93.5 1 140 22.5', { label: `${LABEL_ID.CLUE_KEY}`, isStatic: true });
 
         const bodyDoorBack = this.matter.add.fromVertices(942 + 80, 1900 + 74, '8 130.5 1 190.5 544.5 190.5 508.5 142.5 422.5 62.5 309 0.5 217 0.5 115.5 56.5', {
-            label: `${DOOR_BACK_ID}`,
+            label: `${LABEL_ID.DOOR_BACK_ID}`,
             isStatic: true,
             isSensor: true
         })
@@ -314,16 +279,12 @@ export class GameScene3 extends Phaser.Scene {
                 player.setVelocity(0);
                 console.log(this.eventZone);
 
-                if (this.eventZone == DOOR_FORWARD_ID) {
-                    this.isInZone = false;
-                    this.eventZone = null;
-                    socket.emit('switchScene', CST.SCENE.GAMESCENE4, 1024, 1850);
+                if (this.eventZone == LABEL_ID.DOOR_FORWARD_ID) {
+                    this.moveForwardRoom();
                     return;
                 }
-                if (this.eventZone == DOOR_BACK_ID) {
-                    this.isInZone = false;
-                    this.eventZone = null;
-                    socket.emit('switchScene', CST.SCENE.GAMESCENE2, 1024, 850);
+                if (this.eventZone == LABEL_ID.DOOR_BACK_ID) {
+                    this.moveBackRoom();
                     return;
                 }
 
@@ -354,13 +315,25 @@ export class GameScene3 extends Phaser.Scene {
         });
     }
 
+    moveForwardRoom() {
+        this.isInZone = false;
+        this.eventZone = null;
+        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE4, 1024, 1850);
+    }
+
+    moveBackRoom() {
+        this.isInZone = false;
+        this.eventZone = null;
+        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE2, 1024, 850);
+    }
+
     showOverlay() {
         this.isOverlayVisible = true
 
-        if (this.eventZone == FIVETH_KEY) {
+        if (this.eventZone == LABEL_ID.FIVETH_KEY) {
             this.fiverthKey.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
         }
-        else if (this.eventZone == CLUE_KEY) {
+        else if (this.eventZone == LABEL_ID.CLUE_KEY) {
             this.clueKey.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
         }
         else {
@@ -376,8 +349,8 @@ export class GameScene3 extends Phaser.Scene {
 
     hideOverlay() {
         this.isOverlayVisible = false
-        if (this.eventZone == FIVETH_KEY) this.fiverthKey.setVisible(false);
-        else if (this.eventZone == FOURTH_KEY) this.clueKey.setVisible(false);
+        if (this.eventZone == LABEL_ID.FIVETH_KEY) this.fiverthKey.setVisible(false);
+        else if (this.eventZone == LABEL_ID.CLUE_KEY) this.clueKey.setVisible(false);
         else {
             this.emptySign.setVisible(false);
         }
@@ -385,179 +358,61 @@ export class GameScene3 extends Phaser.Scene {
         this.closeButton.setVisible(false);
     }
 
-    createUI() {
-        // Создаем контейнер для HTML элементов
-        const uiContainer = this.add.dom(50, this.cameras.main.height / 2).createFromHTML(`
-                <div class="container">
-        <img class="game-logo" src="./assets/icon/logo.png" alt="Company Logo">
-        <div class="game-buttons">
-            <input class="gamebutton" id="settingsButton" type="image" src="./assets/icon/settings.png" alt="Кнопка «input»">
-            <input class="gamebutton" id="exitButton" type="image" src="./assets/icon/exit.png" alt="Кнопка «input»">
-        </div>
-    </div>
-        `);
-
-        // Добавляем обработчик события для кнопки настроек
-        const settingsButton = document.getElementById('settingsButton');
-        const exitButton = document.getElementById('exitButton');
-        settingsButton.addEventListener('click', () => {
-            console.log('Settings button clicked');
-            this.avatarDialog.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360);
-            this.avatarDialog.setVisible(true);
-            this.isOverlayVisible = true
-            player.setVelocity(0);
-        });
-        exitButton.addEventListener('click', () => {
-            console.log('exitButton button clicked');
-            this.exitContainer.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360);
-            this.exitContainer.setVisible(true);
-            this.isOverlayVisible = true
-            player.setVelocity(0);
-        });
-
-        // Настраиваем стили контейнера
-        // uiContainer.setDisplaySize(100, this.cameras.main.height);
-        uiContainer.setOrigin(0.5, 0.5);
-        uiContainer.setScrollFactor(0); // Чтобы контейнер не двигался вместе с камерой
+    showSettings(self) {
+        self.avatarDialog.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
+        self.avatarDialog.setVisible(true);
+        self.isOverlayVisible = true
+        player.setVelocity(0);
     }
 
-    createUIRight() {
-        // Создаем контейнер для HTML элементов
-        const uiContainer = this.add.dom(this.cameras.main.width, this.cameras.main.height / 2).createFromHTML(`
-            <div style="text-align: center;background:#0F0920;height: 720px; width: 50px">
-            </div>
-        `);
-
-        // Настраиваем стили контейнера
-        // uiContainer.setDisplaySize(100, this.cameras.main.height);
-        uiContainer.setOrigin(0.5, 0.5);
-        uiContainer.setScrollFactor(0); // Чтобы контейнер не двигался вместе с камерой
+    showExitMenu(self) {
+        self.exitContainer.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
+        self.exitContainer.setVisible(true);
+        self.isOverlayVisible = true
+        player.setVelocity(0);
     }
 
-    createUITop() {
-        // Создаем контейнер для HTML элементов
-        const uiContainer = this.add.dom(this.cameras.main.width / 2, 0).createFromHTML(`
-            <div style="text-align: center;background:#0F0920;height: 24px; width: 1280px">
-            </div>
-        `);
-
-        // Настраиваем стили контейнера
-        uiContainer.setOrigin(0.5, 0.5);
-        uiContainer.setScrollFactor(0); // Чтобы контейнер не двигался вместе с камерой
+    leaveGame(self) {
+        window.location.reload();
     }
 
-    createUIBottom() {
-        // Создаем контейнер для HTML элементов
-        const uiContainer = this.add.dom(this.cameras.main.width / 2, this.cameras.main.height).createFromHTML(`
-            <div style="text-align: center;background:#0F0920;height: 24px; width: 1280px">
-            </div>
-        `);
-
-        // Настраиваем стили контейнера
-        uiContainer.setOrigin(0.5, 0.5);
-        uiContainer.setScrollFactor(0); // Чтобы контейнер не двигался вместе с камерой
+    closeExitMenu(self) {
+        self.exitContainer.setVisible(false);
+        self.isOverlayVisible = false
     }
 
-    createExitButton() {
-        this.exitContainer = this.add.dom(0, 0).createFromHTML(`
-<div class="exit-container">
-    <input type="image" src="./assets/button/leave-space.png" alt="Leave space" class="exit-button" id="leave-space">
-    <input type="image" src="./assets/button/cancel-exit.png" alt="Close" class="exit-button" id="close-btn">
-</div>
-    `);
-        const leaveBtn = document.getElementById('leave-space');
-        leaveBtn.addEventListener('click', () => {
-
-            //Поменяй на нормальный способ
-            window.location.reload();
-        });
-
-
-        const closeBtn = document.getElementById('close-btn');
-        closeBtn.addEventListener('click', () => {
-            this.exitContainer.setVisible(false);
-            this.isOverlayVisible = false
-        });
-
-        this.exitContainer.setOrigin(2, 1);
-        this.exitContainer.setVisible(false);
+    enterNewSettingsInAvatarDialog(self, usernameInput, nameError, imgCount) {
+        const username = usernameInput.value;
+        if (username.length < 1 || username.length > 12) {
+            nameError.style.visibility = "visible";
+        } else {
+            self.mySocket.emitPlayerReconnect({ x: player.x, y: player.y, avatar: imgCount + 1, name: username });
+            player.setTexture(`character${imgCount + 1}`);
+            player.character = imgCount + 1;
+            player.nameText.setText(username);
+            self.avatarDialog.setVisible(false);
+            self.isOverlayVisible = false;
+            nameError.style.visibility = "hidden";
+        }
     }
 
-    createAvatarDialog() {
-        this.avatarDialog = this.add.dom(0, 0).createFromHTML(`
-	<div id="avatarDialog">
-        <h2>Choose avatar</h2>
-        <div id="avatarContainer">
-            <img src="./assets/character/man1.png" class="avatar" data-index="0">
-            <img src="./assets/character/man2.png" class="avatar" data-index="1">
-            <img src="./assets/character/man3.png" class="avatar" data-index="2">
-            <img src="./assets/character/woman1.png" class="avatar" data-index="3">
-            <img src="./assets/character/woman2.png" class="avatar" data-index="4">
-            <img src="./assets/character/woman3.png" class="avatar" data-index="5">
-        </div>
-        <div id="usernameContainer">
-            <label for="usernameInput">Name</label>
-            <div id="inputContainer">
-                <input type="text" id="usernameInput" placeholder="Enter your name">
-                <img src="./assets/icon/pen.png" id="penIcon">
-            </div>
-        </div>
-        <label id="incorrectName">Incorrect name
-*the name must be 1-12 characters</label>
-        <input type="image" src="./assets/button/join.png" id="joinBtn">
-        <input type="image" src="./assets/button/back.png" id="backBtn">
-    </div>
-            `);
-        this.avatarDialog.setVisible(false);
+    closeAvatarDialog(self) {
+        self.avatarDialog.setVisible(false);
+        self.isOverlayVisible = false;
+    }
 
-        this.avatarDialog.setOrigin(0.5, 0.5);
+    loadPlusTexture(name, path) {
+        this.load.image(name, path);
 
-        const avatars = document.querySelectorAll('#avatarContainer .avatar');
-        let selectedAvatar = avatars[0]; // По умолчанию выделяем первый аватар
-        let imgCount = 0;
+        // Начало загрузки
+        this.load.start();
+    }
 
-        // Добавляем класс выделения первому аватару
-        selectedAvatar.classList.add('selected');
+    loadedResolutionMap(name, scaleX, scaleY) {
+        this.map.setScale(scaleX, scaleY);
 
-        avatars.forEach(avatar => {
-            avatar.addEventListener('click', function () {
-                // Убираем класс выделения с предыдущего аватара
-                selectedAvatar.classList.remove('selected');
-                // Добавляем класс выделения новому аватару
-                avatar.classList.add('selected');
-                // Обновляем ссылку на текущий выделенный аватар
-                selectedAvatar = avatar;
-                imgCount = Number(avatar.dataset.index);
-                console.log(imgCount);
-            });
-        });
-
-        const nameInput = document.getElementById('usernameInput');
-        const nameError = document.getElementById('incorrectName');
-
-        const avatarDialogJoin = document.getElementById('joinBtn');
-        avatarDialogJoin.addEventListener('click', () => {
-            const username = nameInput.value;
-            if (username.length < 1 || username.length > 12) {
-                nameError.style.visibility = "visible";
-            } else {
-                socket.emit('playerReconnect', { x: player.x, y: player.y, avatar: imgCount + 1, name: username });
-                player.setTexture(`character${imgCount + 1}`);
-                player.character = imgCount + 1;
-                player.nameText.setText(username);
-                this.avatarDialog.setVisible(false);
-                this.isOverlayVisible = false;
-
-                nameError.style.visibility = "hidden";
-            }
-        });
-
-        const avatarDialogBack = document.getElementById('backBtn');
-        avatarDialogBack.addEventListener('click', () => {
-            this.avatarDialog.setVisible(false);
-            this.isOverlayVisible = false;
-        });
-
+        this.map.setTexture(name);
+        this.matter.world.setBounds(0, 0, this.map.width * scaleX, this.map.height * scaleY);
     }
 
     update() {
@@ -568,44 +423,32 @@ export class GameScene3 extends Phaser.Scene {
         this.updatePressXVisibility();
 
         if (!fullMap) {
-            if (this.textures.exists('mapFull3')) {
+            if (this.textures.exists(MAP_SETTINGS.MAP_FULL3)) {
                 fullMap = true;
                 this.map.setScale(4 / 3, 4 / 3);
 
-                this.map.setTexture('mapFull3');
+                this.map.setTexture(MAP_SETTINGS.MAP_FULL3);
                 this.matter.world.setBounds(0, 0, this.map.width * 4 / 3, this.map.height * 4 / 3);
             }
         }
     }
 
     updatePlayerPosition() {
-        player.setVelocity(0);
-        if (this.cursors.left.isDown) {
-            player.setVelocityX(-5);
-            player.anims.play(`walk_left${player.character}`, true);
-        } else if (this.cursors.right.isDown) {
-            player.setVelocityX(5);
-            player.anims.play(`walk_right${player.character}`, true);
-        } else if (this.cursors.up.isDown) {
-            player.setVelocityY(-5);
-            player.anims.play(`walk_up${player.character}`, true);
-        } else if (this.cursors.down.isDown) {
-            player.setVelocityY(5);
-            player.anims.play(`walk_down${player.character}`, true);
-        } else {
-            player.anims.stop();
+
+        this.playersController.updateMainPlayerPosition(player, this.cursors);
+
+        if (player.body.velocity.x != 0 || player.body.velocity.y != 0) {
+            this.mySocket.emitPlayerMovement(this.scene.key, { x: player.x, y: player.y, velocityX: player.body.velocity.x, velocityY: player.body.velocity.y });
+            moved = true;
+        } else if (moved) {
+            this.mySocket.emitPlayerMovement(this.scene.key, { x: player.x, y: player.y, velocityX: player.body.velocity.x, velocityY: player.body.velocity.y });
+            moved = false;
         }
-
-        //Рисуем ник игрока
-        player.nameText.setPosition(player.x, player.y - hieghtName);
-
-        //Передаем данные о передвижение игрока на сервер
-        socket.emit(`playerMovement:${this.scene.key}`, { x: player.x, y: player.y, velocityX: player.body.velocity.x, velocityY: player.body.velocity.y });
     }
 
     updatePressXVisibility() {
         if (this.isInZone) {
-            this.pressX.setPosition(player.x, player.y - heightPressX);
+            this.pressX.setPosition(player.x, player.y - HEIGHT_PRESS_X);
             this.pressX.setVisible(true);
         } else {
             this.pressX.setVisible(false);
@@ -614,73 +457,12 @@ export class GameScene3 extends Phaser.Scene {
 
 }
 
-function addPlayer(self, playerInfo) {
-    console.log(playerInfo.character);
-    const newPlayer = self.matter.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`);
-    newPlayer.setScale(1.3);
-    newPlayer.character = playerInfo.character;
-    newPlayer.name = playerInfo.name;
-    newPlayer.setBounce(0); // настройка упругости
-    newPlayer.setFrictionAir(0); // настройка сопротивления воздуха
-
-
-    const colliderWidth = 22; // 80% от ширины спрайта
-    const colliderHeight = 25; // 80% от высоты спрайта
-    newPlayer.setBody({
-        type: 'circle',
-        width: colliderWidth,
-        height: colliderHeight
-    });
-    newPlayer.setOrigin(0.5, 0.7);
-
-
-    // Добавляем текст с именем игрока
-    newPlayer.nameText = self.add.text(newPlayer.x, newPlayer.y - hieghtName, newPlayer.name, { fontSize: '16px', fill: '#fff' }).setOrigin(0.5);
-    newPlayer.setFixedRotation();
-    //////////////////////////////////////////////////////
-
-    return newPlayer;
+function sceneSwitched(self, data) {
+    self.map.destroy();
+    self.avatarDialog.destroy();
+    self.exitContainer.destroy();
+    otherPlayers = {};
+    let players = data.players;
+    self.scene.start(data.scene, { players });
 }
 
-function addOtherPlayer(self, playerInfo) {
-    const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`);
-    otherPlayer.setScale(1.3);
-    otherPlayer.setOrigin(0.5, 0.7);
-    // const otherPlayer = self.matter.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`); //это если нужно будет взаимодействие
-    otherPlayer.character = playerInfo.character;
-    otherPlayer.name = playerInfo.name;
-
-    // Установить статическую физику для других игроков
-    // otherPlayer.setStatic(true);
-
-    // Добавляем текст с именем игрока
-    otherPlayer.nameText = self.add.text(otherPlayer.x, otherPlayer.y - hieghtName, otherPlayer.name, { fontSize: '16px', fill: '#fff' }).setOrigin(0.5);
-
-    //Убираем вращение при столкновении с объектами
-    // otherPlayer.setFixedRotation();
-
-    otherPlayers[playerInfo.id] = otherPlayer;
-}
-
-
-function updateAnimation(playerSprite, playerInfo) {
-    if (playerInfo.velocityX < 0) {
-        playerSprite.anims.play(`walk_left${playerSprite.character}`, true);
-    } else if (playerInfo.velocityX > 0) {
-        playerSprite.anims.play(`walk_right${playerSprite.character}`, true);
-    } else if (playerInfo.velocityY < 0) {
-        playerSprite.anims.play(`walk_up${playerSprite.character}`, true);
-    } else if (playerInfo.velocityY > 0) {
-        playerSprite.anims.play(`walk_down${playerSprite.character}`, true);
-    } else {
-        playerSprite.anims.stop();
-    }
-
-    // Обновляем позицию текста с именем
-    playerSprite.nameText.setPosition(playerSprite.x, playerSprite.y - hieghtName);
-}
-
-const DOOR_FORWARD_ID = 11111111;
-const DOOR_BACK_ID = 1111112;
-const FIVETH_KEY = 6666666;
-const CLUE_KEY = 77777777;

@@ -43,7 +43,6 @@ export class GameScene2 extends Phaser.Scene {
     }
 
     preload() {
-        // Создание спрайта и запуск анимации
         this.loding = new AnimationControl(AnimationControl.LOADING);
         this.loding.addLoadOnScreen(this, 1280 / 2, 720 / 2, 0.3, 0.3);
 
@@ -90,7 +89,7 @@ export class GameScene2 extends Phaser.Scene {
         createUIBottom(this);
         createUI(this, this.showSettings, this.showExitMenu);
         createExitMenu(this, this.leaveGame, this.closeExitMenu);
-        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog);
+        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room);
 
         //Подключение слушателей
         this.mySocket.subscribeNewPlayer(this, this.scene.key, otherPlayers, this.playersController.createOtherPlayer);
@@ -263,7 +262,7 @@ export class GameScene2 extends Phaser.Scene {
         this.closeButton.on('pointerdown', () => {
             this.isOverlayVisible = false;
             this.tweens.add({
-                targets: [this.closeButton, this.overlayBackground],
+                targets: [this.closeButton, this.overlayBackground, this.emptySign, this.thirdKey, this.fourthKey],
                 alpha: 0,
                 duration: 500,
                 onComplete: () => {
@@ -297,14 +296,14 @@ export class GameScene2 extends Phaser.Scene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.emptySign],
+                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.thirdKey, this.fourthKey],
                         alpha: 1,
                         duration: 500
                     });
                 }
                 else {
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.emptySign],
+                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.thirdKey, this.fourthKey],
                         alpha: 0,
                         duration: 500,
                         onComplete: () => {
@@ -427,11 +426,11 @@ export class GameScene2 extends Phaser.Scene {
         this.updatePressXVisibility();
 
         if (!fullMap) {
-            if (this.textures.exists('mapFull2')) {
+            if (this.textures.exists(MAP_SETTINGS.MAP_FULL2)) {
                 fullMap = true;
                 this.map.setScale(4 / 3, 4 / 3);
 
-                this.map.setTexture('mapFull2');
+                this.map.setTexture(MAP_SETTINGS.MAP_FULL2);
                 this.matter.world.setBounds(0, 0, this.map.width * 4 / 3, this.map.height * 4 / 3);
             }
         }

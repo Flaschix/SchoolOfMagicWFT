@@ -101,7 +101,7 @@ io.on('connection', (socket) => {
 
             socket.join(`${roomId}:${socket.currentLevel}`);
 
-            rooms[roomId].levels[socket.currentLevel][socket.id] = { id: socket.id, x: 1024, y: 1024, character: avatar, name: username };
+            rooms[roomId].levels[socket.currentLevel][socket.id] = { id: socket.id, x: 1024, y: 1024, character: avatar, name: username, room: roomCode };
 
             // Отправляем информацию о текущих игроках новому игроку
             socket.emit('currentPlayers', rooms[roomId].levels[socket.currentLevel]);
@@ -144,7 +144,7 @@ io.on('connection', (socket) => {
                     rooms[roomId].levels[newScene] = {};
                 }
 
-                rooms[roomId].levels[newScene][socket.id] = { id: socket.id, x: posX, y: posY, character: avatarCur, name: usernameCur };
+                rooms[roomId].levels[newScene][socket.id] = { id: socket.id, x: posX, y: posY, character: avatarCur, name: usernameCur, room: roomCode };
                 socket.join(`${roomId}:${newScene}`);
 
                 socket.emit('sceneSwitched', { players: rooms[roomId].levels[newScene], scene: newScene });
@@ -166,10 +166,9 @@ io.on('connection', (socket) => {
 
             socket.on('playerReconnect', (newSettings) => {
                 if (rooms[roomId].levels[socket.currentLevel][socket.id]) {
-                    // delete rooms[roomId].levels[socket.currentLevel][socket.id];
                     io.to(`${roomId}:${socket.currentLevel}`).emit('playerDisconnected', socket.id);
 
-                    rooms[roomId].levels[socket.currentLevel][socket.id] = { id: socket.id, x: newSettings.x, y: newSettings.y, character: newSettings.avatar, name: newSettings.name };
+                    rooms[roomId].levels[socket.currentLevel][socket.id] = { id: socket.id, x: newSettings.x, y: newSettings.y, character: newSettings.avatar, name: newSettings.name, room: roomCode };
                     socket.to(`${roomId}:${socket.currentLevel}`).emit(`newPlayer:${socket.currentLevel}`, rooms[roomId].levels[socket.currentLevel][socket.id]);
                 }
             })

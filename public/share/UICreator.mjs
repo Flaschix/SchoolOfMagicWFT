@@ -73,13 +73,14 @@ export function createExitMenu(self, eventLeaveBtn, eventCloseBtn) {
         eventCloseBtn(self);
     });
 
-    self.exitContainer.setOrigin(2, 1);
+    self.exitContainer.setOrigin(0.5, 0.5);
     self.exitContainer.setVisible(false);
 }
 
-export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn) {
+export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room) {
     self.avatarDialog = self.add.dom(0, 0).createFromHTML(`
-<div id="avatarDialog">
+<div id="avatarDialogGame">
+    <h5 id="roomId">Room number: 133456</h3>
     <h2>Choose avatar</h2>
     <div id="avatarContainer">
         <img src="./assets/character/man1.png" class="avatar" data-index="0">
@@ -139,6 +140,8 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn) {
         eventCloseBtn(self);
     });
 
+    const roomCode = document.getElementById('roomId');
+    roomCode.innerHTML = `Room number: ${room}`;
 }
 
 export const HEIGHT_PRESS_X = 90;

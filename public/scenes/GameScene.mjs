@@ -94,7 +94,7 @@ export class GameScene extends Phaser.Scene {
         createUIBottom(this);
         createUI(this, this.showSettings, this.showExitMenu);
         createExitMenu(this, this.leaveGame, this.closeExitMenu);
-        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog);
+        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room);
 
         //Подключение слушателей
         this.mySocket.subscribeNewPlayer(this, this.scene.key, otherPlayers, this.playersController.createOtherPlayer);

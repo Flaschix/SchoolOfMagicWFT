@@ -6,6 +6,7 @@ export class PlayersController {
         newPlayer.setDepth(1);
         newPlayer.character = playerInfo.character;
         newPlayer.name = playerInfo.name;
+        newPlayer.room = playerInfo.room;
         newPlayer.setBounce(0); // настройка упругости
         newPlayer.setFrictionAir(0); // настройка сопротивления воздуха
 
