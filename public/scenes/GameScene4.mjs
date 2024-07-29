@@ -135,6 +135,8 @@ export class GameScene4 extends Phaser.Scene {
         const bodyMainWall = this.matter.add.fromVertices(1120, 620, '896 986 886 973 873 912.5 828 883.5 770.5 883.5 755 860.5 730.5 856 718.5 810.5 730.5 793 736 772 741.5 740 718.5 740 682.5 714 661.5 728 661.5 631 674.5 583.5 667 400.5 563.5 285.5 421 275 308.5 318 240 431.5 253.5 690 209.5 699.5 209.5 799.5 166.5 810.5 172 945.5 135 984 154 1040 221 1071 221 1276 215.5 1305.5 229.5 1352 172 1334.5 154 1389.5 1 1394 14.5 0.5 2038 0.5 2038 1024.5 1941.5 1014.5 1932 922 1878 928.5 1849 928.5 1844 941 1828.5 941 1816.5 933.5 1828.5 909 1823.5 895.5 1807.5 880.5 1828.5 842.5 1837 842.5 1844 861.5 1851 883.5 1841.5 893.5 1851 909 1870.5 902.5 1875.5 883.5 1875.5 872.5 1892 856 1878 809.5 1832.5 802 1828 702 1859 702 1868.5 371.5 1859 358.5 1849.5 351.5 1846 358.5 1835.5 351.5 1840.5 344 1846 332 1840.5 327 1835.5 327 1832.5 321.5 1849.5 298.5 1826.5 273 1746.5 227.5 1731.5 294.5 1637 260.5 1571.5 250.5 1459 286.5 1380.5 326.5 1391.5 611 1369 710 1319.5 743 1319.5 815.5 1284 884.5 1201 859.5 1159.5 890.5 1159.5 952 1135 978 1110.5 972 1110.5 879.5 1246.5 749 1243 717 1243 697.5 1258.5 670 1262.5 660 1270.5 624.5 1268.5 565 1268.5 542 1277.5 367.5 1260 361 1249 355 1249 343 1256 337.5 1249 331 1249 326.5 1253 320.5 1256 309 1267.5 304.5 1246.5 279.5 1202.5 234.5 1177.5 220 996 180 900.5 207.5 775 290 795.5 314 787 338 795.5 343.5 787 355.5 779.5 355.5 767 367.5 775 631 787 636 803.5 663 809 685.5 803.5 728 806.5 740 814.5 755 818.5 761 828 766 832.5 772 841.5 779 861 781.5 870 776 875.5 781.5 886 781.5 905 795 912.5 810.5 920 823 927.5 821.5 942.5 828.5 958.5 847 951.5 870.5 951.5 916.5 929.5 935.5 929.5 969.5 919.5 986', { isStatic: true }, true)
         const bodyRightMiddleWall = this.matter.add.fromVertices(1450 + 170, 1400 + 168, '35.5 412 82 390.5 86 366.5 73 351.5 73 219.5 108.5 190.5 154.5 174.5 174 190.5 310.5 196 367 196 427.5 190.5 471.5 196 546.5 240 591.5 289 604.5 356.5 636.5 356.5 644.5 351.5 651 308.5 662 289 688.5 268.5 723.5 256 776.5 274 791 351.5 805 351.5 805 40 188.5 40 183.5 1.5 93 55.5 63 35.5 35.5 35.5 14.5 67.5 23 95.5 23 348.5 11 351.5 1.5 378', { isStatic: true }, true)
         const bodyLeftBottomWall = this.matter.add.fromVertices(10, 1400 + 340, '25 641 1 641 2.5 0.5 22 0.5', { isStatic: true }, true)
+        const bodyRightBottomTable = this.matter.add.fromVertices(1495 + 245 / 2, 1655 + 234 / 2, '266.5 235 26.5 235 26.5 148.5 1.5 29.5 107.5 1 244.5 1 235.5 84.5 266.5 148.5 266.5 235', { isStatic: true }, true);
+
     }
 
     createPlayers(players) {
@@ -180,6 +182,9 @@ export class GameScene4 extends Phaser.Scene {
         const bodyLeftTable2 = this.matter.add.fromVertices(250 + 200, 392 + 590, '252.5 1 4.5 1 1.5 90.5 248.5 87.5', { label: '1', isStatic: true });
         const bodyLeftTable3 = this.matter.add.fromVertices(250 + 214, 392 + 732, '272 0.5 1 0.5 1 82.5 267 87.5', { label: '1', isStatic: true });
         const bodyLeftTable4 = this.matter.add.fromVertices(250 + 196, 392 + 880, '243 1 1 1 1 87.5 246.5 87.5', { label: `${LABEL_ID.SIXETH_KEY}`, isStatic: true });
+        const bodyLeftBottomTable2 = this.matter.add.fromVertices(336 + 232 / 2, 1810 + 84 / 2, '1 85 1 0.5 233 0.5 233 85', { label: '1', isStatic: true });
+        const bodyLeftBottomTable1 = this.matter.add.fromVertices(305.5 + 122.5, 1636 + 48, '0.5 95 0.5 1 244.5 1 244.5 95 0.5 95', { label: '1', isStatic: true });
+
 
         const bodyLeftMiddleBookshell = this.matter.add.fromVertices(1500 + 168, 392 + 950, '189 2 0.5 0.5 2 125.5 191.5 125.5', { label: '1', isStatic: true });
         const bodyRightTable3 = this.matter.add.fromVertices(1500 + 116, 392 + 680, '412.5 71.5 1 71.5 5.5 0.5 412.5 0.5', { label: '1', isStatic: true });
@@ -193,7 +198,7 @@ export class GameScene4 extends Phaser.Scene {
             isSensor: true
         })
 
-        const arrBodies = [bodyDoor, bodyLeftTopBookShell, bodyMiddleTopTable, bodyRightTable3, bodyRightTable2, bodyRightTable1, bodyRightTopBookshell, bodyLeftMiddleBookshell, bodyLeftTable1, bodyLeftTable2, bodyLeftTable3, bodyLeftTable4]
+        const arrBodies = [bodyLeftBottomTable1, bodyLeftBottomTable2, bodyDoor, bodyLeftTopBookShell, bodyMiddleTopTable, bodyRightTable3, bodyRightTable2, bodyRightTable1, bodyRightTopBookshell, bodyLeftMiddleBookshell, bodyLeftTable1, bodyLeftTable2, bodyLeftTable3, bodyLeftTable4]
 
         this.matterCollision.addOnCollideStart({
             objectA: player,
