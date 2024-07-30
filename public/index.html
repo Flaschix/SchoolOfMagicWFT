@@ -16,7 +16,33 @@
     <script src="./phaser-matter-collision-plugin.min.js"></script>
     <script type="module" src="game.js"></script>
 
-
+    <div id="avatarDialogGame">
+        <div id="avatarDialogLeft">
+            <h5 id="roomId">Room number: 133456</h3>
+                <h2>Choose avatar</h2>
+                <div id="avatarContainer">
+                    <img src="./assets/character/man1.png" class="avatar" data-index="0">
+                    <img src="./assets/character/man2.png" class="avatar" data-index="1">
+                    <img src="./assets/character/man3.png" class="avatar" data-index="2">
+                    <img src="./assets/character/woman1.png" class="avatar" data-index="3">
+                    <img src="./assets/character/woman2.png" class="avatar" data-index="4">
+                    <img src="./assets/character/woman3.png" class="avatar" data-index="5">
+                </div>
+        </div>
+        <div id="avatarDialogRight">
+            <div id="usernameContainer">
+                <label for="usernameInput">Name</label>
+                <div id="inputContainer">
+                    <input type="text" id="usernameInput" placeholder="Enter your name">
+                    <img src="./assets/icon/pen.png" id="penIcon">
+                </div>
+            </div>
+            <label id="incorrectName">Incorrect name
+                *the name must be 1-12 characters</label>
+            <input type="image" src="./assets/button/join.png" id="joinBtn">
+            <input type="image" src="./assets/button/back.png" id="backBtn">
+        </div>
+    </div>
 </body>
 
 </html>

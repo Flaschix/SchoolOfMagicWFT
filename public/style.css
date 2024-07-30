@@ -128,13 +128,15 @@ body {
 #avatarDialog h2 {
     margin-bottom: 24px;
     margin-top: 0px;
-    color: #F2F0FF
+    color: #F2F0FF;
+    font-size: 36px;
 }
 
 #avatarDialogGame h2 {
     margin-bottom: 24px;
     margin-top: 0px;
-    color: #F2F0FF
+    color: #F2F0FF;
+    font-size: 36px;
 }
 
 #avatarContainer {
@@ -142,7 +144,9 @@ body {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
     margin-bottom: 20px;
+    width: fit-content;
 }
+
 
 #avatarContainer img {
     width: 60px;
@@ -153,6 +157,8 @@ body {
     transition: transform 0.3s;
 }
 
+
+
 #avatarContainer img:hover {
     transform: scale(1.1);
 }
@@ -162,6 +168,14 @@ body {
     margin-bottom: 0px;
     border: 1px solid #B5B3BC;
     border-radius: 18px;
+}
+
+#usernameMobileContainer {
+    width: 100%;
+    height: 23%;
+    margin-bottom: 60px;
+    border: 3px solid #B5B3BC;
+    border-radius: 34px;
 }
 
 #usernameContainer label {
@@ -192,6 +206,7 @@ body {
     color: white;
 }
 
+
 #usernameInput::placeholder {
     color: #B5B3BC;
 }
@@ -208,6 +223,7 @@ body {
 #backBtn {
     margin: 0px 0px;
     cursor: pointer;
+    width: 100%;
 }
 
 #joinBtn {
@@ -227,14 +243,129 @@ body {
     visibility: hidden;
 }
 
+
 #roomId {
     align-self: flex-end;
     margin: 0 -20px 6px 0;
     color: #B5B3BC;
 }
 
-
 /* choose a character */
+
+/* choose a character mobile */
+
+#avatarMobileContainer img {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 48px;
+    transition: transform 0.3s;
+}
+
+#avatarMobileContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 0;
+    width: fit-content;
+}
+
+#avatarDialogGameMobile {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 12px 36px 36px 36px;
+    background-color: #221C3E;
+    border: 2px solid #B5B3BC;
+    border-radius: 24px;
+}
+
+#avatarDialogLeft {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 400px;
+}
+
+#avatarDialogRight {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
+
+#avatarDialogGameMobile h2 {
+    margin-bottom: 10px;
+    margin-top: 0px;
+    color: #F2F0FF;
+    font-size: 40px;
+}
+
+#usernameMobileContainer label {
+    display: block;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    margin-left: 20px;
+    font-size: 30px;
+    color: #B5B3BC;
+}
+
+#usernameInputMobile {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 5px;
+    color: black;
+    background-color: #221C3E;
+    /* Цвет фона */
+    margin-left: 10px;
+    color: white;
+    font-size: 48px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#usernameInputMobile::placeholder {
+    color: #B5B3BC;
+}
+
+#penIconMobile {
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    margin-right: 20px;
+    margin-bottom: 10px;
+}
+
+#roomIdMobile {
+    align-self: flex-start;
+    margin: 0 0 6px 0;
+    color: #B5B3BC;
+}
+
+#incorrectNameMobile {
+    color: red;
+    margin: 0 0 0 0;
+    visibility: hidden;
+}
+
+#avatarMobileContainer img:hover {
+    transform: scale(1.1);
+}
+
+#avatarMobileContainer .selected {
+    border: 4px solid #007BFF;
+    /* Синий цвет рамки для выделенного аватара */
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+    /* Тень для выделенного аватара */
+}
+
+
+
+/* choose a character mobile */
 
 
 /* createNewSpaceContainer */
@@ -346,12 +477,13 @@ body {
 .exit-container {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     background-color: #221C3E;
-    border-radius: 10px;
+    border-radius: 24px;
     padding: 48px;
     border: 2px solid white;
 }
+
 
 #leave-space {
     margin-bottom: 24px;

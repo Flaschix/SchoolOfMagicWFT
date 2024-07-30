@@ -51,6 +51,30 @@ export class PlayersController {
         player.nameText.setPosition(player.x, player.y - PlayersController.HEIGHT_NAME);
     }
 
+    updateMainPlayerPositionJoystick(player, joystickThumb, joystickBase) {
+        player.setVelocity(0);
+        if (joystickThumb.x < joystickBase.x - 10) {
+            player.setVelocityX(-5);
+            player.anims.play(`walk_left${player.character}`, true);
+        } else if (joystickThumb.x > joystickBase.x + 10) {
+            player.setVelocityX(5);
+            player.anims.play(`walk_right${player.character}`, true);
+        } else if (joystickThumb.y < joystickBase.y - 10) {
+            player.setVelocityY(-5);
+            player.anims.play(`walk_up${player.character}`, true);
+        } else if (joystickThumb.y > joystickBase.y + 10) {
+            player.setVelocityY(5);
+            player.anims.play(`walk_down${player.character}`, true);
+        } else {
+            player.anims.stop();
+        }
+
+        //Рисуем ник игрока
+        player.nameText.setPosition(player.x, player.y - PlayersController.HEIGHT_NAME);
+    }
+
+
+
     createOtherPlayer(self, playerInfo, otherPlayers) {
         const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, `character${playerInfo.character}`);
         otherPlayer.setScale(1.3);

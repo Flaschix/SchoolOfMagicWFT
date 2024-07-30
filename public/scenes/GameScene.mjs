@@ -6,9 +6,15 @@ import { SocketWorker } from "../share/SocketWorker.mjs";
 import { createUIBottom } from "../share/UICreator.mjs";
 import { createUITop } from "../share/UICreator.mjs";
 import { createUIRight } from "../share/UICreator.mjs";
+import { createUILeftMobile } from "../share/UICreator.mjs";
 import { createUI } from "../share/UICreator.mjs";
 import { createExitMenu } from "../share/UICreator.mjs";
 import { createAvatarDialog } from "../share/UICreator.mjs";
+import { CAMERA_MARGIN, CAMERA_MARGIN_MOBILE } from "../share/UICreator.mjs";
+
+import { createJoystick } from "../share/UICreator.mjs";
+import { createMobileXButton } from "../share/UICreator.mjs";
+
 import { HEIGHT_PRESS_X } from "../share/UICreator.mjs";
 import { MAP_SETTINGS } from "../share/UICreator.mjs";
 
@@ -20,13 +26,6 @@ let player;
 let otherPlayers = {};
 let fullMap = true;
 let moved = false;
-
-const CAMERA_MARGIN = {
-    right: 125,
-    left: -100,
-    top: -12,
-    bottom: 24
-}
 
 export class GameScene extends Phaser.Scene {
     constructor() {
@@ -40,6 +39,10 @@ export class GameScene extends Phaser.Scene {
 
         //виден ли оверлей сейчас поврех экрана
         this.isOverlayVisible = false;
+
+        this.mobileFlag = false;
+
+        this.isDragging = false;
     }
 
     preload() {
@@ -66,6 +69,8 @@ export class GameScene extends Phaser.Scene {
 
         this.playersController = new PlayersController();
 
+        this.mobileFlag = this.isMobile();
+
         // Добавляем карту
         this.createMap();
 
@@ -75,8 +80,18 @@ export class GameScene extends Phaser.Scene {
         //Создаём стены и остальные непроходимые объекты
         this.createUnWalkedObjects();
 
+        if (this.mobileFlag) {
+            createJoystick(this, 'joystickBase', 'joystickThumb', this.isDragging, 160, this.cameras.main.height - 120);
+            createMobileXButton(this, 'touchButton', 'joystickBase', this.cameras.main.width - 150, this.cameras.main.height - 120, this.itemInteract);
+            createUILeftMobile(this, 'settingsMobile', 'exitMobile', 90, 70, this.cameras.main.width - 90, 70, this.showSettings, this.showExitMenu);
+            this.createPlayers(players, CAMERA_MARGIN_MOBILE);
+        } else {
+            createUI(this, this.showSettings, this.showExitMenu);
+            this.createPlayers(players, CAMERA_MARGIN);
+        }
+
         //Создаём игроков
-        this.createPlayers(players);
+
 
         //Создаём объект с которыми будем взаимодействовать
         this.createCollision();
@@ -92,9 +107,10 @@ export class GameScene extends Phaser.Scene {
         createUIRight(this);
         createUITop(this);
         createUIBottom(this);
-        createUI(this, this.showSettings, this.showExitMenu);
-        createExitMenu(this, this.leaveGame, this.closeExitMenu);
-        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room);
+
+        createExitMenu(this, this.leaveGame, this.closeExitMenu, this.mobileFlag);
+        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room, this.mobileFlag);
+
 
         //Подключение слушателей
         this.mySocket.subscribeNewPlayer(this, this.scene.key, otherPlayers, this.playersController.createOtherPlayer);
@@ -109,6 +125,44 @@ export class GameScene extends Phaser.Scene {
 
             fullMap = false;
         }
+    }
+
+    createJoystick() {
+
+        this.joystickBase = this.add.image(100, this.cameras.main.height - 100, 'joystickBase').setInteractive();
+        this.joystickThumb = this.add.image(100, this.cameras.main.height - 100, 'joystickThumb').setInteractive();
+
+        this.joystickBase.setDisplaySize(150, 150);
+        this.joystickThumb.setDisplaySize(100, 100);
+
+        this.joystickThumb.on('pointerdown', (pointer) => {
+            this.isDragging = true;
+            this.dragStartX = pointer.x;
+            this.dragStartY = pointer.y;
+        });
+
+        this.input.on('pointermove', (pointer) => {
+            if (this.isDragging) {
+                let deltaX = pointer.x - this.dragStartX;
+                let deltaY = pointer.y - this.dragStartY;
+                let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                let maxDistance = 50;
+
+                if (distance > maxDistance) {
+                    let angle = Math.atan2(deltaY, deltaX);
+                    deltaX = Math.cos(angle) * maxDistance;
+                    deltaY = Math.sin(angle) * maxDistance;
+                }
+
+                this.joystickThumb.setPosition(this.joystickBase.x + deltaX, this.joystickBase.y + deltaY);
+            }
+        });
+
+        this.input.on('pointerup', () => {
+            this.isDragging = false;
+            this.joystickThumb.setPosition(this.joystickBase.x, this.joystickBase.y);
+        });
+
     }
 
     createMap() {
@@ -129,7 +183,7 @@ export class GameScene extends Phaser.Scene {
         const bodyMainWall = this.matter.add.fromVertices(944, 915, '106 1810.5 9 1882.5 1 1882.5 1 1 2048.5 1 2048.5 1887 2002.5 1887 1943 1833.5 1934 1781 1887 1766 1859 1733 1859 1650.5 1871 1622 1859 1574 1910 1559 1910 1517.5 1887 1483.5 1887 1438 1934 1425 1934 1388 1934 1369.5 1934 1336.5 1921 1311.5 1921 1257 1903.5 1239.5 1910 1162.5 1941.5 1162.5 1941.5 1128.5 1910 1113 1903.5 1085 1921 1054.5 1952.5 1041.5 1941.5 982.5 1952.5 847.5 1934 837.5 1910 847.5 1846 837.5 1827.5 817 1827.5 786.5 1846 770 1846 449.5 1768.5 449.5 1768.5 407 1576.5 407 1571 449.5 1507 449.5 1507 748 1520 763.5 1525.5 817 1493 847.5 1412 837.5 1306.5 837.5 1206 829 1206 786.5 1233.5 763.5 1216 721 1179 732 1136.5 703.5 1142 682 1110.5 675 1110.5 659 1110.5 473.5 942.5 473.5 942.5 667.5 918.5 682 918.5 703.5 880.5 732 845.5 721 821.5 715.5 814 798.5 684.5 829 642 829 530.5 829 522 816 530.5 786.5 551.5 763.5 551.5 459.5 480.5 459.5 474 421.5 280 421.5 280 459.5 211.5 459.5 211.5 763.5 217 776.5 211.5 829 123 829 136.5 776.5 123 763.5 102.5 853 102.5 936.5 108 955.5 108 980.5 102.5 1004.5 102.5 1044.5 115.5 1052 143 1065.5 150.5 1096 123 1155.5 129.5 1181 150.5 1199.5 143 1249.5 129.5 1258 136.5 1305 115.5 1323.5 115.5 1421.5 163.5 1439 163.5 1475 136.5 1489 106 1592.5', { isStatic: true }, true)
     }
 
-    createPlayers(players) {
+    createPlayers(players, cameraMargin) {
         Object.keys(players).forEach((id) => {
             if (id === socket.id) {
                 //добовляем игрока
@@ -137,8 +191,8 @@ export class GameScene extends Phaser.Scene {
 
                 //настраиваем камеру игрока
                 this.cameras.main.startFollow(player);
-                if (this.textures.exists(MAP_SETTINGS.MAP_FULL1)) this.cameras.main.setBounds(CAMERA_MARGIN.left, CAMERA_MARGIN.top, this.map.width * MAP_SETTINGS.MAP_SCALE_4_3 + CAMERA_MARGIN.right, this.map.height * MAP_SETTINGS.MAP_SCALE_4_3 + CAMERA_MARGIN.bottom);
-                else this.cameras.main.setBounds(CAMERA_MARGIN.left, CAMERA_MARGIN.top, this.map.width * MAP_SETTINGS.MAP_SCALE_2 + CAMERA_MARGIN.right, this.map.height * MAP_SETTINGS.MAP_SCALE_2 + CAMERA_MARGIN.bottom);
+                if (this.textures.exists(MAP_SETTINGS.MAP_FULL1)) this.cameras.main.setBounds(cameraMargin.left, cameraMargin.top, this.map.width * MAP_SETTINGS.MAP_SCALE_4_3 + cameraMargin.right, this.map.height * MAP_SETTINGS.MAP_SCALE_4_3 + cameraMargin.bottom);
+                else this.cameras.main.setBounds(cameraMargin.left, cameraMargin.top, this.map.width * MAP_SETTINGS.MAP_SCALE_2 + cameraMargin.right, this.map.height * MAP_SETTINGS.MAP_SCALE_2 + cameraMargin.bottom);
             } else {
                 this.playersController.createOtherPlayer(this, players[id], otherPlayers);
             }
@@ -234,17 +288,20 @@ export class GameScene extends Phaser.Scene {
         this.firstKey.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
         this.firstKey.setVisible(false);
         this.firstKey.setDepth(2);
+        this.firstKey.setAlpha(0);
 
         //Второй ключ
         this.secondKey = this.add.image(0, 0, 'secondKey');
         this.secondKey.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
         this.secondKey.setVisible(false);
         this.secondKey.setDepth(2);
+        this.secondKey.setAlpha(0);
 
         //Текст для пустых
         this.emptySign = this.add.image(0, 0, 'empty');
         this.emptySign.setVisible(false);
         this.emptySign.setDepth(2);
+        this.emptySign.setAlpha(0);
 
         this.closeButton = this.add.image(0, 0, 'closeIcon');
         this.closeButton.setDisplaySize(this.overlayBackground.displayWidth * 0.05, this.overlayBackground.displayHeight * 0.07);
@@ -400,6 +457,45 @@ export class GameScene extends Phaser.Scene {
         this.matter.world.setBounds(0, 0, this.map.width * scaleX, this.map.height * scaleY);
     }
 
+    itemInteract(context) {
+        if (context.isInZone) {
+            player.setVelocity(0);
+
+            if (context.eventZone == LABEL_ID.DOOR_FORWARD_ID) {
+                context.moveForwardRoom();
+                return;
+            }
+
+            if (!context.isOverlayVisible) {
+
+                context.showOverlay();
+
+                context.tweens.add({
+                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.firstKey, context.secondKey],
+                    alpha: 1,
+                    duration: 500
+                });
+            }
+            else {
+                context.tweens.add({
+                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.firstKey, context.secondKey],
+                    alpha: 0,
+                    duration: 500,
+                    onComplete: () => {
+                        try {
+                            context.hideOverlay();
+                            console.log('dddd');
+                        } catch (e) { }
+
+                    }
+                });
+            }
+        }
+    }
+
+    animationShow() {
+
+    }
 
     update() {
         if (!player || this.isOverlayVisible) return;
@@ -419,7 +515,10 @@ export class GameScene extends Phaser.Scene {
 
     updatePlayerPosition() {
 
-        this.playersController.updateMainPlayerPosition(player, this.cursors);
+        if (!this.mobileFlag) this.playersController.updateMainPlayerPosition(player, this.cursors);
+        else {
+            this.playersController.updateMainPlayerPositionJoystick(player, this.joystickThumb, this.joystickBase);
+        }
 
         if (player.body.velocity.x != 0 || player.body.velocity.y != 0) {
             this.mySocket.emitPlayerMovement(this.scene.key, { x: player.x, y: player.y, velocityX: player.body.velocity.x, velocityY: player.body.velocity.y });
@@ -432,14 +531,29 @@ export class GameScene extends Phaser.Scene {
 
     updatePressXVisibility() {
         if (this.isInZone) {
-            this.pressX.setPosition(player.x, player.y - HEIGHT_PRESS_X);
-            this.pressX.setVisible(true);
+            if (this.mobileFlag) {
+                this.mobileXButton.setVisible(true);
+                this.buttonBackground.setVisible(true);
+            }
+            else {
+                this.pressX.setPosition(player.x, player.y - HEIGHT_PRESS_X);
+                this.pressX.setVisible(true);
+            }
         } else {
-            this.pressX.setVisible(false);
+            if (this.mobileFlag) {
+                this.mobileXButton.setVisible(false);
+                this.buttonBackground.setVisible(false);
+            }
+            else {
+                this.pressX.setVisible(false);
+            }
         }
     }
 
-
+    isMobile() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        return /android|avantgo|blackberry|bada\/|bb|meego|mmp|mobile|opera m(ob|in)i|palm(os)?|phone|p(ixi|re)\/|plucker|pocket|psp|symbian|up\.browser|up\.link|vodafone|wap|windows ce|xda|xiino/i.test(userAgent) || /ipad|tablet|(android(?!.*mobile))/i.test(userAgent);
+    }
 }
 
 function sceneSwitched(self, data) {

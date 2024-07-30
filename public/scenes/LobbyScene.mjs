@@ -29,6 +29,12 @@ export class LobbyScene extends Phaser.Scene {
         this.load.image('empty', 'assets/keyFrame/Empty.png')
         this.load.image('overlayBackground', 'assets/overlay/overlayBackground.png');
 
+        this.load.image('joystickBase', 'assets/joystick/joystick-back.png');
+        this.load.image('joystickThumb', 'assets/joystick/thrumb-btn.png');
+        this.load.image('touchButton', 'assets/joystick/touch-button.png');
+        this.load.image('exitMobile', 'assets/button/exitMobile.png');
+        this.load.image('settingsMobile', 'assets/button/settingsMobile.png');
+
         //characters
         this.load.spritesheet('character1', './assets/characterMap/character1.png', { frameWidth: 32, frameHeight: 64 });
         this.load.spritesheet('character2', './assets/characterMap/character2.png', { frameWidth: 32, frameHeight: 64 });
@@ -47,7 +53,7 @@ export class LobbyScene extends Phaser.Scene {
         <input type="image" src="./assets/button/create-room.png" alt="CreateToSpace" class="connect-button" id="create-space">
     </div>
         `);
-        this.welcomeContainer.setOrigin(1, 0.7);
+        this.welcomeContainer.setOrigin(0.5, 0.5);
 
         const connectToSpaceBtn = document.getElementById('connect-to-space');
         connectToSpaceBtn.addEventListener('click', () => {
@@ -167,7 +173,7 @@ export class LobbyScene extends Phaser.Scene {
             `);
         this.avatarDialog.setVisible(false);
 
-        this.avatarDialog.setOrigin(0.5, 0.6);
+        this.avatarDialog.setOrigin(0.5, 0.5);
 
         const avatars = document.querySelectorAll('#avatarContainer .avatar');
         let selectedAvatar = avatars[0]; // По умолчанию выделяем первый аватар
@@ -229,6 +235,8 @@ export class LobbyScene extends Phaser.Scene {
     </div>
     </div>
         `);
+
+        this.newSpaceContainer.setOrigin(0.5, 0.5);
 
         this.newSpaceContainer.setVisible(false);
 
