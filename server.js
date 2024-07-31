@@ -123,9 +123,12 @@ io.on('connection', (socket) => {
                     rooms[roomId].levels[socket.currentLevel][socket.id].y = movementData.y;
                     rooms[roomId].levels[socket.currentLevel][socket.id].velocityX = movementData.velocityX;
                     rooms[roomId].levels[socket.currentLevel][socket.id].velocityY = movementData.velocityY;
+                    rooms[roomId].levels[socket.currentLevel][socket.id].isMoving = movementData.isMoving;
+                    rooms[roomId].levels[socket.currentLevel][socket.id].direction = movementData.direction;
                     io.to(`${roomId}:${socket.currentLevel}`).emit(`playerMoved:${socket.currentLevel}`, { id: socket.id, ...movementData });
                 }
             });
+
 
             socket.on('switchScene', (newScene, posX, posY) => {
                 let avatarCur = rooms[roomId].levels[socket.currentLevel][socket.id].character;
