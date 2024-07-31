@@ -3,7 +3,7 @@ export class SocketWorker {
     constructor(socket) {
         this.socket = socket;
         this.lastSentTime = 0;
-        this.sendInterval = 50; // 100 ms
+        this.sendInterval = 75; // 100 ms
     }
 
     subscribeNewPlayer(context, sceneKey, playerArr, event) {
