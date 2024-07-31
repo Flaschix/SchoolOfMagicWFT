@@ -216,7 +216,7 @@ export class GameScene extends Phaser.Scene {
                 targets: player,
                 x: playerInfo.x,
                 y: playerInfo.y,
-                duration: 50,
+                duration: 100,
                 onUpdate: function () {
                     // Обновление анимации на основе данных о движении
                     self.playersController.updateAnimOtherPlayer(player, {
