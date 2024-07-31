@@ -53,7 +53,7 @@ export class LobbyScene extends Phaser.Scene {
         <input type="image" src="./assets/button/create-room.png" alt="CreateToSpace" class="connect-button" id="create-space">
     </div>
         `);
-        this.welcomeContainer.setOrigin(0.5, 0.5);
+        this.welcomeContainer.setOrigin(1, 0.7);
 
         const connectToSpaceBtn = document.getElementById('connect-to-space');
         connectToSpaceBtn.addEventListener('click', () => {
@@ -173,7 +173,7 @@ export class LobbyScene extends Phaser.Scene {
             `);
         this.avatarDialog.setVisible(false);
 
-        this.avatarDialog.setOrigin(0.5, 0.5);
+        this.avatarDialog.setOrigin(0.5, 0.6);
 
         const avatars = document.querySelectorAll('#avatarContainer .avatar');
         let selectedAvatar = avatars[0]; // По умолчанию выделяем первый аватар

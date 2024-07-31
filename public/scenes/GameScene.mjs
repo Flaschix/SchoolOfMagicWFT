@@ -109,7 +109,7 @@ export class GameScene extends Phaser.Scene {
         createUIBottom(this);
 
         createExitMenu(this, this.leaveGame, this.closeExitMenu, this.mobileFlag);
-        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room, this.mobileFlag);
+        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room, this.isMobile());
 
 
         //Подключение слушателей

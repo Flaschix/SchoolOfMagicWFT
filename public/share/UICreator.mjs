@@ -153,6 +153,7 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
         nameInput = document.getElementById('usernameInputMobile');
         nameError = document.getElementById('incorrectNameMobile');
         roomCode = document.getElementById('roomIdMobile');
+        self.avatarDialog.setOrigin(0.5, 0.5);
     } else {
         self.avatarDialog = self.add.dom(0, 0).createFromHTML(`
             <div id="avatarDialogGame">
@@ -183,10 +184,11 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
         nameInput = document.getElementById('usernameInput');
         nameError = document.getElementById('incorrectName');
         roomCode = document.getElementById('roomId');
+        self.avatarDialog.setOrigin(0.5, 0.55);
     }
     self.avatarDialog.setVisible(false);
 
-    self.avatarDialog.setOrigin(0.5, 0.5);
+
 
 
     let selectedAvatar = avatars[0]; // По умолчанию выделяем первый аватар
