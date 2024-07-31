@@ -1,8 +1,14 @@
 const cluster = require('cluster');
 const os = require('os');
+const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
+const redis = require('redis');
+const { v4: uuidv4 } = require('uuid');
+
+const numCPUs = os.cpus().length;
 
 if (cluster.isMaster) {
-    const numCPUs = os.cpus().length;
     console.log(`Master ${process.pid} is running`);
 
     // Fork workers.
@@ -15,13 +21,6 @@ if (cluster.isMaster) {
         cluster.fork(); // Restart the worker
     });
 } else {
-    // Your existing server code here
-    const express = require('express');
-    const http = require('http');
-    const socketIo = require('socket.io');
-    const redis = require('redis');
-    const { v4: uuidv4 } = require('uuid');
-
     const redisClient = redis.createClient({
         url: process.env.REDIS_URL || 'redis://localhost:6379'
     });
@@ -71,7 +70,7 @@ if (cluster.isMaster) {
             const roomId = uuidv4();
 
             try {
-                await redisClient.set(roomCode, roomId, { EX: 86400 }); // Устанавливаем срок действия 24 часа
+                await redisClient.set(roomCode, roomId, { EX: 400 }); // Устанавливаем срок действия 24 часа 86400
                 rooms[roomId] = { levels: {} };
                 socket.join(roomId);
                 socket.emit('roomCreated', roomCode);
@@ -198,5 +197,5 @@ if (cluster.isMaster) {
         });
     });
 
-    server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    server.listen(PORT, () => console.log(`Server running on port ${PORT} and worker ${process.pid}`));
 }
