@@ -101,20 +101,29 @@ export class PlayersController {
         // Определяем направление движения и проигрываем соответствующую анимацию
         if (Math.abs(playerInfo.velocityX) > velocityThreshold || Math.abs(playerInfo.velocityY) > velocityThreshold) {
 
-            if (playerInfo.direction == 'left') {
-                playerSprite.anims.play(`walk_left${playerSprite.character}`, true);
-            } else if (playerInfo.direction == 'right') {
-                playerSprite.anims.play(`walk_right${playerSprite.character}`, true);
-            } else if (playerInfo.direction == 'up') {
-                playerSprite.anims.play(`walk_up${playerSprite.character}`, true);
-            } else if (playerInfo.direction == 'down') {
-                playerSprite.anims.play(`walk_down${playerSprite.character}`, true);
+            try {
+                if (playerInfo.direction == 'left') {
+                    playerSprite.anims.play(`walk_left${playerSprite.character}`, true);
+                } else if (playerInfo.direction == 'right') {
+                    playerSprite.anims.play(`walk_right${playerSprite.character}`, true);
+                } else if (playerInfo.direction == 'up') {
+                    playerSprite.anims.play(`walk_up${playerSprite.character}`, true);
+                } else if (playerInfo.direction == 'down') {
+                    playerSprite.anims.play(`walk_down${playerSprite.character}`, true);
+                }
+            } catch (e) {
+
             }
+
 
         } else {
             // Остановка анимации, если скорость ниже порога
-            if (playerSprite.anims.isPlaying) {
-                playerSprite.anims.stop();
+            try {
+                if (playerSprite.anims.isPlaying) {
+                    playerSprite.anims.stop();
+                }
+            } catch (e) {
+
             }
         }
 
