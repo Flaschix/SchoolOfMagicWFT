@@ -235,9 +235,6 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-
-
-
     deletePlayer(id) {
         if (otherPlayers[id]) {
             otherPlayers[id].nameText.destroy();

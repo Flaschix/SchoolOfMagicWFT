@@ -157,8 +157,37 @@ export class GameScene4 extends Phaser.Scene {
 
     checkOtherPlayer(self, playerInfo) {
         if (otherPlayers[playerInfo.id]) {
-            otherPlayers[playerInfo.id].setPosition(playerInfo.x, playerInfo.y);
-            self.playersController.updateAnimOtherPlayer(otherPlayers[playerInfo.id], playerInfo);
+            const player = otherPlayers[playerInfo.id];
+
+            // Обновляем целевые координаты и скорость
+            player.targetX = playerInfo.x;
+            player.targetY = playerInfo.y;
+            player.velocityX = playerInfo.velocityX;
+            player.velocityY = playerInfo.velocityY;
+            player.isMoving = playerInfo.isMoving;
+            player.direction = playerInfo.direction;
+
+            // Интерполяция движения
+            self.tweens.add({
+                targets: player,
+                x: playerInfo.x,
+                y: playerInfo.y,
+                duration: 200,
+                onUpdate: function () {
+                    // Обновление анимации на основе данных о движении
+                    self.playersController.updateAnimOtherPlayer(player, {
+                        ...playerInfo,
+                        velocityX: player.targetX - player.x,
+                        velocityY: player.targetY - player.y
+                    });
+                },
+                onComplete: function () {
+                    // Проверяем, нужно ли остановить анимацию
+                    if (!player.isMoving) {
+                        player.anims.stop();
+                    }
+                }
+            });
         }
     }
 
@@ -531,6 +560,16 @@ export class GameScene4 extends Phaser.Scene {
 
         this.updatePressXVisibility();
 
+        // Интерполяция для других игроков
+        Object.keys(otherPlayers).forEach((id) => {
+            let otherPlayer = otherPlayers[id];
+            if (otherPlayer.targetX !== undefined && otherPlayer.targetY !== undefined) {
+                otherPlayer.x += (otherPlayer.targetX - otherPlayer.x) * 0.1;
+                otherPlayer.y += (otherPlayer.targetY - otherPlayer.y) * 0.1;
+            }
+        });
+
+
         if (!fullMap) {
             if (this.textures.exists(MAP_SETTINGS.MAP_FULL4)) {
                 fullMap = true;
@@ -544,13 +583,26 @@ export class GameScene4 extends Phaser.Scene {
 
     updatePlayerPosition() {
 
-        this.playersController.updateMainPlayerPosition(player, this.cursors);
+        if (!this.mobileFlag) this.playersController.updateMainPlayerPosition(player, this.cursors);
+        else {
+            this.playersController.updateMainPlayerPositionJoystick(player, this.joystickThumb, this.joystickBase);
+        }
+
+        const isMoving = player.body.velocity.x !== 0 || player.body.velocity.y !== 0;
+        const movementData = {
+            x: player.x,
+            y: player.y,
+            velocityX: player.body.velocity.x,
+            velocityY: player.body.velocity.y,
+            isMoving: isMoving,
+            direction: player.direction
+        };
 
         if (player.body.velocity.x != 0 || player.body.velocity.y != 0) {
-            this.mySocket.emitPlayerMovement(this.scene.key, { x: player.x, y: player.y, velocityX: player.body.velocity.x, velocityY: player.body.velocity.y });
+            this.mySocket.emitPlayerMovement(this.scene.key, movementData);
             moved = true;
         } else if (moved) {
-            this.mySocket.emitPlayerMovement(this.scene.key, { x: player.x, y: player.y, velocityX: player.body.velocity.x, velocityY: player.body.velocity.y });
+            this.mySocket.emitPlayerMovement(this.scene.key, movementData);
             moved = false;
         }
     }

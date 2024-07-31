@@ -155,13 +155,15 @@ io.on('connection', (socket) => {
                 socket.to(`${roomId}:${newScene}`).emit(`newPlayer:${newScene}`, rooms[roomId].levels[newScene][socket.id]);
 
                 // Переподключаем слушатель для новой сцены
-                socket.on(`playerMovement:${newScene}`, (movementData) => {
-                    if (rooms[roomId].levels[newScene][socket.id]) {
-                        rooms[roomId].levels[newScene][socket.id].x = movementData.x;
-                        rooms[roomId].levels[newScene][socket.id].y = movementData.y;
-                        rooms[roomId].levels[newScene][socket.id].velocityX = movementData.velocityX;
-                        rooms[roomId].levels[newScene][socket.id].velocityY = movementData.velocityY;
-                        io.to(`${roomId}:${newScene}`).emit(`playerMoved:${newScene}`, { id: socket.id, ...movementData });
+                socket.on(`playerMovement:${socket.currentLevel}`, (movementData) => {
+                    if (rooms[roomId].levels[socket.currentLevel][socket.id]) {
+                        rooms[roomId].levels[socket.currentLevel][socket.id].x = movementData.x;
+                        rooms[roomId].levels[socket.currentLevel][socket.id].y = movementData.y;
+                        rooms[roomId].levels[socket.currentLevel][socket.id].velocityX = movementData.velocityX;
+                        rooms[roomId].levels[socket.currentLevel][socket.id].velocityY = movementData.velocityY;
+                        rooms[roomId].levels[socket.currentLevel][socket.id].isMoving = movementData.isMoving;
+                        rooms[roomId].levels[socket.currentLevel][socket.id].direction = movementData.direction;
+                        io.to(`${roomId}:${socket.currentLevel}`).emit(`playerMoved:${socket.currentLevel}`, { id: socket.id, ...movementData });
                     }
                 });
 
