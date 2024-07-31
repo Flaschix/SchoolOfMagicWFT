@@ -2,6 +2,8 @@ export class SocketWorker {
 
     constructor(socket) {
         this.socket = socket;
+        this.lastSentTime = 0;
+        this.sendInterval = 75; // 100 ms
     }
 
     subscribeNewPlayer(context, sceneKey, playerArr, event) {
@@ -40,7 +42,11 @@ export class SocketWorker {
     }
 
     emitPlayerMovement(sceneKey, playerInfo) {
-        this.socket.emit(`playerMovement:${sceneKey}`, playerInfo);
+        const currentTime = Date.now();
+        if (currentTime - this.lastSentTime > this.sendInterval) {
+            this.socket.emit(`playerMovement:${sceneKey}`, playerInfo);
+            this.lastSentTime = currentTime;
+        }
     }
 
     unSubscribeAllListeners(sceneKey) {

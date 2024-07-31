@@ -7,6 +7,7 @@ export class PlayersController {
         newPlayer.character = playerInfo.character;
         newPlayer.name = playerInfo.name;
         newPlayer.room = playerInfo.room;
+        newPlayer.direction = 'none';
         newPlayer.setBounce(0); // настройка упругости
         newPlayer.setFrictionAir(0); // настройка сопротивления воздуха
 
@@ -34,17 +35,22 @@ export class PlayersController {
         if (cursors.left.isDown) {
             player.setVelocityX(-5);
             player.anims.play(`walk_left${player.character}`, true);
+            player.direction = 'left';
         } else if (cursors.right.isDown) {
             player.setVelocityX(5);
             player.anims.play(`walk_right${player.character}`, true);
+            player.direction = 'right';
         } else if (cursors.up.isDown) {
             player.setVelocityY(-5);
             player.anims.play(`walk_up${player.character}`, true);
+            player.direction = 'up';
         } else if (cursors.down.isDown) {
             player.setVelocityY(5);
             player.anims.play(`walk_down${player.character}`, true);
+            player.direction = 'down';
         } else {
             player.anims.stop();
+            player.direction = 'none';
         }
 
         //Рисуем ник игрока
@@ -90,16 +96,26 @@ export class PlayersController {
     }
 
     updateAnimOtherPlayer(playerSprite, playerInfo) {
-        if (playerInfo.velocityX < 0) {
-            playerSprite.anims.play(`walk_left${playerSprite.character}`, true);
-        } else if (playerInfo.velocityX > 0) {
-            playerSprite.anims.play(`walk_right${playerSprite.character}`, true);
-        } else if (playerInfo.velocityY < 0) {
-            playerSprite.anims.play(`walk_up${playerSprite.character}`, true);
-        } else if (playerInfo.velocityY > 0) {
-            playerSprite.anims.play(`walk_down${playerSprite.character}`, true);
+        const velocityThreshold = 0.1; // Порог скорости для определения движения
+
+        // Определяем направление движения и проигрываем соответствующую анимацию
+        if (Math.abs(playerInfo.velocityX) > velocityThreshold || Math.abs(playerInfo.velocityY) > velocityThreshold) {
+
+            if (playerInfo.direction == 'left') {
+                playerSprite.anims.play(`walk_left${playerSprite.character}`, true);
+            } else if (playerInfo.direction == 'right') {
+                playerSprite.anims.play(`walk_right${playerSprite.character}`, true);
+            } else if (playerInfo.direction == 'up') {
+                playerSprite.anims.play(`walk_up${playerSprite.character}`, true);
+            } else if (playerInfo.direction == 'down') {
+                playerSprite.anims.play(`walk_down${playerSprite.character}`, true);
+            }
+
         } else {
-            playerSprite.anims.stop();
+            // Остановка анимации, если скорость ниже порога
+            if (playerSprite.anims.isPlaying) {
+                playerSprite.anims.stop();
+            }
         }
 
         // Обновляем позицию текста с именем
