@@ -52,10 +52,9 @@ export class GameScene4 extends Phaser.Scene {
         this.loding.addLoadOnScreen(this, 1280 / 2, 720 / 2, 0.3, 0.3);
 
         //map
-        this.load.image('map4', './assets/map/library_room_4.png');
-        this.load.image('doorRoom4', './assets/map/door_room_4.png');
-        this.load.image('tableRoom4', './assets/map/table_room_4.png');
+        this.load.image('map4', './assets/map/laboratory_room_3.png');
         this.load.image('sixethKey', 'assets/keyFrame/sixethKey.png');
+        this.load.image('fiverthKey', 'assets/keyFrame/fiverthKey.png');
         this.load.image('answer', 'assets/keyFrame/answer.png');
 
     }
@@ -119,7 +118,7 @@ export class GameScene4 extends Phaser.Scene {
 
         if (!this.textures.exists(MAP_SETTINGS.MAP_FULL4)) {
 
-            this.loadPlusTexture(MAP_SETTINGS.MAP_FULL4, './assets/map/library_room_4_full.png');
+            this.loadPlusTexture(MAP_SETTINGS.MAP_FULL4, './assets/map/laboratory_room_3_full.png');
 
             fullMap = false;
         }
@@ -135,19 +134,13 @@ export class GameScene4 extends Phaser.Scene {
             this.map.setScale(2, 2);
             this.matter.world.setBounds(0, 0, this.map.width * MAP_SETTINGS.MAP_SCALE_2, this.map.height * MAP_SETTINGS.MAP_SCALE_2);
         }
-
-        this.add.image(1040, 1960, 'doorRoom4');
-        this.add.image(1024, 596, 'tableRoom4');
     }
 
     createUnWalkedObjects() {
-        const bodyLeftMiddleWall = this.matter.add.fromVertices(150 + 296, 1400 + 162, '787.5 415 749 385 737.5 343 712 335.5 649 318.5 587 253.5 538.5 207.5 458.5 186 372.5 186 308.5 214 258 250.5 230 339 157.5 339 136 292.5 109 263 62 254.5 29 263 11.5 300 6 347.5 1 347.5 1 36.5 612.5 36.5 612.5 1 749 61.5 787.5 36.5 823 69.5 809 92 809 343 835 378.5', { isStatic: true }, true)
-        const bodyRightMiddleShell = this.matter.add.fromVertices(1450 + 472, 1152 + 140, '82 4 110.5 18.5 106.5 12.5 198 18.5 199.5 1029.5 180 1029.5 184.5 383.5 45 383.5 32 377.5 20.5 377.5 17.5 338.5 1 335.5 1 239.5 17.5 235.5 32 216 38.5 54 24 49 20 25.5 24 12.5 47.5 1', { isStatic: true }, true)
-        const bodyMainWall = this.matter.add.fromVertices(1120, 620, '896 986 886 973 873 912.5 828 883.5 770.5 883.5 755 860.5 730.5 856 718.5 810.5 730.5 793 736 772 741.5 740 718.5 740 682.5 714 661.5 728 661.5 631 674.5 583.5 667 400.5 563.5 285.5 421 275 308.5 318 240 431.5 253.5 690 209.5 699.5 209.5 799.5 166.5 810.5 172 945.5 135 984 154 1040 221 1071 221 1276 215.5 1305.5 229.5 1352 172 1334.5 154 1389.5 1 1394 14.5 0.5 2038 0.5 2038 1024.5 1941.5 1014.5 1932 922 1878 928.5 1849 928.5 1844 941 1828.5 941 1816.5 933.5 1828.5 909 1823.5 895.5 1807.5 880.5 1828.5 842.5 1837 842.5 1844 861.5 1851 883.5 1841.5 893.5 1851 909 1870.5 902.5 1875.5 883.5 1875.5 872.5 1892 856 1878 809.5 1832.5 802 1828 702 1859 702 1868.5 371.5 1859 358.5 1849.5 351.5 1846 358.5 1835.5 351.5 1840.5 344 1846 332 1840.5 327 1835.5 327 1832.5 321.5 1849.5 298.5 1826.5 273 1746.5 227.5 1731.5 294.5 1637 260.5 1571.5 250.5 1459 286.5 1380.5 326.5 1391.5 611 1369 710 1319.5 743 1319.5 815.5 1284 884.5 1201 859.5 1159.5 890.5 1159.5 952 1135 978 1110.5 972 1110.5 879.5 1246.5 749 1243 717 1243 697.5 1258.5 670 1262.5 660 1270.5 624.5 1268.5 565 1268.5 542 1277.5 367.5 1260 361 1249 355 1249 343 1256 337.5 1249 331 1249 326.5 1253 320.5 1256 309 1267.5 304.5 1246.5 279.5 1202.5 234.5 1177.5 220 996 180 900.5 207.5 775 290 795.5 314 787 338 795.5 343.5 787 355.5 779.5 355.5 767 367.5 775 631 787 636 803.5 663 809 685.5 803.5 728 806.5 740 814.5 755 818.5 761 828 766 832.5 772 841.5 779 861 781.5 870 776 875.5 781.5 886 781.5 905 795 912.5 810.5 920 823 927.5 821.5 942.5 828.5 958.5 847 951.5 870.5 951.5 916.5 929.5 935.5 929.5 969.5 919.5 986', { isStatic: true }, true)
-        const bodyRightMiddleWall = this.matter.add.fromVertices(1450 + 170, 1400 + 168, '35.5 412 82 390.5 86 366.5 73 351.5 73 219.5 108.5 190.5 154.5 174.5 174 190.5 310.5 196 367 196 427.5 190.5 471.5 196 546.5 240 591.5 289 604.5 356.5 636.5 356.5 644.5 351.5 651 308.5 662 289 688.5 268.5 723.5 256 776.5 274 791 351.5 805 351.5 805 40 188.5 40 183.5 1.5 93 55.5 63 35.5 35.5 35.5 14.5 67.5 23 95.5 23 348.5 11 351.5 1.5 378', { isStatic: true }, true)
-        const bodyLeftBottomWall = this.matter.add.fromVertices(10, 1400 + 340, '25 641 1 641 2.5 0.5 22 0.5', { isStatic: true }, true)
-        const bodyRightBottomTable = this.matter.add.fromVertices(1495 + 245 / 2, 1655 + 234 / 2, '266.5 235 26.5 235 26.5 148.5 1.5 29.5 107.5 1 244.5 1 235.5 84.5 266.5 148.5 266.5 235', { isStatic: true }, true);
-
+        const bodyArca = this.matter.add.fromVertices(744 + 556, 932 + 47, '1.5 6 6.5 93 1061.5 87 1111 69 1111 1 1.5 6', { isStatic: true }, true)
+        const bodyMainWall = this.matter.add.fromVertices(870, 100 + 1050, '246.159 2017.41 498.794 2026.94 498.794 2052.5 0.5 2052.5 0.5 1 2046 1 2054 2049 1578.6 2049 1578.6 2025.93 1738.55 2025.93 2039 1886.5 2045.5 1777.71 1970.26 1777.71 1836.22 1751.13 1836.22 1715.02 1826.75 1585.14 1810.31 1368 1687.23 1368 1687.23 1078.66 1313.51 1067.62 1313.51 1368 1266.17 1368 1266.17 1307.83 788.303 1307.83 788.303 1634.79 746 1634.79 750 1031.5 1840.2 1022.99 1866.11 1003.94 1840.2 774.5 1789.88 750 1789.88 500.965 1163.52 500.965 1163.52 715.594 1158 839 881 839 888.959 265.274 751.43 265.274 755.5 816.389 716 816.389 709.573 399.668 554.603 399.668 554.603 810.371 486.337 810.371 486.337 862.023 241.674 869.545 228.719 927.214 125.074 935.738 52.3226 953.791 52.3226 1025.5 540.153 1025.5 540.153 1634.79 508.76 1634.79 508.76 1380.04 486.337 1380.04 374.5 1380.04 374.5 1089.19 92.6845 1089.19 125.074 1386 98.5 1440 92.6845 1526.97 31.3942 1526.97 31.3942 1887.03 138.029 1887.03 138.029 1961.24 246.159 2017.41', { isStatic: true }, true)
+        const bodyCar = this.matter.add.fromVertices(1160 + 200, 1898 + 74, '1 0.5 1 147.5 399 147.5 399 94 322 0.5 1 0.5', { isStatic: true }, true)
+        const barrel = this.matter.add.fromVertices(886.5 + 66.5, 1875 + 84.5, '59 1.5 18 18 5.5 33 0.5 47.5 0.5 94 5.5 168.5 132 168.5 132 78.5 132 39 121 24 103 12.5 59 1.5', { isStatic: true }, true)
     }
 
     createPlayers(players, cameraMargin) {
@@ -214,31 +207,24 @@ export class GameScene4 extends Phaser.Scene {
         const highlightGraphics = this.add.graphics();
         highlightGraphics.lineStyle(2, 0x06ff01, 1);
 
-        const bodyMiddleTopTable = this.matter.add.fromVertices(804 + 225, 608, '1 1 1 181 454 181 454 1', { label: '0', isStatic: true });
+        const bodyRightMiddleBookshel = this.matter.add.fromVertices(1315 + 183, 1081 + 143.5, '365.5 286.5 12 286.5 1 286.5 1 0.5 365.5 0.5 365.5 286.5', { label: `${LABEL_ID.FIVETH_KEY}`, isStatic: true })
+        const bodyLeftMiddleBookshell = this.matter.add.fromVertices(98 + 137, 1100 + 137, '273.5 273 1 273 1 0.5 273.5 0.5 273.5 273', { label: '1', isStatic: true })
+        const bodyMiddleTopBookshell = this.matter.add.fromVertices(756 + 62.5, 282 + 283, '124.5 565.5 1 565.5 1 0.5 124.5 0.5 124.5 565.5', { label: '1', isStatic: true })
+        const bodyLeftTopBookShell = this.matter.add.fromVertices(573 + 67.5, 412 + 172, '134.5 343 0.5 343 0.5 1 134.5 1 134.5 343', { label: '1', isStatic: true })
+        const bodyRightTopBookshell = this.matter.add.fromVertices(1173 + 305.5, 510 + 114, '610 227 1 227 1 8.00775 610 1 610 227', { label: `${LABEL_ID.SIXETH_KEY}`, isStatic: true });
+        const bodyRightTopTable = this.matter.add.fromVertices(1394 + 165.5, 772 + 70, '330 1 1 1 1 139 330 139 330 1', { label: '1', isStatic: true })
+        const bodyLeftBookFireplace = this.matter.add.fromVertices(781.5 + 53, 1060.5 + 146.5, '0.5 292 105 292 105 0.5 0.5 0.5 0.5 292', { label: '1', isStatic: true })
+        const bodyRightBookFireplace = this.matter.add.fromVertices(1142 + 62.5, 1055 + 152, '124 303.5 1 303.5 1 1 124 1 124 303.5', { label: '1', isStatic: true })
 
+        const bodyFire = this.matter.add.fromVertices(1426 + 82.5, 1581 + 69.5, '8.5 29 1.5 110.5 69 137.5 164 110.5 133.5 29 69 1', { label: '0', isStatic: true })
 
-        const bodyLeftTopBookShell = this.matter.add.fromVertices(250 + 206, 392 + 146, '374 409 1 409 1 165.5 51.5 59.5 191.5 1 338 59.5 374 165.5', { label: '1', isStatic: true });
-        const bodyLeftTable1 = this.matter.add.fromVertices(250 + 192, 392 + 410, '190.5 95.5 1 91.5 1 0.5 190.5 0.5', { label: '1', isStatic: true });
-        const bodyLeftTable2 = this.matter.add.fromVertices(250 + 200, 392 + 590, '252.5 1 4.5 1 1.5 90.5 248.5 87.5', { label: '1', isStatic: true });
-        const bodyLeftTable3 = this.matter.add.fromVertices(250 + 214, 392 + 732, '272 0.5 1 0.5 1 82.5 267 87.5', { label: '1', isStatic: true });
-        const bodyLeftTable4 = this.matter.add.fromVertices(250 + 196, 392 + 880, '243 1 1 1 1 87.5 246.5 87.5', { label: `${LABEL_ID.SIXETH_KEY}`, isStatic: true });
-        const bodyLeftBottomTable2 = this.matter.add.fromVertices(336 + 232 / 2, 1810 + 84 / 2, '1 85 1 0.5 233 0.5 233 85', { label: '1', isStatic: true });
-        const bodyLeftBottomTable1 = this.matter.add.fromVertices(305.5 + 122.5, 1636 + 48, '0.5 95 0.5 1 244.5 1 244.5 95 0.5 95', { label: '1', isStatic: true });
-
-
-        const bodyLeftMiddleBookshell = this.matter.add.fromVertices(1500 + 168, 392 + 950, '189 2 0.5 0.5 2 125.5 191.5 125.5', { label: '1', isStatic: true });
-        const bodyRightTable3 = this.matter.add.fromVertices(1500 + 116, 392 + 680, '412.5 71.5 1 71.5 5.5 0.5 412.5 0.5', { label: '1', isStatic: true });
-        const bodyRightTable2 = this.matter.add.fromVertices(1500 + 48, 392 + 540, '309.5 42.5 251.5 80 26.5 80 1.5 42.5 26.5 0.5 256.5 0.5', { label: '1', isStatic: true });
-        const bodyRightTable1 = this.matter.add.fromVertices(1500 + 112, 390 + 380, '275.5 70 1 70 11 1 275.5 1', { label: '1', isStatic: true });
-        const bodyRightTopBookshell = this.matter.add.fromVertices(1500 + 96, 392 + 160, '1 162.5 1 395 384 395 384 162.5 328.5 54.5 188.5 1 61 54.5', { label: '1', isStatic: true });
-
-        const bodyDoor = this.matter.add.fromVertices(942 + 86, 1900 + 80, '8 130.5 1 190.5 544.5 190.5 508.5 142.5 422.5 62.5 309 0.5 217 0.5 115.5 56.5', {
+        const bodyDoor = this.matter.add.fromVertices(501 + 140, 1910.5 + 67.5, '1 0.5 1 134.5 279 134.5 279 0.5', {
             label: `${LABEL_ID.DOOR_BACK_ID}`,
             isStatic: true,
             isSensor: true
         })
 
-        const arrBodies = [bodyLeftBottomTable1, bodyLeftBottomTable2, bodyDoor, bodyLeftTopBookShell, bodyMiddleTopTable, bodyRightTable3, bodyRightTable2, bodyRightTable1, bodyRightTopBookshell, bodyLeftMiddleBookshell, bodyLeftTable1, bodyLeftTable2, bodyLeftTable3, bodyLeftTable4]
+        const arrBodies = [bodyRightBookFireplace, bodyRightTopTable, bodyLeftBookFireplace, bodyRightTopBookshell, bodyDoor, bodyFire, bodyLeftTopBookShell, bodyMiddleTopBookshell, bodyLeftMiddleBookshell, bodyRightMiddleBookshel]
 
         this.matterCollision.addOnCollideStart({
             objectA: player,
@@ -286,9 +272,15 @@ export class GameScene4 extends Phaser.Scene {
         this.overlayBackground.setDepth(2);
         this.overlayBackground.setAlpha(0); // Начальное значение прозрачности
 
+        //Пятый ключ
+        this.fiverthKey = this.add.image(0, 0, 'fiverthKey');
+        this.fiverthKey.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
+        this.fiverthKey.setVisible(false);
+        this.fiverthKey.setDepth(2);
+
         //Шестой ключ
         this.sixethKey = this.add.image(0, 0, 'sixethKey');
-        this.sixethKey.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
+        this.sixethKey.setDisplaySize(this.cameras.main.width * 0.74, this.cameras.main.height * 0.70);
         this.sixethKey.setVisible(false);
         this.sixethKey.setDepth(2);
 
@@ -313,7 +305,7 @@ export class GameScene4 extends Phaser.Scene {
         this.closeButton.on('pointerdown', () => {
             this.isOverlayVisible = false;
             this.tweens.add({
-                targets: [this.closeButton, this.overlayBackground, this.sixethKey, this.emptySign, this.answer],
+                targets: [this.emptySign, this.closeButton, this.overlayBackground, this.sixethKey, this.answer, this.fiverthKey],
                 alpha: 0,
                 duration: 500,
                 onComplete: () => {
@@ -342,14 +334,14 @@ export class GameScene4 extends Phaser.Scene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySig],
+                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySign, this.fiverthKey],
                         alpha: 1,
                         duration: 500
                     });
                 }
                 else {
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySign, this.answer],
+                        targets: [this.emptySign, this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.answer, this.fiverthKey],
                         alpha: 0,
                         duration: 500,
                         onComplete: () => {
@@ -367,7 +359,7 @@ export class GameScene4 extends Phaser.Scene {
     moveBackRoom() {
         this.isInZone = false;
         this.eventZone = null;
-        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE3, 1024, 800);
+        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE2, 1024, 800);
     }
 
     showOverlay() {
@@ -379,6 +371,8 @@ export class GameScene4 extends Phaser.Scene {
             return;
         } else if (this.eventZone == LABEL_ID.SIXETH_KEY) {
             this.sixethKey.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
+        } else if (this.eventZone == LABEL_ID.FIVETH_KEY) {
+            this.fiverthKey.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
         }
         else {
             this.emptySign.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);;
@@ -403,6 +397,7 @@ export class GameScene4 extends Phaser.Scene {
             return;
         }
         else if (this.eventZone == LABEL_ID.SIXETH_KEY) this.sixethKey.setVisible(false);
+        else if (this.eventZone == LABEL_ID.FIVETH_KEY) this.fiverthKey.setVisible(false);
         else {
             this.emptySign.setVisible(false);
         }
@@ -500,7 +495,7 @@ export class GameScene4 extends Phaser.Scene {
             });
         });
 
-        const correctCode = 'OKOLIZ';
+        const correctCode = '437268';
         let correctFlag = true;
 
         const joinRoomConnect = document.getElementById('join-room-connect');
@@ -583,14 +578,14 @@ export class GameScene4 extends Phaser.Scene {
                 context.showOverlay();
 
                 context.tweens.add({
-                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.sixethKey, context.enterCodeContainer],
+                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.sixethKey, context.fiverthKey, context.enterCodeContainer],
                     alpha: 1,
                     duration: 500
                 });
             }
             else {
                 context.tweens.add({
-                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.sixethKey, context.enterCodeContainer],
+                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.sixethKey, context.fiverthKey, context.enterCodeContainer],
                     alpha: 0,
                     duration: 500,
                     onComplete: () => {

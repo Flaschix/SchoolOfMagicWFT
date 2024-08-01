@@ -49,9 +49,13 @@ export class GameScene2 extends Phaser.Scene {
         this.loding.addLoadOnScreen(this, 1280 / 2, 720 / 2, 0.3, 0.3);
 
         //map
-        this.load.image('map2', './assets/map/library_room_2.png');
+        this.load.image('map2', './assets/map/laboratory_room_2.png');
         this.load.image('thirdKey', 'assets/keyFrame/thirdKey.png');
         this.load.image('fourthKey', 'assets/keyFrame/fourthKey.png');
+
+        this.load.image('doorRoom1', './assets/map/door_room_4.png');
+        this.load.image('stair', './assets/map/stair.png');
+        this.load.image('balcon', './assets/map/balcon.png');
     }
 
     create(data) {
@@ -111,7 +115,7 @@ export class GameScene2 extends Phaser.Scene {
 
         if (!this.textures.exists(MAP_SETTINGS.MAP_FULL2)) {
 
-            this.loadPlusTexture(MAP_SETTINGS.MAP_FULL2, './assets/map/library_room_2_full.png');
+            this.loadPlusTexture(MAP_SETTINGS.MAP_FULL2, './assets/map/laboratory_room_2_full.png');
 
             fullMap = false;
         }
@@ -127,21 +131,18 @@ export class GameScene2 extends Phaser.Scene {
             this.map.setScale(2, 2);
             this.matter.world.setBounds(0, 0, this.map.width * MAP_SETTINGS.MAP_SCALE_2, this.map.height * MAP_SETTINGS.MAP_SCALE_2);
         }
+
+        this.add.image(964, 1960, 'doorRoom1');
+        this.add.image(1028, 624, 'balcon').setDepth(2);
+        this.add.image(1505, 1090, 'stair');
     }
 
     createUnWalkedObjects() {
-        const bodyMainWall = this.matter.add.fromVertices(976, 1250, '872 1705 872 2042 0.5 2044.5 0.5 1 2045.5 1 2045.5 2048.5 1171.5 2045.5 1171.5 1968 1171.5 1880.5 1171.5 1822.5 1164 1773 1164 1757 1158.5 1709.5 1158.5 1688 1155 1678 1145.5 1656.5 1145.5 1641 1155 1624.5 1158.5 1605.5 1171.5 1595 1183 1605.5 1183 1628 1197.5 1650.5 1205.5 1688 1223 1703.5 1388 1669.5 1401 1641 1431 1661 1498 1757 1521.5 1778 1540 1832 1619 1890 1842 1873.5 1928 1816.5 1987 1734 1967 1701.5 1987 1683.5 1987 1613 1951.5 1596.5 1935.5 1439.5 1928 1345.5 1976.5 1350 1951.5 1336 1928 1308.5 1886 1302.5 1886 1263 1886 1160 1922 1143.5 1922 1084.5 1928 1043.5 1913 865.5 1895 861 1886 853.5 1886 621.5 1548.5 621.5 1548.5 804 1548.5 835 1527.5 847.5 1489.5 847.5 1478 835 1482.5 469 1375 469 1375 823 1345.5 853.5 1315 847.5 1302 810 1166.5 810 1166.5 796 1149 692 1149 535 1123 474 1102 443.5 1051 423 1013 423 948.5 456 909.5 535 897.5 796 889.5 796 828 816 747 784 741 804 736 849 684.5 834.5 676.5 468 567.5 468 553.5 746.5 506.5 756 500.5 618 163.5 618 163.5 786.5 124.5 821.5 114 890.5 86.5 962 86.5 1218 70.5 1279.5 79.5 1279.5 90.5 1250 90.5 1233.5 100 1215.5 114 1213.5 122 1243 131.5 1268.5 142 1288.5 114 1337 106.5 1420.5 96 1490 96 1609 72.5 1759 119.5 1819 169.5 1859 223.5 1879 359 1887.5 398.5 1887.5 427 1859 473 1833 473 1814.5 473 1786 484 1773.5 503 1773.5 551.5 1722 576 1694 614 1673.5 690 1680.5 814.5 1709 832 1694 840 1680.5 851 1667 851 1651.5 856.5 1630 863 1610 872 1600 888.5 1630 909 1651.5 909 1680.5', { isStatic: true }, true);
-        const bodyRightBottomBoxes = this.matter.add.fromVertices(1829 + 80, 1603 + 150, '113.5 5.5 127 1 154.5 10 154.5 76.5 136 102 154.5 135 136 198.5 113.5 198.5 92 195 75.5 203 60.5 212 42 238 20 238 9 230.5 1 206.5 3 195 7.5 188.5 19 182 42 179 51 171 57 164 63.5 162 63.5 102 68.5 67 102 53 107 15.5', { isStatic: true }, true);
-        const bodyRightMiddleBoxes = this.matter.add.fromVertices(1827 + 50, 1335 + 136, '90.5 0.5 104.5 13 111.5 177 121 242.5 110 281 99.5 293 69 293 48 277 33.5 250.5 41.5 218 33.5 204.5 23 196.5 9 186 0.5 159.5 0.5 131.5 9 104.5 20 86 14 51 20 13 33.5 0.5', { isStatic: true }, true);
-        const bodyLeftTopBarrel = this.matter.add.fromVertices(490 + 42, 748 + 66, '72.5 110 40 120 19.5 114.5 5.5 104 1 88 1 68 1 46.5 8 23 14.5 11 29 0.5 61.5 0.5 78 14 84 35 86.5 83.5', { isStatic: true }, true);
-        const bodyLeftMiddleBarrel = this.matter.add.fromVertices(112 + 40, 1326 + 66, '48 125.5 9 125.5 1 113 1 85 1 53.5 5 22.5 16 8.5 55.5 1.5 82.5 14.5 88 44 93.5 74.5 79 119', { isStatic: true }, true);
-
-
-
-        const bodyLeftBottomBookshell = this.matter.add.fromVertices(380 + 164, 1443 + 85, '32 94 32 238 305.5 238 305.5 94 324 94 324 0.5 1 0.5 1 94', { isStatic: true });
-        const bodyRightBottomBookshell = this.matter.add.fromVertices(1384 + 164, 1436 + 108, '19 246 314 251 314 100.5 325.5 100.5 325.5 0.5 0.5 6.5 0.5 91.5 19 100.5', { label: '1', isStatic: true });
+        const bodyMainWall = this.matter.add.fromVertices(280 + 1024, 110 + 1027, '1235.5 1891 1235.5 2037.5 1235.5 2044 2047.5 2044 2047.5 0.5 0.5 0.5 0.5 2053 71 2053 62 1284.5 691.5 1284.5 691.5 853 625.5 853 54.5 853 47.5 798 41 671.5 41 449.5 57.5 303 129.5 159.5 233.5 77.5 389 64.5 538 149.5 631 286 637 401.5 707.5 391.5 846.5 286 1230.5 286 1331.5 401.5 1385 401.5 1397.5 305 1459 189.5 1552 103.5 1662 62 1754 53 1951 219 1962 796 1636 796 1636 896.5 1991.5 896.5 1985.5 1342 2017 1499.5 2006 1548 1999 1566 1985.5 1591.5 1974.5 1608 1957 1624 1938 1634.5 1801 1632.5 1790.5 1624 1779.5 1620 1768.5 1621.5 1768.5 1629.5 1758 1629.5 1733 1613 1707 1617.5 1671.5 1617.5 1661.5 1638.5 1649.5 1646 1649.5 1669.5 1631 1697 1615 1723 1598.5 1742 1573.5 1768 1537 1777 1531.5 1757 1402 1757 1407.5 1829.5 1407.5 1971.5 1344.5 1971.5 1344.5 1963 1337 1933.5 1337 1874 1318.5 1859.5 1309.5 1839 1280.5 1845.5 1252.5 1853 1235.5 1891', { isStatic: true }, true)
+        const bodyDownDoorWall = this.matter.add.fromVertices(710 + 361.5, 730 + 288.5, '11.5 476.5 215 400 215 229 239.5 177.5 283 153 348 153 410 184.5 427.5 229 427.5 400 583.5 454.5 685.5 472 693 576 722 576 712 1 1 7.5 11.5 476.5', { isStatic: true }, true);
+        const bodyUpDoorWall = this.matter.add.fromVertices(620 + 370, 256 + 175.5, '12 343 272.5 343 266 206.5 272.5 161.5 301.5 106.5 356.5 92 439 92 481 142.5 489.5 350.5 739 350.5 739 142.5 587.5 1 242 1 178 28.5 1 142.5 12 343', { isStatic: true }, true)
+        const bodyWallStairRight = this.matter.add.fromVertices(1587 + 19.5, 790 + 306, '38 611 1 611 1 1 38 1 38 611', { isStatic: true }, true)
     }
-
     createPlayers(players, cameraMargin) {
         Object.keys(players).forEach((id) => {
             if (id === socket.id) {
@@ -203,31 +204,29 @@ export class GameScene2 extends Phaser.Scene {
     }
 
     createCollision() {
-        const bodyDoor = this.matter.add.fromVertices(900 + 131, 626, '13.5 103.5 1 384 262 378 246 103.5 207.5 35.5 129.5 -1 56 35.5', { label: `${LABEL_ID.DOOR_FORWARD_ID}`, isStatic: true });
-        const bodyRightDoorBookshell = this.matter.add.fromVertices(1374 + 56, 469 + 170, '106.5 348.5 9 348.5 0.5 348.5 0.5 1 9 1 106.5 1', { label: '1', isStatic: true });
-        const bodyLeftDoorBookshell = this.matter.add.fromVertices(558 + 67, 469 + 176, '12.5 333 107.5 333 107.5 0.5 0.5 0.5 0.5 283', { label: '1', isStatic: true });
-        const bodyLeftBottomBookshell = this.matter.add.fromVertices(381 + 165, 1443 + 168, '1 1 1 149 251 149 251 1', { label: '1', isStatic: true });
+        const bodyDoorDown = this.matter.add.fromVertices(920 + 100, 1000 + 118.5, '0.5 69 0.5 236 199 236 199 69 168.5 18.5 98.5 1.5 29 18.5 0.5 69', { label: `${LABEL_ID.DOOR_FORWARD2_ID}`, isStatic: true })
+        const bodyDoorUp = this.matter.add.fromVertices(920 + 100, 414 + 118.5, '0.5 69 0.5 236 199 236 199 69 168.5 18.5 98.5 1.5 29 18.5 0.5 69', { label: `${LABEL_ID.DOOR_FORWARD_ID}`, isStatic: true })
 
 
-        const bodyRightBottomBookshell = this.matter.add.fromVertices(1384 + 164, 1436 + 178, '1 1 1 149 251 149 251 1', { label: '1', isStatic: true });
-        const bodyRightTopBookshell = this.matter.add.fromVertices(1551 + 166, 624 + 92, '334 0.5 0.5 0.5 0.5 183 93.5 195 239 195 334 183', { label: '1', isStatic: true });
-        const bodyLeftTopBookshell = this.matter.add.fromVertices(165 + 164, 623 + 92, '0.5 1 0.5 188.5 315 188.5 332.5 125.5 332.5 1', { label: `${LABEL_ID.THIRD_KEY}`, isStatic: true });
+        const bodyMiddleBookshell = this.matter.add.fromVertices(823 + 185, 1372 + 159, '21 165 32 317.5 368.5 311 347.5 1 54 1 54 56.5 15.5 56.5 1 143 21 165', { label: '1', isStatic: true })
+        const bodyLeftMiddleTable = this.matter.add.fromVertices(63 + 314.5, 1286 + 244.5, '1 488 1 0.5 628 0.5 628 107 197.5 107 180.5 488 1 488', { label: '1', isStatic: true })
+        const bodyLeftTopookshell = this.matter.add.fromVertices(53 + 296, 68 + 279.5, '0.5 558 590.5 558 569.5 234 467.5 67 296 1.5 114.5 67 0.5 234 0.5 558', { label: '1', isStatic: true })
+        const bodyRightTopBookshell = this.matter.add.fromVertices(1387 + 280, 78 + 292.5, '559 506 1 584 1 246.5 123.5 73.5 301 1 443 23.5 559 138 559 506', { label: '1', isStatic: true })
 
-        const bodyRightMiddleTable1 = this.matter.add.fromVertices(1305 + 42, 1027 + 76, '79.5 145.5 0.5 145.5 0.5 0.5 79.5 0.5', { label: '1', isStatic: true });
-        const bodyLeftMiddleTable1 = this.matter.add.fromVertices(648 + 45, 1026 + 76, '86 148.5 0.5 155 0.5 0.5 86 0.5', { label: '1', isStatic: true });
-        const bodyRightMiddleTable2 = this.matter.add.fromVertices(1587 + 45, 1019 + 80, '90 160 5.5 157.5 1 1.5 90 6', { label: `${LABEL_ID.FOURTH_KEY}`, isStatic: true });
-        const bodyLeftMiddleTable2 = this.matter.add.fromVertices(368 + 46, 981 + 62, '93 197.5 7.5 197.5 1 55 7.5 43.5 33 28.5 33 13.5 45 0.5 59.5 0.5 59.5 23 84.5 55', { label: '1', isStatic: true });
-        const bodyRightMiddleTrashTable = this.matter.add.fromVertices(1756 + 74, 865 + 154, '26.5 214.5 21 232 28.5 243 34 247 46 247 53 237.5 58.5 230 65.5 230 75.5 230 78.5 208 102 198 148 198 169 214.5 169 208 172.5 171 165 109 160 1 152.5 1 140 1 118.5 7 102 11.5 90 1 65.5 1 33.5 11.5 26.5 33 26.5 50.5 10 66 1.5 97.5 26.5 131.5 26.5 182.5 21 198 12.5 195 4.5 198 4.5 214.5 21 221.5', { label: '1', isStatic: true });
-        const bodyLeftMiddleTrashTable = this.matter.add.fromVertices(119 + 94, 832 + 76, '143.5 236 6 236 1 236 6 88.5 13 11.5 23.5 1 41 11.5 74 11.5 82 38 92 38 92 23.5 101.5 1 118 1 118 23.5 130 66 151.5 88.5 151.5 169.5 130 195', { label: '1', isStatic: true });
-        const bodyLeftBottomTable = this.matter.add.fromVertices(73 + 110, 1610 + 88, '59 5 6.5 1 1 145.5 18.5 175 69.5 225 92 225 127.5 208.5 139 185 139 170.5 151 154.5 155.5 136 155.5 100 151 37 117 27 114 22.5 103 11.5 92 16 85 5', { label: '1', isStatic: true });
-        const bodyDoorBack = this.matter.add.rectangle(1024, 2000, 300, 360, { label: `${LABEL_ID.DOOR_BACK_ID}`, isStatic: true, isSensor: true });
+        const bodyCotel = this.matter.add.fromVertices(348 + 91.5, 1767 + 78.5, '15.5 156.5 1 144 1 40 26 35 51 26.5 68 1.5 74 13.5 82 13.5 92.5 35 176 35 182 112.5 170 156.5 15.5 156.5', { label: '1', isStatic: true })
+        const bodyRightMiddleBookshel = this.matter.add.fromVertices(1634.5 + 173, 912 + 211, '345.5 421 2.5 421 0.5 0.5 345.5 0.5', { label: '1', isStatic: true })
 
+        const bodyDoorBack = this.matter.add.fromVertices(954, 1980, '8 130.5 1 190.5 544.5 190.5 508.5 142.5 422.5 62.5 309 0.5 217 0.5 115.5 56.5', {
+            label: `${LABEL_ID.DOOR_BACK_ID}`,
+            isStatic: true,
+            isSensor: true
+        })
 
         // Создаем графику для подсветки
         const highlightGraphics = this.add.graphics();
         highlightGraphics.lineStyle(2, 0x06ff01, 1);
 
-        const arrBodies = [bodyDoorBack, bodyDoor, bodyLeftMiddleTrashTable, bodyRightMiddleTrashTable, bodyLeftMiddleTable2, bodyRightMiddleTable2, bodyRightMiddleTable1, bodyLeftMiddleTable1, bodyRightDoorBookshell, bodyLeftDoorBookshell, bodyLeftBottomBookshell, bodyRightBottomBookshell, bodyLeftBottomTable, bodyLeftTopBookshell, bodyRightTopBookshell];
+        const arrBodies = [bodyRightMiddleBookshel, bodyDoorBack, bodyDoorDown, bodyDoorUp, bodyMiddleBookshell, bodyLeftMiddleTable, bodyLeftTopookshell, bodyRightTopBookshell, bodyCotel];
 
         this.matterCollision.addOnCollideStart({
             objectA: player,
@@ -326,6 +325,11 @@ export class GameScene2 extends Phaser.Scene {
                     return;
                 }
 
+                if (this.eventZone == LABEL_ID.DOOR_FORWARD2_ID) {
+                    this.moveForwardRoom2();
+                    return;
+                }
+
                 if (this.eventZone == LABEL_ID.DOOR_BACK_ID) {
                     this.moveBackRoom();
                     return;
@@ -362,6 +366,12 @@ export class GameScene2 extends Phaser.Scene {
         this.isInZone = false;
         this.eventZone = null;
         this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE3, 1024, 1840);
+    }
+
+    moveForwardRoom2() {
+        this.isInZone = false;
+        this.eventZone = null;
+        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE4, 1024, 1840);
     }
 
     moveBackRoom() {
@@ -467,8 +477,13 @@ export class GameScene2 extends Phaser.Scene {
                 return;
             }
 
+            if (context.eventZone == LABEL_ID.DOOR_FORWARD2_ID) {
+                context.moveForwardRoom2();
+                return;
+            }
+
             if (context.eventZone == LABEL_ID.DOOR_BACK_ID) {
-                context.moveBackRoom();
+                context.moveForwardRoom2();
                 return;
             }
 
