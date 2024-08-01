@@ -10,6 +10,7 @@ import { createUILeftMobile } from "../share/UICreator.mjs";
 import { createUI } from "../share/UICreator.mjs";
 import { createExitMenu } from "../share/UICreator.mjs";
 import { createAvatarDialog } from "../share/UICreator.mjs";
+import { isMobile } from "../share/UICreator.mjs";
 import { CAMERA_MARGIN, CAMERA_MARGIN_MOBILE } from "../share/UICreator.mjs";
 
 import { createJoystick } from "../share/UICreator.mjs";
@@ -69,7 +70,7 @@ export class GameScene extends Phaser.Scene {
 
         this.playersController = new PlayersController();
 
-        this.mobileFlag = this.isMobile();
+        this.mobileFlag = isMobile();
 
         // Добавляем карту
         this.createMap();
@@ -90,9 +91,6 @@ export class GameScene extends Phaser.Scene {
             this.createPlayers(players, CAMERA_MARGIN);
         }
 
-        //Создаём игроков
-
-
         //Создаём объект с которыми будем взаимодействовать
         this.createCollision();
 
@@ -109,7 +107,8 @@ export class GameScene extends Phaser.Scene {
         createUIBottom(this);
 
         createExitMenu(this, this.leaveGame, this.closeExitMenu, this.mobileFlag);
-        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room, this.isMobile());
+
+        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room, isMobile());
 
 
         //Подключение слушателей
@@ -522,9 +521,6 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    animationShow() {
-
-    }
 
     update() {
         if (!player || this.isOverlayVisible) return;
@@ -599,10 +595,7 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    isMobile() {
-        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-        return /android|avantgo|blackberry|bada\/|bb|meego|mmp|mobile|opera m(ob|in)i|palm(os)?|phone|p(ixi|re)\/|plucker|pocket|psp|symbian|up\.browser|up\.link|vodafone|wap|windows ce|xda|xiino/i.test(userAgent) || /ipad|tablet|(android(?!.*mobile))/i.test(userAgent);
-    }
+
 }
 
 function sceneSwitched(self, data) {

@@ -1,14 +1,21 @@
 import { CST, LABEL_ID } from "../CST.mjs";
-import { socket } from "../CST.mjs";
 
+import { socket } from "../CST.mjs";
 import { SocketWorker } from "../share/SocketWorker.mjs";
 
 import { createUIBottom } from "../share/UICreator.mjs";
 import { createUITop } from "../share/UICreator.mjs";
 import { createUIRight } from "../share/UICreator.mjs";
+import { createUILeftMobile } from "../share/UICreator.mjs";
 import { createUI } from "../share/UICreator.mjs";
 import { createExitMenu } from "../share/UICreator.mjs";
 import { createAvatarDialog } from "../share/UICreator.mjs";
+import { isMobile } from "../share/UICreator.mjs";
+import { CAMERA_MARGIN, CAMERA_MARGIN_MOBILE } from "../share/UICreator.mjs";
+
+import { createJoystick } from "../share/UICreator.mjs";
+import { createMobileXButton } from "../share/UICreator.mjs";
+
 import { HEIGHT_PRESS_X } from "../share/UICreator.mjs";
 import { MAP_SETTINGS } from "../share/UICreator.mjs";
 
@@ -21,13 +28,6 @@ let otherPlayers = {};
 let fullMap = true;
 let moved = false;
 
-const CAMERA_MARGIN = {
-    right: 125,
-    left: -100,
-    top: -12,
-    bottom: 24
-}
-
 export class GameScene2 extends Phaser.Scene {
     constructor() {
         super({ key: CST.SCENE.GAMESCENE2 });
@@ -37,6 +37,8 @@ export class GameScene2 extends Phaser.Scene {
 
         //зона в которой стоит игрок
         this.eventZone = null;
+
+        this.mobileFlag = false;
 
         //существует ли оверлей сейчас поврех экрана
         this.isOverlayVisible = false;
@@ -61,6 +63,8 @@ export class GameScene2 extends Phaser.Scene {
 
         this.playersController = new PlayersController();
 
+        this.mobileFlag = isMobile();
+
         // Добавляем карту
         this.createMap('map2', MAP_SETTINGS.MAP_FULL2);
 
@@ -70,8 +74,15 @@ export class GameScene2 extends Phaser.Scene {
         //Создаём стены и остальные непроходимые объекты
         this.createUnWalkedObjects();
 
-        //Создаём игроков
-        this.createPlayers(players);
+        if (this.mobileFlag) {
+            createJoystick(this, 'joystickBase', 'joystickThumb', this.isDragging, 160, this.cameras.main.height - 120);
+            createMobileXButton(this, 'touchButton', 'joystickBase', this.cameras.main.width - 150, this.cameras.main.height - 120, this.itemInteract);
+            createUILeftMobile(this, 'settingsMobile', 'exitMobile', 90, 70, this.cameras.main.width - 90, 70, this.showSettings, this.showExitMenu);
+            this.createPlayers(players, CAMERA_MARGIN_MOBILE);
+        } else {
+            createUI(this, this.showSettings, this.showExitMenu);
+            this.createPlayers(players, CAMERA_MARGIN);
+        }
 
         //Создаём объект с которыми будем взаимодействовать
         this.createCollision();
@@ -87,9 +98,9 @@ export class GameScene2 extends Phaser.Scene {
         createUIRight(this);
         createUITop(this);
         createUIBottom(this);
-        createUI(this, this.showSettings, this.showExitMenu);
-        createExitMenu(this, this.leaveGame, this.closeExitMenu);
-        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room);
+
+        createExitMenu(this, this.leaveGame, this.closeExitMenu, this.mobileFlag);
+        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room, isMobile());
 
         //Подключение слушателей
         this.mySocket.subscribeNewPlayer(this, this.scene.key, otherPlayers, this.playersController.createOtherPlayer);
@@ -131,7 +142,7 @@ export class GameScene2 extends Phaser.Scene {
         const bodyRightBottomBookshell = this.matter.add.fromVertices(1384 + 164, 1436 + 108, '19 246 314 251 314 100.5 325.5 100.5 325.5 0.5 0.5 6.5 0.5 91.5 19 100.5', { label: '1', isStatic: true });
     }
 
-    createPlayers(players) {
+    createPlayers(players, cameraMargin) {
         Object.keys(players).forEach((id) => {
             if (id === socket.id) {
                 //добовляем игрока
@@ -139,8 +150,8 @@ export class GameScene2 extends Phaser.Scene {
 
                 //настраиваем камеру игрока
                 this.cameras.main.startFollow(player);
-                if (this.textures.exists(MAP_SETTINGS.MAP_FULL2)) this.cameras.main.setBounds(CAMERA_MARGIN.left, CAMERA_MARGIN.top, this.map.width * MAP_SETTINGS.MAP_SCALE_4_3 + CAMERA_MARGIN.right, this.map.height * MAP_SETTINGS.MAP_SCALE_4_3 + CAMERA_MARGIN.bottom);
-                else this.cameras.main.setBounds(CAMERA_MARGIN.left, CAMERA_MARGIN.top, this.map.width * MAP_SETTINGS.MAP_SCALE_2 + CAMERA_MARGIN.right, this.map.height * MAP_SETTINGS.MAP_SCALE_2 + CAMERA_MARGIN.bottom);
+                if (this.textures.exists(MAP_SETTINGS.MAP_FULL2)) this.cameras.main.setBounds(cameraMargin.left, cameraMargin.top, this.map.width * MAP_SETTINGS.MAP_SCALE_4_3 + cameraMargin.right, this.map.height * MAP_SETTINGS.MAP_SCALE_4_3 + cameraMargin.bottom);
+                else this.cameras.main.setBounds(cameraMargin.left, cameraMargin.top, this.map.width * MAP_SETTINGS.MAP_SCALE_2 + cameraMargin.right, this.map.height * MAP_SETTINGS.MAP_SCALE_2 + cameraMargin.bottom);
             } else {
                 this.playersController.createOtherPlayer(this, players[id], otherPlayers);
             }
@@ -447,6 +458,47 @@ export class GameScene2 extends Phaser.Scene {
         this.matter.world.setBounds(0, 0, this.map.width * scaleX, this.map.height * scaleY);
     }
 
+    itemInteract(context) {
+        if (context.isInZone) {
+            player.setVelocity(0);
+
+            if (context.eventZone == LABEL_ID.DOOR_FORWARD_ID) {
+                context.moveForwardRoom();
+                return;
+            }
+
+            if (context.eventZone == LABEL_ID.DOOR_BACK_ID) {
+                context.moveBackRoom();
+                return;
+            }
+
+            if (!context.isOverlayVisible) {
+
+                context.showOverlay();
+
+                context.tweens.add({
+                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.thirdKey, context.fourthKey],
+                    alpha: 1,
+                    duration: 500
+                });
+            }
+            else {
+                context.tweens.add({
+                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.thirdKey, context.fourthKey],
+                    alpha: 0,
+                    duration: 500,
+                    onComplete: () => {
+                        try {
+                            context.hideOverlay();
+                            console.log('dddd');
+                        } catch (e) { }
+
+                    }
+                });
+            }
+        }
+    }
+
     update() {
         if (!player || this.isOverlayVisible) return;
 
@@ -502,10 +554,22 @@ export class GameScene2 extends Phaser.Scene {
 
     updatePressXVisibility() {
         if (this.isInZone) {
-            this.pressX.setPosition(player.x, player.y - HEIGHT_PRESS_X);
-            this.pressX.setVisible(true);
+            if (this.mobileFlag) {
+                this.mobileXButton.setVisible(true);
+                this.buttonBackground.setVisible(true);
+            }
+            else {
+                this.pressX.setPosition(player.x, player.y - HEIGHT_PRESS_X);
+                this.pressX.setVisible(true);
+            }
         } else {
-            this.pressX.setVisible(false);
+            if (this.mobileFlag) {
+                this.mobileXButton.setVisible(false);
+                this.buttonBackground.setVisible(false);
+            }
+            else {
+                this.pressX.setVisible(false);
+            }
         }
     }
 

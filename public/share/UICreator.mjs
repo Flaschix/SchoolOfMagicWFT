@@ -90,6 +90,7 @@ export function createExitMenu(self, eventLeaveBtn, eventCloseBtn, isMobile) {
                 <input type="image" src="./assets/button/cancel-exitMobile.png" alt="Close" class="exit-button" id="close-btn">
             </div>
             `);
+        self.exitContainer.setOrigin(0.5, 0.5);
     } else {
         self.exitContainer = self.add.dom(0, 0).createFromHTML(`
             <div class="exit-container">
@@ -97,7 +98,10 @@ export function createExitMenu(self, eventLeaveBtn, eventCloseBtn, isMobile) {
                 <input type="image" src="./assets/button/cancel-exit.png" alt="Close" class="exit-button" id="close-btn">
             </div>
             `);
+        self.exitContainer.setOrigin(0.5, 0.5);
     }
+
+    // self.exitContainer.setScrollFactor(0);
 
     const leaveBtn = document.getElementById('leave-space');
     leaveBtn.addEventListener('click', () => {
@@ -110,7 +114,7 @@ export function createExitMenu(self, eventLeaveBtn, eventCloseBtn, isMobile) {
         eventCloseBtn(self);
     });
 
-    self.exitContainer.setOrigin(0.5, 0.5);
+
     self.exitContainer.setVisible(false);
 }
 
@@ -120,10 +124,10 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
     let nameError;
     let roomCode;
     if (isMobile) {
-        self.avatarDialog = self.add.dom(0, 0).createFromHTML(`
+        self.avatarDialog = self.add.dom(self.cameras.main.width / 2, self.cameras.main.height / 2).createFromHTML(`
            <div id="avatarDialogGameMobile">
 	<div id="avatarDialogLeft">
-    <h5 id="roomIdMobile">Room number: 133456</h3>
+    <h5 id="roomIdMobile"></h3>
     <h2>Choose avatar</h2>
     <div id="avatarMobileContainer">
         <img src="./assets/character/man1.png" class="avatar" data-index="0">
@@ -155,9 +159,9 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
         roomCode = document.getElementById('roomIdMobile');
         self.avatarDialog.setOrigin(0.5, 0.5);
     } else {
-        self.avatarDialog = self.add.dom(0, 0).createFromHTML(`
+        self.avatarDialog = self.add.dom(self.cameras.main.width / 2, self.cameras.main.height / 2).createFromHTML(`
             <div id="avatarDialogGame">
-                <h5 id="roomId">Room number: 133456</h3>
+                <h5 id="roomId"></h3>
                 <h2>Choose avatar</h2>
                 <div id="avatarContainer">
                     <img src="./assets/character/man1.png" class="avatar" data-index="0">
@@ -184,7 +188,7 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
         nameInput = document.getElementById('usernameInput');
         nameError = document.getElementById('incorrectName');
         roomCode = document.getElementById('roomId');
-        self.avatarDialog.setOrigin(0.5, 0.55);
+        self.avatarDialog.setOrigin(0.5, 0.5);
     }
     self.avatarDialog.setVisible(false);
 
@@ -220,7 +224,7 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
         eventCloseBtn(self);
     });
 
-    roomCode.innerHTML = `Room number: ${room}`;
+    if (room != null) roomCode.innerHTML = `Room number: ${room}`;
 }
 
 export function createJoystick(context, joystickBase, joystickThumb, flag, x, y) {
@@ -307,4 +311,9 @@ export const CAMERA_MARGIN_MOBILE = {
     left: -25,
     top: -12,
     bottom: 24
+}
+
+export function isMobile() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    return /android|avantgo|blackberry|bada\/|bb|meego|mmp|mobile|opera m(ob|in)i|palm(os)?|phone|p(ixi|re)\/|plucker|pocket|psp|symbian|up\.browser|up\.link|vodafone|wap|windows ce|xda|xiino/i.test(userAgent) || /ipad|tablet|(android(?!.*mobile))/i.test(userAgent);
 }

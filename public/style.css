@@ -344,11 +344,13 @@ body {
     align-self: flex-start;
     margin: 0 0 6px 0;
     color: #B5B3BC;
+    font-size: 16px;
 }
 
 #incorrectNameMobile {
     color: red;
-    margin: 0 0 0 0;
+    margin-bottom: 40px;
+    font-size: 26px;
     visibility: hidden;
 }
 

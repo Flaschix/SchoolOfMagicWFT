@@ -62,17 +62,22 @@ export class PlayersController {
         if (joystickThumb.x < joystickBase.x - 10) {
             player.setVelocityX(-5);
             player.anims.play(`walk_left${player.character}`, true);
+            player.direction = 'left';
         } else if (joystickThumb.x > joystickBase.x + 10) {
             player.setVelocityX(5);
             player.anims.play(`walk_right${player.character}`, true);
+            player.direction = 'right';
         } else if (joystickThumb.y < joystickBase.y - 10) {
             player.setVelocityY(-5);
             player.anims.play(`walk_up${player.character}`, true);
+            player.direction = 'up';
         } else if (joystickThumb.y > joystickBase.y + 10) {
             player.setVelocityY(5);
             player.anims.play(`walk_down${player.character}`, true);
+            player.direction = 'down';
         } else {
             player.anims.stop();
+            player.direction = 'none';
         }
 
         //Рисуем ник игрока

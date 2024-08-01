@@ -1,6 +1,10 @@
 import { CST } from "../CST.mjs";
 import { socket } from "../CST.mjs";
 
+import { isMobile } from "../share/UICreator.mjs";
+import { createAvatarDialog } from "../share/UICreator.mjs";
+import { createExitMenu } from "../share/UICreator.mjs";
+
 export class LobbyScene extends Phaser.Scene {
     constructor() {
         super({ key: CST.SCENE.LOBBYSCENE });
@@ -11,6 +15,8 @@ export class LobbyScene extends Phaser.Scene {
         this.newSpaceContainer = null;
         this.creatCodeText = null;
         this.copyBtn = null;
+
+        this.mobile = isMobile();
     }
 
     preload() {
@@ -220,6 +226,23 @@ export class LobbyScene extends Phaser.Scene {
 
     }
 
+    avatartFinishEditing(self, nameInput, nameError, imgCount) {
+        const username = nameInput.value;
+        if (username.length < 1 || username.length > 12) {
+            nameError.style.visibility = "visible";
+        }
+        else {
+            console.log(username);
+
+            let roomCode = self.code;
+            socket.emit('joinRoom', { roomCode, avatar: imgCount + 1, username });
+        }
+    }
+    closeAvatarDialog(self) {
+        self.avatarDialog.setVisible(false);
+        self.welcomeContainer.setVisible(true);
+    }
+
     createNewSpaceContainer() {
         this.newSpaceContainer = this.add.dom(this.scale.width / 2, this.scale.height / 2).createFromHTML(`
 	<div id="createRoomDialogContainer">
@@ -255,6 +278,7 @@ export class LobbyScene extends Phaser.Scene {
         const connectBtn = document.getElementById('connectBtn')
         connectBtn.addEventListener('click', () => {
             this.newSpaceContainer.setVisible(false);
+            if (!this.mobile) this.avatarDialog.setOrigin(0.5, 0.6);
             this.avatarDialog.setVisible(true);
         });
 
@@ -272,17 +296,21 @@ export class LobbyScene extends Phaser.Scene {
         // Добавляем фон
         this.add.image(this.scale.width / 2, this.scale.height / 2, 'backgroundMenu').setDisplaySize(this.scale.width, this.scale.height);
 
+        createExitMenu(this, {}, {}, this.mobileFlag);
+
         this.createWelcomeContainer();
 
         this.createJoinRoomContainer();
 
-        this.createAvatarDialog();
+        // this.createAvatarDialog();
+        createAvatarDialog(this, this.avatartFinishEditing, this.closeAvatarDialog, null, isMobile());
 
         this.createNewSpaceContainer();
 
         socket.on('roomExists', (roomCode) => {
             this.code = roomCode;
             this.joinRoomContainer.setVisible(false);
+            if (!this.mobile) this.avatarDialog.setOrigin(0.5, 0.6);
             this.avatarDialog.setVisible(true);
         });
 
@@ -293,6 +321,7 @@ export class LobbyScene extends Phaser.Scene {
             this.welcomeContainer.destroy();
             this.joinRoomContainer.destroy();
             this.newSpaceContainer.destroy();
+            this.exitContainer.destroy();
             this.scene.start(CST.SCENE.GAMESCENE, { players });
         });
 
