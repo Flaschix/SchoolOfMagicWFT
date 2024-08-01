@@ -208,12 +208,15 @@ export class GameScene2 extends Phaser.Scene {
         const bodyDoorUp = this.matter.add.fromVertices(920 + 100, 414 + 118.5, '0.5 69 0.5 236 199 236 199 69 168.5 18.5 98.5 1.5 29 18.5 0.5 69', { label: `${LABEL_ID.DOOR_FORWARD_ID}`, isStatic: true })
 
 
-        const bodyMiddleBookshell = this.matter.add.fromVertices(823 + 185, 1372 + 159, '21 165 32 317.5 368.5 311 347.5 1 54 1 54 56.5 15.5 56.5 1 143 21 165', { label: '1', isStatic: true })
-        const bodyLeftMiddleTable = this.matter.add.fromVertices(63 + 314.5, 1286 + 244.5, '1 488 1 0.5 628 0.5 628 107 197.5 107 180.5 488 1 488', { label: '1', isStatic: true })
-        const bodyLeftTopookshell = this.matter.add.fromVertices(53 + 296, 68 + 279.5, '0.5 558 590.5 558 569.5 234 467.5 67 296 1.5 114.5 67 0.5 234 0.5 558', { label: '1', isStatic: true })
-        const bodyRightTopBookshell = this.matter.add.fromVertices(1387 + 280, 78 + 292.5, '559 506 1 584 1 246.5 123.5 73.5 301 1 443 23.5 559 138 559 506', { label: '1', isStatic: true })
+        const bodyMiddleBookshell = this.matter.add.fromVertices(834.5 + 174, 1376.5 + 157, '0.5 149.5 25 313.5 347.5 313.5 347.5 0.5 54 0.5 9.5 53.5', { label: '1', isStatic: true });
+        const bodyLeftMiddleTable = this.matter.add.fromVertices(63 + 97.5, 1385.5 + 195, '180.5 389 1 389 1 0.5 193.5 0.5 180.5 389', { label: '1', isStatic: true })
+        const bodyLeftMiddleTable2 = this.matter.add.fromVertices(66 + 313, 1288 + 50, '1 1 1 99 625 99 625 1 1 1', { label: `${LABEL_ID.THIRD_KEY}`, isStatic: true })
 
-        const bodyCotel = this.matter.add.fromVertices(348 + 91.5, 1767 + 78.5, '15.5 156.5 1 144 1 40 26 35 51 26.5 68 1.5 74 13.5 82 13.5 92.5 35 176 35 182 112.5 170 156.5 15.5 156.5', { label: '1', isStatic: true })
+        const bodyLeftTopTable = this.matter.add.fromVertices(67 + 216, 601 + 88.5, '1 11.5 1 176 422 176 431 1 1 11.5', { label: '1', isStatic: true })
+        const bodyLeftTopookshell = this.matter.add.fromVertices(53 + 296, 68 + 279.5, '0.5 558 590.5 558 569.5 234 467.5 67 296 1.5 114.5 67 0.5 234 0.5 558', { label: '1', isStatic: true })
+        const bodyRightTopBookshell = this.matter.add.fromVertices(1387 + 280, 78 + 292.5, '559 506 1 584 1 246.5 123.5 73.5 301 1 443 23.5 559 138 559 506', { label: `${LABEL_ID.FOURTH_KEY}`, isStatic: true })
+
+        const bodyCotel = this.matter.add.fromVertices(328 + 91.5, 1717 + 78.5, '15.5 156.5 1 144 1 40 26 35 51 26.5 68 1.5 74 13.5 82 13.5 92.5 35 176 35 182 112.5 170 156.5 15.5 156.5', { label: '1', isStatic: true })
         const bodyRightMiddleBookshel = this.matter.add.fromVertices(1634.5 + 173, 912 + 211, '345.5 421 2.5 421 0.5 0.5 345.5 0.5', { label: '1', isStatic: true })
 
         const bodyDoorBack = this.matter.add.fromVertices(954, 1980, '8 130.5 1 190.5 544.5 190.5 508.5 142.5 422.5 62.5 309 0.5 217 0.5 115.5 56.5', {
@@ -226,12 +229,13 @@ export class GameScene2 extends Phaser.Scene {
         const highlightGraphics = this.add.graphics();
         highlightGraphics.lineStyle(2, 0x06ff01, 1);
 
-        const arrBodies = [bodyRightMiddleBookshel, bodyDoorBack, bodyDoorDown, bodyDoorUp, bodyMiddleBookshell, bodyLeftMiddleTable, bodyLeftTopookshell, bodyRightTopBookshell, bodyCotel];
+        const arrBodies = [bodyLeftTopTable, bodyLeftMiddleTable2, bodyRightMiddleBookshel, bodyDoorBack, bodyDoorDown, bodyDoorUp, bodyMiddleBookshell, bodyLeftMiddleTable, bodyLeftTopookshell, bodyRightTopBookshell, bodyCotel];
 
         this.matterCollision.addOnCollideStart({
             objectA: player,
             objectB: arrBodies,
             callback: function (eventData) {
+                highlightGraphics.clear();
                 this.isInZone = true;
                 this.eventZone = Number(eventData.bodyB.label);
 
@@ -276,13 +280,13 @@ export class GameScene2 extends Phaser.Scene {
 
         //Первый ключ
         this.thirdKey = this.add.image(0, 0, 'thirdKey');
-        this.thirdKey.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
+        this.thirdKey.setDisplaySize(this.cameras.main.width * 0.72, this.cameras.main.height * 0.7);
         this.thirdKey.setVisible(false);
         this.thirdKey.setDepth(2);
 
         //Второй ключ
         this.fourthKey = this.add.image(0, 0, 'fourthKey');
-        this.fourthKey.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
+        this.fourthKey.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.7);
         this.fourthKey.setVisible(false);
         this.fourthKey.setDepth(2);
 
@@ -371,7 +375,7 @@ export class GameScene2 extends Phaser.Scene {
     moveForwardRoom2() {
         this.isInZone = false;
         this.eventZone = null;
-        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE4, 1024, 1840);
+        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE4, 650, 1890);
     }
 
     moveBackRoom() {

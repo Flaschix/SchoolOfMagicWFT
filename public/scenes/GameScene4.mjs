@@ -359,7 +359,7 @@ export class GameScene4 extends Phaser.Scene {
     moveBackRoom() {
         this.isInZone = false;
         this.eventZone = null;
-        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE2, 1024, 800);
+        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE2, 1024, 1250);
     }
 
     showOverlay() {

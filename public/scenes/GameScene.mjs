@@ -247,18 +247,19 @@ export class GameScene extends Phaser.Scene {
         highlightGraphics.setDepth(0);
 
         // Создаем область, через которую игрок не может пройти
-        const bodyCLeftBottomCandel = this.matter.add.fromVertices(56 + 50, 1585 + 147, '81 373 14.5 373 8.5 367 6 225.5 26 203 36 184 28.5 102 1.5 73.5 8.5 35.5 28.5 35.5 36 23.5 43.5 5.5 56 1 62 19.5 64 27.5 62 35.5 81 35.5 91 51.5 99 86.5 62 96 56 184 84.5 218 81 373', { label: '1', isStatic: true })
-        const bodyBookshellMiddle = this.matter.add.fromVertices(702 + 317, 1291 + 258, '484.5 415.5 633.5 415.5 633.5 156.5 477 156.5 477 1 155.5 1 155.5 156.5 0.5 156.5 0.5 426 155.5 426 155.5 475.5 227 515.5 419 515.5 484.5 476.5 484.5 415.5', { label: '1', isStatic: true })
-        const bodyBookshellMiddleRight = this.matter.add.fromVertices(1240 + 271.5, 1551 + 82.5, '0.5 164 542.5 164 542.5 1 0.5 6 0.5 164', { label: '1', isStatic: true })
+        const bodyCLeftBottomCandel = this.matter.add.fromVertices(56 + 50, 1545 + 147, '81 373 14.5 373 8.5 367 6 225.5 26 203 36 184 28.5 102 1.5 73.5 8.5 35.5 28.5 35.5 36 23.5 43.5 5.5 56 1 62 19.5 64 27.5 62 35.5 81 35.5 91 51.5 99 86.5 62 96 56 184 84.5 218 81 373', { label: '1', isStatic: true })
+        const bodyBookshellMiddle = this.matter.add.fromVertices(706 + 319.5, 1435 + 173.5, '1 1 1 254.121 230.5 346 419 346 638 254.121 638 1 1 1', { label: '1', isStatic: true })
+        const bodyBookshellMiddleRight = this.matter.add.fromVertices(1421 + 278, 1544 + 82.5, '1 164 555 164 555 1 1 6 1 164', { label: `${LABEL_ID.FIRST_KEY}`, isStatic: true })
         const bodyTableMiddleLeft = this.matter.add.fromVertices(48 + 56.5, 573 + 272.5, '112.5 544.5 1 544.5 1 1 107 1 112.5 544.5', { label: '1', isStatic: true })
         const bodyBookshellTopLeft = this.matter.add.fromVertices(451 + 183.5, 323 + 130.5, '366.5 260 1 260 7.5 1 366.5 1', { label: '1', isStatic: true })
         const bodyShellMiddle = this.matter.add.fromVertices(1181 + 114, 610 + 166, '1 34 1 292.5 111 331 227.5 299.5 227.5 20.5 93 1 1 34', { label: '1', isStatic: true })
         const bodyBookshellRightTop = this.matter.add.fromVertices(1420 + 201.5, 633 + 126, '402.5 0.5 1 0.5 1 251.5 402.5 251.5 402.5 0.5', { label: '1', isStatic: true })
         const bodyTableMiddleRight = this.matter.add.fromVertices(1896 + 47.5, 756 + 159, '0.5 317.5 94 317.5 94 0.5 0.5 0.5 0.5 317.5', { label: '1', isStatic: true })
         const bodyBonfire = this.matter.add.fromVertices(146 + 106.5, 1674 + 118.5, '136.5 256.5 53.5 256.5 29 245.5 9 233.5 12.5 195 16 167 9 149.5 0.5 131.5 0.5 118.5 5.5 106.5 19 89.5 35.5 76.5 52 69.5 58 51.5 58 24 65.5 13.5 74 7 88 4 110 0.5 129.5 5.5 143.5 16.5 155.5 38.5 162 66 181 71.5 196.5 84.5 209 98 212 112.5 209 122 196.5 131.5 200.5 139.5 200.5 145.5 191 162.5 196.5 186 203 207.5 203 228 188.5 239 170.5 245.5 136.5 256.5', { label: '1', isStatic: true })
-        const bodyDoor = this.matter.add.fromVertices(942 + 86, 483 + 90, '167.5 0.5 1 0.5 1 176 167.5 176', {
+        const bodyDoor = this.matter.add.fromVertices(901.5 + 116, 59 + 115.5, '0.5 57 0.5 230.5 231.5 230.5 231.5 57 183 1 43 1 0.5 57', {
             label: `${LABEL_ID.DOOR_FORWARD_ID}`,
             isStatic: true,
+            isSensor: true
         })
 
         const arrBodies = [bodyBookshellMiddle, bodyBookshellMiddleRight, bodyTableMiddleLeft, bodyBookshellTopLeft, bodyShellMiddle, bodyBookshellRightTop, bodyTableMiddleRight, bodyDoor];
@@ -386,7 +387,8 @@ export class GameScene extends Phaser.Scene {
     moveForwardRoom() {
         this.isInZone = false;
         this.eventZone = null;
-        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE2, 1024, 1770);
+        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE2, 960, 1850);
+        // this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE2, 960, 600);
     }
 
     showOverlay() {
