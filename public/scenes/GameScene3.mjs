@@ -320,14 +320,14 @@ export class GameScene3 extends Phaser.Scene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.emptySign, this.secondKey],
+                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.secondKey],
                         alpha: 1,
                         duration: 500
                     });
                 }
                 else {
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.emptySign, this.secondKey],
+                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.secondKey],
                         alpha: 0,
                         duration: 500,
                         onComplete: () => {
@@ -373,7 +373,7 @@ export class GameScene3 extends Phaser.Scene {
 
     hideOverlay() {
         this.isOverlayVisible = false
-        if (this.eventZone == LABEL_ID.FIVETH_KEY) this.secondKey.setVisible(false);
+        if (this.eventZone == LABEL_ID.SECOND_KEY) this.secondKey.setVisible(false);
         else {
             this.emptySign.setVisible(false);
         }
