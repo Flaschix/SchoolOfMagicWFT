@@ -5,7 +5,10 @@ export const CST = {
         GAMESCENE: "GameScene",
         GAMESCENE2: "GameScene2",
         GAMESCENE3: "GameScene3",
-        GAMESCENE4: "GameScene4"
+        GAMESCENE4: "GameScene4",
+        GAMESCENE5: "GameScene5",
+        GAMESCENE6: "GameScene6",
+        GAMESCENE7: "GameScene7"
     }
 }
 
@@ -13,6 +16,7 @@ export const socket = io();
 
 export const LABEL_ID = {
     DOOR_FORWARD_ID: 11111111,
+    DOOR_FORWARD_ID_2: 11111112,
     DOOR_BACK_ID: 22222222,
     FIRST_KEY: 33333333,
     SECOND_KEY: 44444444,

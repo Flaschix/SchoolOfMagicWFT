@@ -28,9 +28,9 @@ let otherPlayers = {};
 let fullMap = true;
 let moved = false;
 
-export class GameScene3 extends Phaser.Scene {
+export class GameScene7 extends Phaser.Scene {
     constructor() {
-        super({ key: CST.SCENE.GAMESCENE3 });
+        super({ key: CST.SCENE.GAMESCENE7 });
 
         //проверка на то, стоит ли игрок в зоне или нет
         this.isInZone = false;
@@ -50,7 +50,7 @@ export class GameScene3 extends Phaser.Scene {
 
 
         //map
-        this.load.image('map3', './assets/map/forest 3.png');
+        this.load.image('map7', './assets/map/forest 7.png');
     }
 
     create(data) {
@@ -65,7 +65,7 @@ export class GameScene3 extends Phaser.Scene {
         this.mobileFlag = isMobile();
 
         // Добавляем карту
-        this.createMap('map3', MAP_SETTINGS.MAP_FULL3);
+        this.createMap('map7', MAP_SETTINGS.MAP_FULL7);
 
         //Создаём курсор для обработки инпутов пользователя
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -108,9 +108,9 @@ export class GameScene3 extends Phaser.Scene {
         this.mySocket.subscribeSceneSwitched(this, this.scene.key, sceneSwitched)
 
 
-        if (!this.textures.exists(MAP_SETTINGS.MAP_FULL3)) {
+        if (!this.textures.exists(MAP_SETTINGS.MAP_FULL7)) {
 
-            this.loadPlusTexture(MAP_SETTINGS.MAP_FULL3, './assets/map/forest 3_full.png');
+            this.loadPlusTexture(MAP_SETTINGS.MAP_FULL7, './assets/map/forest 7_full.png');
 
             fullMap = false;
         }
@@ -129,8 +129,8 @@ export class GameScene3 extends Phaser.Scene {
     }
 
     createUnWalkedObjects() {
-        const bodyRightWall = this.matter.add.fromVertices(1235.5 + 380, 236 + 911.5, '0.5 1727.5 43.5 1822 759.5 1822 759.5 1 389.5 1 361 48.5 330 103 330 162.5 292.5 186 292.5 243 275.5 276 292.5 319 313.5 359 330 406.5 361 435 422.5 406.5 449 492 389.5 492 313.5 506 252 572.5 252 603.5 275.5 662.5 330 679.5 275.5 800 349 971 275.5 1013.5 292.5 1054 330 1127.5 349 1179.5 401.5 1227 422.5 1269.5 401.5 1348 349 1397.5 252 1431 140.5 1431 43.5 1431 0.5 1445 0.5 1533 0.5 1637 0.5 1727.5', { isStatic: true }, true)
-        const bodyLeftWall = this.matter.add.fromVertices(600, 982, '962 1562.5 942 1812 0.5 1794.5 0.5 0.5 1217 0.5 1198 69 1233.5 111.5 1281 199.5 1269 244.5 1262 346.5 1307 427 1262 555 1179 665 1101 768.5 1101 809 1155.5 844.5 1162.5 944 1262 971.5 1335.5 1031.5 1307 1129 1281 1227 1141 1247.5 962 1247.5 899.5 1197.5 787 1152.5 662 1069.5 617 998.5 453.5 915.5 403.5 855 373 740 318.5 569.5 252 466 202 377.5 233 346.5 278.5 294.5 349 294.5 439.5 235 403.5 173.5 304 111.5 221 90.5 202 90.5 176 126 98 213.5 17 199.5 17 415 31.5 466 57 597 111 665 153.5 829.5 202 855 278.5 971.5 403.5 1096.5 426.5 1227 568.5 1301 633.5 1389 787 1448.5 920.5 1477 962 1562.5', { isStatic: true }, true)
+        const bodyRightWall = this.matter.add.fromVertices(850 + 614, 540 + 822, '1156.5 1570.5 1121.5 1643.5 1227.5 1643.5 1227.5 0.5 1022.5 0.5 916 97.5 916 202 903 313.5 813.5 409 659 476 641.5 511 641.5 578 554 578 466.5 825 423 941.5 341.5 991 152.5 1017.5 88 1017.5 36 1067 1 1113.5 15.5 1267.5 36 1358 73.5 1378.5 123 1442.5 190 1465.5 236.5 1506.5 318 1442.5 379.5 1358 423 1291 466.5 1267.5 519 1308.5 595 1358 702.5 1358 772.5 1378.5 889 1404.5 982 1442.5 1098.5 1465.5 1156.5 1506.5 1156.5 1570.5', { isStatic: true }, true)
+        const bodyLeftWall = this.matter.add.fromVertices(674, 1045, '685.5 1663.5 738 1736 755 1771 10 1736 1 1 1981 1 1981 91.5 1943 91.5 1867.5 91.5 1794.5 109 1684 219.5 1521 219.5 1489 304 1302.5 304 1125 304 1052 455 1008.5 647.5 775.5 697 545.5 723 365 647.5 260.5 586 237 472.5 193.5 400 147 423 83 472.5 83 542.5 193.5 723 117.5 825 237 1037.5 292.5 1162.5 292.5 1232.5 292.5 1328.5 292.5 1398.5 292.5 1477 342 1512 420.5 1564.5 572 1564.5 598 1614 685.5 1663.5', { isStatic: true }, true)
     }
 
     createPlayers(players, cameraMargin) {
@@ -141,7 +141,7 @@ export class GameScene3 extends Phaser.Scene {
 
                 //настраиваем камеру игрока
                 this.cameras.main.startFollow(player);
-                if (this.textures.exists(MAP_SETTINGS.MAP_FULL3)) this.cameras.main.setBounds(cameraMargin.left, cameraMargin.top, this.map.width * MAP_SETTINGS.MAP_SCALE_4_3 + cameraMargin.right, this.map.height * MAP_SETTINGS.MAP_SCALE_4_3 + cameraMargin.bottom);
+                if (this.textures.exists(MAP_SETTINGS.MAP_FULL7)) this.cameras.main.setBounds(cameraMargin.left, cameraMargin.top, this.map.width * MAP_SETTINGS.MAP_SCALE_4_3 + cameraMargin.right, this.map.height * MAP_SETTINGS.MAP_SCALE_4_3 + cameraMargin.bottom);
                 else this.cameras.main.setBounds(cameraMargin.left, cameraMargin.top, this.map.width * MAP_SETTINGS.MAP_SCALE_2 + cameraMargin.right, this.map.height * MAP_SETTINGS.MAP_SCALE_2 + cameraMargin.bottom);
             } else {
                 this.playersController.createOtherPlayer(this, players[id], otherPlayers);
@@ -199,24 +199,13 @@ export class GameScene3 extends Phaser.Scene {
         const highlightGraphics = this.add.graphics();
         highlightGraphics.lineStyle(2, 0x06ff01, 1);
 
-        const bodyDoorLeft = this.matter.add.fromVertices(140, 290 + 175.5, '168.5 335.5 0.5 349.5 0.5 84 147.5 1 292 143', {
-            label: `${LABEL_ID.DOOR_FORWARD_ID}`,
-            isStatic: true,
-            isSensor: true
-        });
-
-        const bodyDoorRight = this.matter.add.fromVertices(1204.5 + 236, 12.5 + 200, '1 280 77 398.5 384.5 369.5 470.5 0.5 134 0.5', {
-            label: `${LABEL_ID.DOOR_FORWARD_ID_2}`,
-            isStatic: true,
-        });
-
-        const bodyDoorBack = this.matter.add.fromVertices(932.5 + 183, 1742 + 154.5, '26 1 1.5 308.5 365 308.5 327.5 1', {
+        const bodyDoorBack = this.matter.add.fromVertices(1615 + 170.5, 1820 + 118, '0.5 1 0.5 235.5 295 235.5 340 159.5 295 75', {
             label: `${LABEL_ID.DOOR_BACK_ID}`,
             isStatic: true,
             isSensor: true
         })
 
-        const arrBodies = [bodyDoorBack, bodyDoorRight, bodyDoorLeft];
+        const arrBodies = [bodyDoorBack];
 
         this.matterCollision.addOnCollideStart({
             objectA: player,
@@ -263,16 +252,6 @@ export class GameScene3 extends Phaser.Scene {
                 player.setVelocity(0);
                 console.log(this.eventZone);
 
-                if (this.eventZone == LABEL_ID.DOOR_FORWARD_ID) {
-                    this.moveForwardRoomLeft();
-                    return;
-                }
-
-                if (this.eventZone == LABEL_ID.DOOR_FORWARD_ID_2) {
-                    this.moveForwardRoomRight();
-                    return;
-                }
-
                 if (this.eventZone == LABEL_ID.DOOR_BACK_ID) {
                     this.moveBackRoom();
                     return;
@@ -285,7 +264,7 @@ export class GameScene3 extends Phaser.Scene {
     moveForwardRoomLeft() {
         this.isInZone = false;
         this.eventZone = null;
-        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE4, 424, 1850);
+        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE4, 1024, 1850);
     }
 
     moveForwardRoomRight() {
@@ -297,7 +276,7 @@ export class GameScene3 extends Phaser.Scene {
     moveBackRoom() {
         this.isInZone = false;
         this.eventZone = null;
-        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE, 1715, 500);
+        this.mySocket.emitSwitchScene(CST.SCENE.GAMESCENE4, 1424, 450);
     }
 
     showSettings(self) {
@@ -361,16 +340,6 @@ export class GameScene3 extends Phaser.Scene {
         if (context.isInZone) {
             player.setVelocity(0);
 
-            if (context.eventZone == LABEL_ID.DOOR_FORWARD_ID) {
-                context.moveForwardRoomLeft();
-                return;
-            }
-
-            if (context.eventZone == LABEL_ID.DOOR_FORWARD_ID_2) {
-                context.moveForwardRoomRight();
-                return;
-            }
-
             if (context.eventZone == LABEL_ID.DOOR_BACK_ID) {
                 context.moveBackRoom();
                 return;
@@ -396,11 +365,11 @@ export class GameScene3 extends Phaser.Scene {
 
 
         if (!fullMap) {
-            if (this.textures.exists(MAP_SETTINGS.MAP_FULL3)) {
+            if (this.textures.exists(MAP_SETTINGS.MAP_FULL7)) {
                 fullMap = true;
                 this.map.setScale(4 / 3, 4 / 3);
 
-                this.map.setTexture(MAP_SETTINGS.MAP_FULL3);
+                this.map.setTexture(MAP_SETTINGS.MAP_FULL7);
                 this.matter.world.setBounds(0, 0, this.map.width * 4 / 3, this.map.height * 4 / 3);
             }
         }
