@@ -53,7 +53,7 @@ export class GameScene extends Phaser.Scene {
 
 
         //map
-        this.load.image('map', './assets/map/library_room_1.png');
+        this.load.image('map', './assets/map/forest 1.png');
 
         //ключи
         this.load.image('firstKey', 'assets/keyFrame/firstKey.png');
@@ -73,7 +73,7 @@ export class GameScene extends Phaser.Scene {
         this.mobileFlag = isMobile();
 
         // Добавляем карту
-        this.createMap();
+        this.createMap('map', MAP_SETTINGS.MAP_FULL1);
 
         //Создаём курсор для обработки инпутов пользователя
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -120,7 +120,7 @@ export class GameScene extends Phaser.Scene {
 
         if (!this.textures.exists(MAP_SETTINGS.MAP_FULL1)) {
 
-            this.loadPlusTexture(MAP_SETTINGS.MAP_FULL1, './assets/map/library_room_1_full.png');
+            this.loadPlusTexture(MAP_SETTINGS.MAP_FULL1, './assets/map/forest 1_full.png');
 
             fullMap = false;
         }
@@ -164,13 +164,13 @@ export class GameScene extends Phaser.Scene {
 
     }
 
-    createMap() {
-        if (this.textures.exists(MAP_SETTINGS.MAP_FULL1)) {
-            this.map = this.add.image(0, 0, MAP_SETTINGS.MAP_FULL1).setOrigin(0, 0);
+    createMap(map, mapFull) {
+        if (this.textures.exists(mapFull)) {
+            this.map = this.add.image(0, 0, mapFull).setOrigin(0, 0);
             this.map.setScale(MAP_SETTINGS.MAP_SCALE_4_3, MAP_SETTINGS.MAP_SCALE_4_3);
             this.matter.world.setBounds(0, 0, this.map.width * MAP_SETTINGS.MAP_SCALE_4_3, this.map.height * MAP_SETTINGS.MAP_SCALE_4_3);
         } else {
-            this.map = this.add.image(0, 0, 'map').setOrigin(0, 0);
+            this.map = this.add.image(0, 0, map).setOrigin(0, 0);
             this.map.setScale(2, 2);
             this.matter.world.setBounds(0, 0, this.map.width * MAP_SETTINGS.MAP_SCALE_2, this.map.height * MAP_SETTINGS.MAP_SCALE_2);
         }
