@@ -58,7 +58,10 @@ export class GameScene6 extends Phaser.Scene {
         this.load.image('stonePanelRight', 'assets/map/stonePanelRight.png');
         this.load.image('leftMiniGameBack', 'assets/overlay/leftMiniGameBack.png');
         this.load.image('leftMiniGameElm', 'assets/overlay/leftMiniGameElm.png');
+        this.load.image('rightMiniGameBack', 'assets/overlay/rightMiniGameBack.png');
+        this.load.image('rightMiniGameElm', 'assets/overlay/rightMiniGameElm.png');
         this.load.image('answer', 'assets/keyFrame/answer.png');
+        this.load.image('answerLeft', 'assets/keyFrame/answerLeft.png');
 
     }
 
@@ -110,6 +113,7 @@ export class GameScene6 extends Phaser.Scene {
         createExitMenu(this, this.leaveGame, this.closeExitMenu, this.mobileFlag);
         createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room, isMobile());
 
+        createGameFieldRight(this, 700, 350);
         createGameFieldLeft(this, 700, 350);
 
         this.createEnterCodeContainer();
@@ -277,6 +281,12 @@ export class GameScene6 extends Phaser.Scene {
         this.answer.setDepth(3);
         this.answer.setAlpha(0); // Начальное значение прозрачности
 
+        this.answerLeft = this.add.image(0, 0, 'answerLeft');
+        this.answerLeft.setDisplaySize(this.cameras.main.width * 0.60, this.cameras.main.height * 0.8);
+        this.answerLeft.setVisible(false);
+        this.answerLeft.setDepth(3);
+        this.answerLeft.setAlpha(0); // Начальное значение прозрачности
+
         this.closeButton = this.add.image(0, 0, 'closeIcon');
         this.closeButton.setDisplaySize(this.overlayBackground.displayWidth * 0.05, this.overlayBackground.displayHeight * 0.07);
         this.closeButton.setInteractive();
@@ -285,6 +295,19 @@ export class GameScene6 extends Phaser.Scene {
         this.closeButton.setAlpha(0); // Начальное значение прозрачности
 
         this.closeButton.on('pointerdown', () => {
+
+            if (this.eventZone == 2) {
+                if (this.answerLeft.visible) {
+                    this.answerLeft.setVisible(false);
+                    this.overlayBackground.setVisible(false)
+                    this.closeButton.setVisible(false);
+                } else {
+                    hideLeftPuzzle(this);
+                }
+                this.isOverlayVisible = !this.isOverlayVisible
+                return;
+            }
+
             this.isOverlayVisible = false;
             this.tweens.add({
                 targets: [this.closeButton, this.overlayBackground, this.answer],
@@ -321,6 +344,12 @@ export class GameScene6 extends Phaser.Scene {
                         return;
                     }
 
+                    if (this.eventZone == 3) {
+                        showRightPuzzle(this);
+                        this.isOverlayVisible = !this.isOverlayVisible
+                        return;
+                    }
+
                     this.showOverlay();
 
                     this.tweens.add({
@@ -331,7 +360,21 @@ export class GameScene6 extends Phaser.Scene {
                 }
                 else {
                     if (this.eventZone == 2) {
-                        hideLeftPuzzle(this);
+                        if (this.answerLeft.visible) {
+                            this.answerLeft.setVisible(false);
+                            this.overlayBackground.setVisible(false)
+                            this.closeButton.setVisible(false);
+                        } else {
+                            hideLeftPuzzle(this);
+                        }
+                        this.isOverlayVisible = !this.isOverlayVisible
+                        return;
+                    }
+
+                    if (this.eventZone == 3) {
+
+                        hideRightPuzzle(this);
+
                         this.isOverlayVisible = !this.isOverlayVisible
                         return;
                     }
@@ -555,6 +598,18 @@ export class GameScene6 extends Phaser.Scene {
 
             if (!context.isOverlayVisible) {
 
+                if (context.eventZone == 2) {
+                    showLeftPuzzle(context);
+                    context.isOverlayVisible = !context.isOverlayVisible
+                    return;
+                }
+
+                if (context.eventZone == 3) {
+                    showRightPuzzle(context);
+                    context.isOverlayVisible = !context.isOverlayVisible
+                    return;
+                }
+
                 context.showOverlay();
 
                 context.tweens.add({
@@ -564,6 +619,19 @@ export class GameScene6 extends Phaser.Scene {
                 });
             }
             else {
+
+                if (context.eventZone == 2) {
+                    if (context.answerLeft.visible) {
+                        context.answerLeft.setVisible(false);
+                        context.overlayBackground.setVisible(false)
+                        context.closeButton.setVisible(false);
+                    } else {
+                        hideLeftPuzzle(this);
+                    }
+                    context.isOverlayVisible = !context.isOverlayVisible
+                    return;
+                }
+
                 context.tweens.add({
                     targets: [context.overlayBackground, context.closeButton, context.enterCodeContainer],
                     alpha: 0,
@@ -669,6 +737,151 @@ function sceneSwitched(self, data) {
 
 
 
+let itemsRight = [];
+let puzzleBackRight;
+
+// Массив, определяющий, какие элементы должны быть повернуты
+let rotatedItemsRight = [
+    [false, false, true],
+    [false, false, true],
+    [true, true, true]
+];
+
+function createGameFieldRight(scene, startX, startY) {
+    const fieldWidth = 720;
+    const fieldHeight = 720;
+    const cols = 3;
+    const rows = 3;
+    const padding = 10; // Отступ между элементами
+    const itemWidth = (fieldWidth - (cols - 1) * padding) / cols;
+    const itemHeight = (fieldHeight - (rows - 1) * padding) / rows;
+
+    puzzleBackRight = scene.add.image(startX, startY, 'rightMiniGameBack');
+    puzzleBackRight.setDisplaySize(itemWidth * 3, itemHeight * 3);
+    puzzleBackRight.setDepth(2);
+    puzzleBackRight.setScrollFactor(0);
+    puzzleBackRight.setAlpha(0);
+    puzzleBackRight.setVisible(false);
+
+    for (let row = 0; row < rows; row++) {
+        itemsRight[row] = [];
+        for (let col = 0; col < cols; col++) {
+            const x = (startX - 190) + col * 170;
+            const y = (startY - 200) + row * 170;
+
+            const item = scene.add.image(x, y, 'rightMiniGameElm');
+            item.setDisplaySize(itemWidth / 5 * 3, itemHeight / 5 * 3);
+            item.setDepth(2);
+            item.setInteractive();
+            item.row = row;
+            item.col = col;
+
+            // Устанавливаем угол поворота только для определённых элементов
+            if (rotatedItemsRight[row][col]) {
+                item.setAngle(-90);
+            }
+
+            item.on('pointerdown', () => rotateItemsRight(scene, row, col));
+            item.setScrollFactor(0);
+            item.setVisible(false);
+            item.setAlpha(0);
+            itemsRight[row][col] = item;
+        }
+    }
+}
+
+function rotateItemsRight(scene, row, col) {
+    // Rotate row
+    for (let c = 0; c < itemsRight[row].length; c++) {
+        scene.tweens.add({
+            targets: itemsRight[row][c],
+            angle: itemsRight[row][c].angle - 90,
+            duration: 300,
+            ease: 'Power2'
+        });
+        rotatedItemsRight[row][c] = !rotatedItemsRight[row][c]; // Меняем значение в массиве
+    }
+
+    // Rotate column
+    for (let r = 0; r < itemsRight.length; r++) {
+        if (r !== row) {
+            scene.tweens.add({
+                targets: itemsRight[r][col],
+                angle: itemsRight[r][col].angle - 90,
+                duration: 300,
+                ease: 'Power2'
+            });
+            rotatedItemsRight[r][col] = !rotatedItemsRight[r][col]; // Меняем значение в массиве
+        }
+    }
+
+    // Проверяем условие победы
+    checkWinConditionRight();
+}
+
+
+function checkWinConditionRight() {
+    for (let row = 0; row < rotatedItemsRight.length; row++) {
+        for (let col = 0; col < rotatedItemsRight[row].length; col++) {
+            if (rotatedItemsRight[row][col]) {
+                return; // Если хотя бы один элемент true, продолжаем игру
+            }
+        }
+    }
+    console.log('win');
+}
+
+function showRightPuzzle(context) {
+    context.tweens.add({
+        targets: [puzzleBackRight],
+        alpha: 1,
+        duration: 500
+    });
+
+    puzzleBackRight.setVisible(true)
+    itemsRight.forEach(items => {
+        items.forEach(item => {
+            context.tweens.add({
+                targets: [item],
+                alpha: 1,
+                duration: 500
+            });
+            item.setVisible(true);
+        })
+    })
+}
+
+function hideRightPuzzle(context) {
+    context.tweens.add({
+        targets: [puzzleBackRight],
+        alpha: 0,
+        duration: 500,
+        onComplete: () => {
+            try {
+                puzzleBackRight.setVisible(false)
+            }
+            catch (e) { }
+        }
+    });
+
+    itemsRight.forEach(items => {
+        items.forEach(item => {
+            context.tweens.add({
+                targets: [item],
+                alpha: 0,
+                duration: 500,
+                onComplete: () => {
+                    try {
+                        item.setVisible(false);
+                    }
+                    catch (e) { }
+                }
+            });
+
+        })
+    })
+}
+
 let itemsLeft = [];
 let puzzleBackLeft;
 
@@ -692,6 +905,7 @@ function createGameFieldLeft(scene, startX, startY) {
     puzzleBackLeft.setDisplaySize(itemWidth * 3, itemHeight * 3);
     puzzleBackLeft.setDepth(2);
     puzzleBackLeft.setScrollFactor(0);
+    puzzleBackLeft.setAlpha(0);
     puzzleBackLeft.setVisible(false);
 
     for (let row = 0; row < rows; row++) {
@@ -712,15 +926,16 @@ function createGameFieldLeft(scene, startX, startY) {
                 item.setAngle(-90);
             }
 
-            item.on('pointerdown', () => rotateItems(scene, row, col));
+            item.on('pointerdown', () => rotateItemsLeft(scene, row, col));
             item.setScrollFactor(0);
             item.setVisible(false);
+            item.setAlpha(0);
             itemsLeft[row][col] = item;
         }
     }
 }
 
-function rotateItems(scene, row, col) {
+function rotateItemsLeft(scene, row, col) {
     // Rotate row
     for (let c = 0; c < itemsLeft[row].length; c++) {
         scene.tweens.add({
@@ -746,11 +961,11 @@ function rotateItems(scene, row, col) {
     }
 
     // Проверяем условие победы
-    checkWinCondition();
+    checkWinConditionLeft(scene);
 }
 
 
-function checkWinCondition() {
+function checkWinConditionLeft(context) {
     for (let row = 0; row < rotatedItemsLeft.length; row++) {
         for (let col = 0; col < rotatedItemsLeft[row].length; col++) {
             if (rotatedItemsLeft[row][col]) {
@@ -759,6 +974,18 @@ function checkWinCondition() {
         }
     }
     console.log('win');
+    hideLeftPuzzle(context);
+
+    context.answerLeft.setAlpha(1);
+    context.overlayBackground.setAlpha(1);
+    context.closeButton.setAlpha(1);
+
+    context.answerLeft.setPosition(context.cameras.main.scrollX + 640, context.cameras.main.scrollY + 360).setVisible(true);
+    context.overlayBackground.setPosition(context.cameras.main.scrollX + 640, context.cameras.main.scrollY + 360).setVisible(true);
+    context.closeButton.setPosition(
+        context.cameras.main.scrollX + 640 + context.overlayBackground.displayWidth / 2 - context.overlayBackground.displayWidth * 0.1 / 2 + 10,
+        context.cameras.main.scrollY + 360 - context.overlayBackground.displayHeight / 2 + context.overlayBackground.displayHeight * 0.1 / 2,
+    ).setVisible(true);
 }
 
 function showLeftPuzzle(context) {
