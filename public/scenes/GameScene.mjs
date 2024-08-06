@@ -316,14 +316,14 @@ export class GameScene extends Phaser.Scene {
         this.firstKey.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
         this.firstKey.setVisible(false);
         this.firstKey.setDepth(2);
-        this.firstKey.setAlpha(0);
+        // this.firstKey.setAlpha(0);
 
         //Второй ключ
         this.secondKey = this.add.image(0, 0, 'secondKey');
         this.secondKey.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
         this.secondKey.setVisible(false);
         this.secondKey.setDepth(2);
-        this.secondKey.setAlpha(0);
+        // this.secondKey.setAlpha(0);
 
         //Текст для пустых
         this.emptySign = this.add.image(0, 0, 'empty');
@@ -369,14 +369,14 @@ export class GameScene extends Phaser.Scene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.emptySign],
+                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.firstKey, this.secondKey],
                         alpha: 1,
                         duration: 500
                     });
                 }
                 else {
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.emptySign],
+                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.firstKey, this.secondKey],
                         alpha: 0,
                         duration: 500,
                         onComplete: () => {
