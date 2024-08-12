@@ -39,7 +39,7 @@ export class SocketWorker {
 
     emitPlayerReconnect(newPlayerSettings) {
         this.socket.emit('playerReconnect', newPlayerSettings);
-    }
+    } zz
 
     emitPlayerMovement(sceneKey, playerInfo) {
         const currentTime = Date.now();

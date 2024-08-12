@@ -62,6 +62,7 @@ export class GameScene6 extends Phaser.Scene {
         this.load.image('rightMiniGameElm', 'assets/overlay/rightMiniGameElm.png');
         this.load.image('answer', 'assets/keyFrame/answer.png');
         this.load.image('answerLeft', 'assets/keyFrame/answerLeft.png');
+        this.load.image('answerRight', 'assets/keyFrame/answerRight.png');
 
     }
 
@@ -282,10 +283,16 @@ export class GameScene6 extends Phaser.Scene {
         this.answer.setAlpha(0); // Начальное значение прозрачности
 
         this.answerLeft = this.add.image(0, 0, 'answerLeft');
-        this.answerLeft.setDisplaySize(this.cameras.main.width * 0.60, this.cameras.main.height * 0.8);
+        this.answerLeft.setDisplaySize(this.cameras.main.width * 0.60, this.cameras.main.height * 0.7);
         this.answerLeft.setVisible(false);
         this.answerLeft.setDepth(3);
         this.answerLeft.setAlpha(0); // Начальное значение прозрачности
+
+        this.answerRight = this.add.image(0, 0, 'answerRight');
+        this.answerRight.setDisplaySize(this.cameras.main.width * 0.60, this.cameras.main.height * 0.7);
+        this.answerRight.setVisible(false);
+        this.answerRight.setDepth(3);
+        this.answerRight.setAlpha(0); // Начальное значение прозрачности
 
         this.closeButton = this.add.image(0, 0, 'closeIcon');
         this.closeButton.setDisplaySize(this.overlayBackground.displayWidth * 0.05, this.overlayBackground.displayHeight * 0.07);
@@ -303,6 +310,18 @@ export class GameScene6 extends Phaser.Scene {
                     this.closeButton.setVisible(false);
                 } else {
                     hideLeftPuzzle(this);
+                }
+                this.isOverlayVisible = !this.isOverlayVisible
+                return;
+            }
+
+            if (this.eventZone == 3) {
+                if (this.answerRight.visible) {
+                    this.answerRight.setVisible(false);
+                    this.overlayBackground.setVisible(false)
+                    this.closeButton.setVisible(false);
+                } else {
+                    hideRightPuzzle(this);
                 }
                 this.isOverlayVisible = !this.isOverlayVisible
                 return;
@@ -372,9 +391,13 @@ export class GameScene6 extends Phaser.Scene {
                     }
 
                     if (this.eventZone == 3) {
-
-                        hideRightPuzzle(this);
-
+                        if (this.answerRight.visible) {
+                            this.answerRight.setVisible(false);
+                            this.overlayBackground.setVisible(false)
+                            this.closeButton.setVisible(false);
+                        } else {
+                            hideRightPuzzle(this);
+                        }
                         this.isOverlayVisible = !this.isOverlayVisible
                         return;
                     }
@@ -632,6 +655,18 @@ export class GameScene6 extends Phaser.Scene {
                     return;
                 }
 
+                if (context.eventZone == 3) {
+                    if (context.answerRight.visible) {
+                        context.answerRight.setVisible(false);
+                        context.overlayBackground.setVisible(false)
+                        context.closeButton.setVisible(false);
+                    } else {
+                        hideLeftPuzzle(this);
+                    }
+                    context.isOverlayVisible = !context.isOverlayVisible
+                    return;
+                }
+
                 context.tweens.add({
                     targets: [context.overlayBackground, context.closeButton, context.enterCodeContainer],
                     alpha: 0,
@@ -816,11 +851,11 @@ function rotateItemsRight(scene, row, col) {
     }
 
     // Проверяем условие победы
-    checkWinConditionRight();
+    checkWinConditionRight(scene);
 }
 
 
-function checkWinConditionRight() {
+function checkWinConditionRight(context) {
     for (let row = 0; row < rotatedItemsRight.length; row++) {
         for (let col = 0; col < rotatedItemsRight[row].length; col++) {
             if (rotatedItemsRight[row][col]) {
@@ -829,6 +864,19 @@ function checkWinConditionRight() {
         }
     }
     console.log('win');
+
+    hideRightPuzzle(context);
+
+    context.answerRight.setAlpha(1);
+    context.overlayBackground.setAlpha(1);
+    context.closeButton.setAlpha(1);
+
+    context.answerRight.setPosition(context.cameras.main.scrollX + 640, context.cameras.main.scrollY + 360).setVisible(true);
+    context.overlayBackground.setPosition(context.cameras.main.scrollX + 640, context.cameras.main.scrollY + 360).setVisible(true);
+    context.closeButton.setPosition(
+        context.cameras.main.scrollX + 640 + context.overlayBackground.displayWidth / 2 - context.overlayBackground.displayWidth * 0.1 / 2 + 10,
+        context.cameras.main.scrollY + 360 - context.overlayBackground.displayHeight / 2 + context.overlayBackground.displayHeight * 0.1 / 2,
+    ).setVisible(true);
 }
 
 function showRightPuzzle(context) {
