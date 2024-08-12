@@ -333,14 +333,14 @@ export class GameScene3 extends Phaser.Scene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.emptySign, this.clueKey, this.fiverthKey],
+                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.clueKey, this.fiverthKey],
                         alpha: 1,
                         duration: 500
                     });
                 }
                 else {
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.emptySign, this.clueKey, this.fiverthKey],
+                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.clueKey, this.fiverthKey],
                         alpha: 0,
                         duration: 500,
                         onComplete: () => {
@@ -402,6 +402,7 @@ export class GameScene3 extends Phaser.Scene {
         self.avatarDialog.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
         self.avatarDialog.setVisible(true);
         self.isOverlayVisible = true
+        self.exitContainer.setVisible(false);
         player.setVelocity(0);
     }
 
@@ -409,6 +410,7 @@ export class GameScene3 extends Phaser.Scene {
         self.exitContainer.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
         self.exitContainer.setVisible(true);
         self.isOverlayVisible = true
+        self.avatarDialog.setVisible(false);
         player.setVelocity(0);
     }
 

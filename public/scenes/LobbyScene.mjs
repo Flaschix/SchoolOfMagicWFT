@@ -173,7 +173,7 @@ export class LobbyScene extends Phaser.Scene {
         </div>
         <label id="incorrectName">Incorrect name
 *the name must be 1-12 characters</label>
-        <input type="image" src="./assets/button/join.png" id="joinBtn">
+        <input type="image" src="./assets/button/join3.png" id="joinBtn">
         <input type="image" src="./assets/button/back.png" id="backBtn">
     </div>
             `);
@@ -303,7 +303,7 @@ export class LobbyScene extends Phaser.Scene {
         this.createJoinRoomContainer();
 
         // this.createAvatarDialog();
-        createAvatarDialog(this, this.avatartFinishEditing, this.closeAvatarDialog, null, isMobile());
+        createAvatarDialog(this, this.avatartFinishEditing, this.closeAvatarDialog, null, isMobile(), 'join3');
 
         this.createNewSpaceContainer();
 
