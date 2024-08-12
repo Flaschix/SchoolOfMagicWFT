@@ -303,7 +303,7 @@ export class LobbyScene extends Phaser.Scene {
         this.createJoinRoomContainer();
 
         // this.createAvatarDialog();
-        createAvatarDialog(this, this.avatartFinishEditing, this.closeAvatarDialog, null, isMobile());
+        createAvatarDialog(this, this.avatartFinishEditing, this.closeAvatarDialog, null, isMobile(), 'join3');
 
         this.createNewSpaceContainer();
 

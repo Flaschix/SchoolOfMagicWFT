@@ -274,7 +274,7 @@ export class GameScene4 extends Phaser.Scene {
 
         //Пятый ключ
         this.fiverthKey = this.add.image(0, 0, 'fiverthKey');
-        this.fiverthKey.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
+        this.fiverthKey.setDisplaySize(this.cameras.main.width * 0.60, this.cameras.main.height * 0.63);
         this.fiverthKey.setVisible(false);
         this.fiverthKey.setDepth(2);
 
@@ -409,6 +409,7 @@ export class GameScene4 extends Phaser.Scene {
         self.avatarDialog.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
         self.avatarDialog.setVisible(true);
         self.isOverlayVisible = true
+        self.exitContainer.setVisible(false);
         player.setVelocity(0);
     }
 
@@ -416,6 +417,7 @@ export class GameScene4 extends Phaser.Scene {
         self.exitContainer.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
         self.exitContainer.setVisible(true);
         self.isOverlayVisible = true
+        self.avatarDialog.setVisible(false);
         player.setVelocity(0);
     }
 

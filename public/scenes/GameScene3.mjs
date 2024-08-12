@@ -139,6 +139,9 @@ export class GameScene3 extends Phaser.Scene {
         const bodyRightStair = this.matter.add.fromVertices(1107 + 20.5, 735 + 303.5, '40 1 9.1039 1 1 606 40 606 40 1', { isStatic: true }, true);
         const bodyLeftStair = this.matter.add.fromVertices(901.5 + 21, 744 + 304.5, '32.6049 1 1 1 1 608 41 608 32.6049 1', { isStatic: true }, true);
         const bodyRightRightStait = this.matter.add.fromVertices(264.5 + 15, 744 + 319, '29 1 1 1 6.40351 637 29 637 29 1', { isStatic: true }, true);
+        const rightMinWall = this.matter.add.fromVertices(1114 + 406, 721 + 15, '1 1 1 29.5 811.5 29.5 811.5 1', { isStatic: true }, true)
+        const leftMinWall = this.matter.add.fromVertices(263 + 336, 721 + 15, '1 29.5 671 29.5 671 1 1 1', { isStatic: true }, true)
+        const leftShell = this.matter.add.fromVertices(520 + 83, 1022 + 139, '1 1 1 277.5 165.5 277.5 165.5 1', { isStatic: true }, true)
     }
 
     createPlayers(players, cameraMargin) {
@@ -214,6 +217,8 @@ export class GameScene3 extends Phaser.Scene {
         const bodyTopRightShell1 = this.matter.add.fromVertices(1379.5 + 128, 203.5 + 206.5, '255.5 412 0.5 412 0.5 0.5 255.5 0.5 255.5 412', { label: `${LABEL_ID.SECOND_KEY}`, isStatic: true })
         const bodyTopRightShell2 = this.matter.add.fromVertices(1641 + 142, 206.5 + 206, '283.5 0.5 1 0.5 1 411.5 283.5 411.5 283.5 0.5', { label: '1', isStatic: true })
         const bodyKamin = this.matter.add.fromVertices(385.5 + 102.5, 345.5 + 70.5, '204 140 14 140 0.5 140 0.5 0.5 204 0.5 204 140', { label: '1', isStatic: true })
+        const bodyMiddleLeftTable = this.matter.add.fromVertices(519 + 86, 1298.5 + 79, '1 6.5 1 157.5 170.5 157.5 164.5 1.5', { label: '1', isStatic: true })
+
 
         const bodyDoorBack = this.matter.add.fromVertices(942 + 80, 1900 + 74, '8 130.5 1 190.5 544.5 190.5 508.5 142.5 422.5 62.5 309 0.5 217 0.5 115.5 56.5', {
             label: `${LABEL_ID.DOOR_BACK_ID}`,
@@ -221,7 +226,7 @@ export class GameScene3 extends Phaser.Scene {
             isSensor: true
         })
 
-        const arrBodies = [bodyKamin, bodyTopRightShell2, bodyTopRightShell1, bodyMiddleRightShell2, bodyMiddleRightShell1, bodyMiddeleRightShell, bodyMiddleTable, bodyDoorBack];
+        const arrBodies = [bodyKamin, bodyMiddleLeftTable, bodyTopRightShell2, bodyTopRightShell1, bodyMiddleRightShell2, bodyMiddleRightShell1, bodyMiddeleRightShell, bodyMiddleTable, bodyDoorBack];
 
         this.matterCollision.addOnCollideStart({
             objectA: player,
@@ -272,7 +277,7 @@ export class GameScene3 extends Phaser.Scene {
 
         //Пятый ключ
         this.secondKey = this.add.image(0, 0, 'secondKey');
-        this.secondKey.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
+        this.secondKey.setDisplaySize(this.cameras.main.width * 0.60, this.cameras.main.height * 0.63);
         this.secondKey.setVisible(false);
         this.secondKey.setDepth(2);
 
@@ -385,6 +390,7 @@ export class GameScene3 extends Phaser.Scene {
         self.avatarDialog.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
         self.avatarDialog.setVisible(true);
         self.isOverlayVisible = true
+        self.exitContainer.setVisible(false);
         player.setVelocity(0);
     }
 
@@ -392,6 +398,7 @@ export class GameScene3 extends Phaser.Scene {
         self.exitContainer.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
         self.exitContainer.setVisible(true);
         self.isOverlayVisible = true
+        self.avatarDialog.setVisible(false);
         player.setVelocity(0);
     }
 
