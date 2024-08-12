@@ -44,12 +44,6 @@ export class GameScene2 extends Phaser.Scene {
         this.isOverlayVisible = false;
     }
 
-    init() {
-        this.playersController = new PlayersController();
-        this.mySocket = new SocketWorker(socket);
-        this.mySocket.subscribeNewPlayer(this, this.scene.key, otherPlayers, this.playersController.createOtherPlayer);
-    }
-
     preload() {
         this.loding = new AnimationControl(AnimationControl.LOADING);
         this.loding.addLoadOnScreen(this, 1280 / 2, 720 / 2, 0.3, 0.3);
@@ -59,13 +53,13 @@ export class GameScene2 extends Phaser.Scene {
     }
 
     create(data) {
-        // this.mySocket = new SocketWorker(socket);
+        this.mySocket = new SocketWorker(socket);
 
         const { players } = data;
 
         this.loding.deleteLoadFromScreen(this);
 
-        // this.playersController = new PlayersController();
+        this.playersController = new PlayersController();
 
         this.mobileFlag = isMobile();
 
@@ -107,7 +101,7 @@ export class GameScene2 extends Phaser.Scene {
         createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room, isMobile());
 
         //Подключение слушателей
-        // this.mySocket.subscribeNewPlayer(this, this.scene.key, otherPlayers, this.playersController.createOtherPlayer);
+        this.mySocket.subscribeNewPlayer(this, this.scene.key, otherPlayers, this.playersController.createOtherPlayer);
         this.mySocket.subscribePlayerMoved(this, this.scene.key, this.checkOtherPlayer);
         this.mySocket.subscribePlayerDisconected(this.deletePlayer);
         this.mySocket.subscribeSceneSwitched(this, this.scene.key, sceneSwitched)
