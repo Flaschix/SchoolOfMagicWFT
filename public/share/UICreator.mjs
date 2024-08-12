@@ -118,11 +118,12 @@ export function createExitMenu(self, eventLeaveBtn, eventCloseBtn, isMobile) {
     self.exitContainer.setVisible(false);
 }
 
-export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, isMobile) {
+export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, isMobile, nameButton) {
     let avatars;
     let nameInput;
     let nameError;
     let roomCode;
+    if (nameButton == null) nameButton = 'finishEditing';
     if (isMobile) {
         self.avatarDialog = self.add.dom(self.cameras.main.width / 2, self.cameras.main.height / 2).createFromHTML(`
            <div id="avatarDialogGameMobile">
@@ -148,7 +149,7 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
     </div>
     <label id="incorrectNameMobile">Incorrect name
 *the name must be 1-12 characters</label>
-    <input type="image" src="./assets/button/finishEditing.png" id="joinBtn">
+    <input type="image" src="./assets/button/${nameButton}.png" id="joinBtn">
     <input type="image" src="./assets/button/back.png" id="backBtn">
 </div>
 </div>
@@ -180,7 +181,7 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
                 </div>
                 <label id="incorrectName">Incorrect name
             *the name must be 1-12 characters</label>
-                <input type="image" src="./assets/button/finishEditing.png" id="joinBtn">
+                <input type="image" src="./assets/button/${nameButton}.png" id="joinBtn">
                 <input type="image" src="./assets/button/back.png" id="backBtn">
             </div>
                     `);
