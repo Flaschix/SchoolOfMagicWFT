@@ -101,7 +101,7 @@ export class GameScene2 extends Phaser.Scene {
         createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room, isMobile());
 
         //Подключение слушателей
-        this.mySocket.subscribeExistedPlayers(this.createOtherPlayersTest);
+        this.mySocket.subscribeExistedPlayers(this, this.createOtherPlayersTest);
         this.mySocket.subscribeNewPlayer(this, this.scene.key, otherPlayers, this.playersController.createOtherPlayer);
         this.mySocket.subscribePlayerMoved(this, this.scene.key, this.checkOtherPlayer);
         this.mySocket.subscribePlayerDisconected(this.deletePlayer);
@@ -153,10 +153,10 @@ export class GameScene2 extends Phaser.Scene {
         });
     }
 
-    createOtherPlayersTest(players) {
+    createOtherPlayersTest(context, players) {
         Object.keys(players).forEach((id) => {
             if (!(id === socket.id) && otherPlayers[id] == null) {
-                this.playersController.createOtherPlayer(this, players[id], otherPlayers);
+                context.playersController.createOtherPlayer(context, players[id], otherPlayers);
                 console.log(players[id]);
             }
         });

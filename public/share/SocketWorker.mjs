@@ -33,9 +33,9 @@ export class SocketWorker {
         });
     }
 
-    subscribeExistedPlayers(event) {
+    subscribeExistedPlayers(context, event) {
         this.socket.on('exitstedPlayers', (players) => {
-            event(players);
+            event(context, players);
         });
     }
 
