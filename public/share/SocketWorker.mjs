@@ -33,13 +33,19 @@ export class SocketWorker {
         });
     }
 
+    subscribeExistedPlayers(event) {
+        this.socket.on('exitstedPlayers', (players) => {
+            event(players);
+        });
+    }
+
     emitSwitchScene(sceneToSwitch, startX, startY) {
         this.socket.emit('switchScene', sceneToSwitch, startX, startY);
     }
 
     emitPlayerReconnect(newPlayerSettings) {
         this.socket.emit('playerReconnect', newPlayerSettings);
-    } zz
+    }
 
     emitPlayerMovement(sceneKey, playerInfo) {
         const currentTime = Date.now();
@@ -49,9 +55,14 @@ export class SocketWorker {
         }
     }
 
+    emitGetPlayers() {
+        this.socket.emit('getPlayers', null);
+    }
+
     unSubscribeAllListeners(sceneKey) {
         this.socket.removeAllListeners('playerDisconnected');
         this.socket.removeAllListeners('sceneSwitched');
+        this.socket.removeAllListeners('exitstedPlayers');
         this.socket.removeAllListeners(`newPlayer:${sceneKey}`);
         this.socket.removeAllListeners(`playerMoved:${sceneKey}`);
     }

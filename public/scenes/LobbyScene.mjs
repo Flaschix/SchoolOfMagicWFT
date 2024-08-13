@@ -32,7 +32,6 @@ export class LobbyScene extends Phaser.Scene {
         this.load.image('pressX', 'assets/icon/pressX.png');
         this.load.image('closeIcon', 'assets/icon/closeIcon.png');
 
-        this.load.image('empty', 'assets/keyFrame/Empty.png')
         this.load.image('overlayBackground', 'assets/overlay/overlayBackground.png');
 
         this.load.image('joystickBase', 'assets/joystick/joystick-back.png');
