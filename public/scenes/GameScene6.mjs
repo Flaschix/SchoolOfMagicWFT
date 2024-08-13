@@ -120,10 +120,13 @@ export class GameScene6 extends Phaser.Scene {
         this.createEnterCodeContainer();
 
         //Подключение слушателей
+        this.mySocket.subscribeExistedPlayers(this, this.createOtherPlayersTest);
         this.mySocket.subscribeNewPlayer(this, this.scene.key, otherPlayers, this.playersController.createOtherPlayer);
         this.mySocket.subscribePlayerMoved(this, this.scene.key, this.checkOtherPlayer);
         this.mySocket.subscribePlayerDisconected(this.deletePlayer);
         this.mySocket.subscribeSceneSwitched(this, this.scene.key, sceneSwitched)
+
+        this.mySocket.emitGetPlayers();
 
 
         if (!this.textures.exists(MAP_SETTINGS.MAP_FULL6)) {
@@ -166,6 +169,15 @@ export class GameScene6 extends Phaser.Scene {
                 else this.cameras.main.setBounds(cameraMargin.left, cameraMargin.top, this.map.width * MAP_SETTINGS.MAP_SCALE_2 + cameraMargin.right, this.map.height * MAP_SETTINGS.MAP_SCALE_2 + cameraMargin.bottom);
             } else {
                 this.playersController.createOtherPlayer(this, players[id], otherPlayers);
+            }
+        });
+    }
+
+    createOtherPlayersTest(context, players) {
+        Object.keys(players).forEach((id) => {
+            if (!(id === socket.id) && otherPlayers[id] == null) {
+                context.playersController.createOtherPlayer(context, players[id], otherPlayers);
+                console.log(players[id]);
             }
         });
     }
