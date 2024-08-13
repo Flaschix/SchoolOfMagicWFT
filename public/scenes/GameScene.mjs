@@ -233,9 +233,11 @@ export class GameScene extends Phaser.Scene {
                 },
                 onComplete: function () {
                     // Проверяем, нужно ли остановить анимацию
-                    if (!player.isMoving) {
-                        player.anims.stop();
-                    }
+                    try {
+                        if (!player.isMoving) {
+                            player.anims.stop();
+                        }
+                    } catch (e) { };
                 }
             });
         }
