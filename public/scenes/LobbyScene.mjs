@@ -108,6 +108,26 @@ export class LobbyScene extends Phaser.Scene {
                     inputs[index + 1].focus();
                 }
             });
+
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Backspace' && input.value.length === 0 && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+
+            input.addEventListener('paste', (event) => {
+                event.preventDefault();
+                const pasteData = (event.clipboardData || window.clipboardData).getData('text');
+                const pasteArray = pasteData.split('').slice(0, inputs.length);
+
+                pasteArray.forEach((char, i) => {
+                    inputs[i].value = char;
+                });
+
+                if (pasteArray.length < inputs.length) {
+                    inputs[pasteArray.length].focus();
+                }
+            });
         });
 
         const joinRoomConnect = document.getElementById('join-room-connect');

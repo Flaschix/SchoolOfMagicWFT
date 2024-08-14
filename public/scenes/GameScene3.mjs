@@ -104,10 +104,13 @@ export class GameScene3 extends Phaser.Scene {
         createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room, isMobile());
 
         //Подключение слушателей
+        this.mySocket.subscribeExistedPlayers(this, this.createOtherPlayersTest);
         this.mySocket.subscribeNewPlayer(this, this.scene.key, otherPlayers, this.playersController.createOtherPlayer);
         this.mySocket.subscribePlayerMoved(this, this.scene.key, this.checkOtherPlayer);
         this.mySocket.subscribePlayerDisconected(this.deletePlayer);
         this.mySocket.subscribeSceneSwitched(this, this.scene.key, sceneSwitched)
+
+        this.mySocket.emitGetPlayers();
 
 
         if (!this.textures.exists(MAP_SETTINGS.MAP_FULL3)) {
@@ -152,6 +155,15 @@ export class GameScene3 extends Phaser.Scene {
         });
     }
 
+    createOtherPlayersTest(context, players) {
+        Object.keys(players).forEach((id) => {
+            if (!(id === socket.id) && otherPlayers[id] == null) {
+                context.playersController.createOtherPlayer(context, players[id], otherPlayers);
+                console.log(players[id]);
+            }
+        });
+    }
+
     checkOtherPlayer(self, playerInfo) {
         if (otherPlayers[playerInfo.id]) {
             const player = otherPlayers[playerInfo.id];
@@ -180,9 +192,11 @@ export class GameScene3 extends Phaser.Scene {
                 },
                 onComplete: function () {
                     // Проверяем, нужно ли остановить анимацию
-                    if (!player.isMoving) {
-                        player.anims.stop();
-                    }
+                    try {
+                        if (!player.isMoving) {
+                            player.anims.stop();
+                        }
+                    } catch (e) { };
                 }
             });
         }
