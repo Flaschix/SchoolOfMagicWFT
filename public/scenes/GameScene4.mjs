@@ -110,10 +110,13 @@ export class GameScene4 extends Phaser.Scene {
         this.createEnterCodeContainer();
 
         //Подключение слушателей
+        this.mySocket.subscribeExistedPlayers(this, this.createOtherPlayersTest);
         this.mySocket.subscribeNewPlayer(this, this.scene.key, otherPlayers, this.playersController.createOtherPlayer);
         this.mySocket.subscribePlayerMoved(this, this.scene.key, this.checkOtherPlayer);
         this.mySocket.subscribePlayerDisconected(this.deletePlayer);
         this.mySocket.subscribeSceneSwitched(this, this.scene.key, sceneSwitched)
+
+        this.mySocket.emitGetPlayers();
 
 
         if (!this.textures.exists(MAP_SETTINGS.MAP_FULL4)) {
@@ -159,6 +162,15 @@ export class GameScene4 extends Phaser.Scene {
         });
     }
 
+    createOtherPlayersTest(context, players) {
+        Object.keys(players).forEach((id) => {
+            if (!(id === socket.id) && otherPlayers[id] == null) {
+                context.playersController.createOtherPlayer(context, players[id], otherPlayers);
+                console.log(players[id]);
+            }
+        });
+    }
+
     checkOtherPlayer(self, playerInfo) {
         if (otherPlayers[playerInfo.id]) {
             const player = otherPlayers[playerInfo.id];
@@ -187,9 +199,11 @@ export class GameScene4 extends Phaser.Scene {
                 },
                 onComplete: function () {
                     // Проверяем, нужно ли остановить анимацию
-                    if (!player.isMoving) {
-                        player.anims.stop();
-                    }
+                    try {
+                        if (!player.isMoving) {
+                            player.anims.stop();
+                        }
+                    } catch (e) { };
                 }
             });
         }
@@ -493,6 +507,25 @@ export class GameScene4 extends Phaser.Scene {
             input.addEventListener('input', () => {
                 if (input.value.length === 1 && index < inputs.length - 1) {
                     inputs[index + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Backspace' && input.value.length === 0 && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+
+            input.addEventListener('paste', (event) => {
+                event.preventDefault();
+                const pasteData = (event.clipboardData || window.clipboardData).getData('text');
+                const pasteArray = pasteData.split('').slice(0, inputs.length);
+
+                pasteArray.forEach((char, i) => {
+                    inputs[i].value = char;
+                });
+
+                if (pasteArray.length < inputs.length) {
+                    inputs[pasteArray.length].focus();
                 }
             });
         });

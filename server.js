@@ -130,6 +130,9 @@ io.on('connection', (socket) => {
                 }
             });
 
+            socket.on(`getPlayers`, () => {
+                socket.emit('exitstedPlayers', rooms[roomId].levels[socket.currentLevel]);
+            });
 
             socket.on('switchScene', (newScene, posX, posY) => {
                 let avatarCur = rooms[roomId].levels[socket.currentLevel][socket.id].character;
