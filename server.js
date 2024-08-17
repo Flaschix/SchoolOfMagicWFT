@@ -55,7 +55,7 @@ io.on('connection', (socket) => {
         try {
             await redisClient.set(roomCode, roomId, { EX: 400 }); // Устанавливаем срок действия 24 часа 86400
             rooms[roomId] = { levels: {} };
-            socket.join(roomId);
+            // socket.join(roomId);
             socket.emit('roomCreated', roomCode);
             console.log(`Room created with code: ${roomCode}`);
         } catch (err) {
@@ -88,14 +88,19 @@ io.on('connection', (socket) => {
             }
 
             if (!rooms[roomId]) {
-                rooms[roomId] = { levels: {} };
+                rooms[roomId] = { levels: {}, fold: [] };
             }
 
             if (!rooms[roomId].levels['GameScene']) {
                 rooms[roomId].levels['GameScene'] = {};
             }
 
-            // socket.join(roomId);
+            if (!rooms[roomId].fold) {
+                rooms[roomId].fold = [];
+            }
+
+
+            socket.join(roomId);
             socket.roomId = roomId;
             socket.currentLevel = 'GameScene';
 
@@ -131,6 +136,17 @@ io.on('connection', (socket) => {
 
             socket.on(`getPlayers`, () => {
                 socket.emit('exitstedPlayers', rooms[roomId].levels[socket.currentLevel]);
+            });
+
+            socket.on(`getFold`, () => {
+                socket.emit('takeFold', rooms[roomId].fold);
+            });
+
+            socket.on(`emitAddNewImg`, (img) => {
+                console.log(rooms[roomId].fold);
+                rooms[roomId].fold.push(img)
+                console.log(rooms[roomId].fold);
+                io.to(`${roomId}`).emit('takeFold', rooms[roomId].fold);
             });
 
             socket.on('switchScene', (newScene, posX, posY) => {

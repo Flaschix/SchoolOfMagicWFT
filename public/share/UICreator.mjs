@@ -55,12 +55,13 @@ export function createUILeftMobile(context, settingsImg, exitImg, settingX, sett
     });
 }
 
-export function createUI(self, eventSettingsBtn, eventExitBtn) {
+export function createUI(self, eventSettingsBtn, eventExitBtn, eventFoldBtn) {
 
     const uiContainer = self.add.dom(50, self.cameras.main.height / 2).createFromHTML(`
             <div class="container">
     <img class="game-logo" src="./assets/icon/logo.png" alt="Company Logo">
     <div class="game-buttons">
+        <input class="gamebutton" id="playerFold" type="image" src="./assets/icon/fold.png" alt="Кнопка «input»">
         <input class="gamebutton" id="settingsButton" type="image" src="./assets/icon/settings.png" alt="Кнопка «input»">
         <input class="gamebutton" id="exitButton" type="image" src="./assets/icon/exit.png" alt="Кнопка «input»">
     </div>
@@ -70,6 +71,11 @@ export function createUI(self, eventSettingsBtn, eventExitBtn) {
     // Добавляем обработчик события для кнопки настроек
     const settingsButton = document.getElementById('settingsButton');
     const exitButton = document.getElementById('exitButton');
+    const playerFold = document.getElementById('playerFold');
+
+    playerFold.addEventListener('click', () => {
+        eventFoldBtn(self);
+    });
 
     settingsButton.addEventListener('click', () => {
         eventSettingsBtn(self);
@@ -123,7 +129,6 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
     let nameInput;
     let nameError;
     let roomCode;
-    console.log(nameButton);
     if (nameButton == null) nameButton = 'finishEditing';
     if (isMobile) {
         self.avatarDialog = self.add.dom(self.cameras.main.width / 2, self.cameras.main.height / 2).createFromHTML(`
@@ -159,7 +164,6 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
         nameInput = document.getElementById('usernameInputMobile');
         nameError = document.getElementById('incorrectNameMobile');
         roomCode = document.getElementById('roomIdMobile');
-        self.avatarDialog.setOrigin(0.5, 0.5);
     } else {
         self.avatarDialog = self.add.dom(self.cameras.main.width / 2, self.cameras.main.height / 2).createFromHTML(`
             <div id="avatarDialogGame">
@@ -190,7 +194,6 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
         nameInput = document.getElementById('usernameInput');
         nameError = document.getElementById('incorrectName');
         roomCode = document.getElementById('roomId');
-        self.avatarDialog.setOrigin(0.5, 0.5);
     }
     self.avatarDialog.setVisible(false);
 
