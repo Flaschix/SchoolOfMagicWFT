@@ -55,7 +55,6 @@ export class GameScene3 extends Phaser.Scene {
 
         //map
         this.load.image('map3', './assets/map/library_room_3.png');
-        this.load.image('fiverthKey', 'assets/keyFrame/fiverthKey.png');
         this.load.image('clueKey', 'assets/keyFrame/clueKey.png');
     }
 
@@ -82,7 +81,7 @@ export class GameScene3 extends Phaser.Scene {
         if (this.mobileFlag) {
             createJoystick(this, 'joystickBase', 'joystickThumb', this.isDragging, 160, this.cameras.main.height - 120);
             createMobileXButton(this, 'touchButton', 'joystickBase', this.cameras.main.width - 150, this.cameras.main.height - 120, this.itemInteract);
-            createUILeftMobile(this, 'settingsMobile', 'exitMobile', 90, 70, this.cameras.main.width - 90, 70, this.showSettings, this.showExitMenu);
+            createUILeftMobile(this, 'settingsMobile', 'exitMobile', 'fold', 90, 70, this.cameras.main.width - 90, 70, this.showSettings, this.showExitMenu, 90, 200, this.showFold);
             this.createPlayers(players, CAMERA_MARGIN_MOBILE);
         } else {
             createUI(this, this.showSettings, this.showExitMenu, this.showFold);
@@ -424,6 +423,7 @@ export class GameScene3 extends Phaser.Scene {
 
     createFold() {
         this.foldKeys = this.add.image(this.cameras.main.width - 636, this.cameras.main.height / 2, 'firstKey');
+        this.foldKeys = this.add.image(this.cameras.main.width - 636, this.cameras.main.height / 2 + 30, 'firstKey');
         this.foldKeys.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
         this.foldKeys.setDepth(2);
         this.foldKeys.setScrollFactor(0);
@@ -436,14 +436,14 @@ export class GameScene3 extends Phaser.Scene {
 
         this.rightArrow.setPosition(
             this.cameras.main.width - 250,
-            this.cameras.main.height / 2,
+            this.cameras.main.height / 2 - 10,
         )
         this.rightArrow.setScrollFactor(0);
         this.rightArrow.setDepth(2);
 
         this.leftArrow.setPosition(
             250,
-            this.cameras.main.height / 2,
+            this.cameras.main.height / 2 - 10,
         )
         this.leftArrow.setScrollFactor(0);
         this.leftArrow.setDepth(2);

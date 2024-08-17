@@ -28,7 +28,7 @@ export function createUIRight(self) {
     uiContainer.setScrollFactor(0);
 }
 
-export function createUILeftMobile(context, settingsImg, exitImg, settingX, settingY, exitX, exitY, settingsEvent, exitEvent) {
+export function createUILeftMobile(context, settingsImg, exitImg, foldImg, settingX, settingY, exitX, exitY, settingsEvent, exitEvent, foldX, foldY, foldEvent) {
     const uiContainer = context.add.dom(0, context.cameras.main.height / 2).createFromHTML(`
         <div style="text-align: center;background:#0F0920;height: 720px; width: 50px">
         </div>
@@ -39,12 +39,15 @@ export function createUILeftMobile(context, settingsImg, exitImg, settingX, sett
 
     const settingsButton = context.add.image(settingX, settingY, settingsImg).setInteractive();
     const exitButton = context.add.image(exitX, exitY, exitImg).setInteractive();
+    const foldButton = context.add.image(foldX, foldY, foldImg).setInteractive();
 
     settingsButton.setDisplaySize(100, 100);
     exitButton.setDisplaySize(100, 100);
+    foldButton.setDisplaySize(100, 100);
 
     settingsButton.setScrollFactor(0);
     exitButton.setScrollFactor(0);
+    foldButton.setScrollFactor(0);
 
     settingsButton.on('pointerdown', (pointer) => {
         settingsEvent(context);
@@ -52,6 +55,10 @@ export function createUILeftMobile(context, settingsImg, exitImg, settingX, sett
 
     exitButton.on('pointerdown', (pointer) => {
         exitEvent(context);
+    });
+
+    foldButton.on('pointerdown', (pointer) => {
+        foldEvent(context);
     });
 }
 

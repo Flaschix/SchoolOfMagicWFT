@@ -44,6 +44,8 @@ export class LobbyScene extends Phaser.Scene {
         this.load.image('rightArrow', 'assets/button/rightArrow.png');
         this.load.image('leftArrow', 'assets/button/leftArrow.png');
 
+        this.load.image('fold', 'assets/icon/fold.png')
+
         //characters
         this.load.spritesheet('character1', './assets/characterMap/character1.png', { frameWidth: 32, frameHeight: 64 });
         this.load.spritesheet('character2', './assets/characterMap/character2.png', { frameWidth: 32, frameHeight: 64 });
@@ -58,6 +60,8 @@ export class LobbyScene extends Phaser.Scene {
         this.load.image('secondKey', 'assets/keyFrame/secondKey.png');
         this.load.image('thirdKey', 'assets/keyFrame/thirdKey.png');
         this.load.image('fourthKey', 'assets/keyFrame/fourthKey.png');
+        this.load.image('fiverthKey', 'assets/keyFrame/fiverthKey.png');
+        this.load.image('sixethKey', 'assets/keyFrame/sixethKey.png');
     }
 
     createWelcomeContainer() {
@@ -326,7 +330,7 @@ export class LobbyScene extends Phaser.Scene {
         // Добавляем фон
         this.add.image(this.scale.width / 2, this.scale.height / 2, 'backgroundMenu').setDisplaySize(this.scale.width, this.scale.height);
 
-        createExitMenu(this, {}, {}, this.mobileFlag);
+        // createExitMenu(this, {}, {}, this.mobileFlag);
         createAvatarDialog(this, this.avatartFinishEditing, this.closeAvatarDialog, null, isMobile(), 'join3');
 
         this.createWelcomeContainer();
@@ -353,7 +357,6 @@ export class LobbyScene extends Phaser.Scene {
             this.welcomeContainer.destroy();
             this.joinRoomContainer.destroy();
             this.newSpaceContainer.destroy();
-            this.exitContainer.destroy();
             this.scene.start(CST.SCENE.GAMESCENE, { players });
         });
 

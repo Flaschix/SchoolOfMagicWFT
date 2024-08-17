@@ -143,9 +143,7 @@ io.on('connection', (socket) => {
             });
 
             socket.on(`emitAddNewImg`, (img) => {
-                console.log(rooms[roomId].fold);
                 rooms[roomId].fold.push(img)
-                console.log(rooms[roomId].fold);
                 io.to(`${roomId}`).emit('takeFold', rooms[roomId].fold);
             });
 
