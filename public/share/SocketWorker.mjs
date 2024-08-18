@@ -39,6 +39,13 @@ export class SocketWorker {
         });
     }
 
+    subscribeTakeFold(context, event) {
+        this.socket.on('takeFold', (arr) => {
+            console.log(arr);
+            event(context, arr);
+        });
+    }
+
     emitSwitchScene(sceneToSwitch, startX, startY) {
         this.socket.emit('switchScene', sceneToSwitch, startX, startY);
     }
@@ -59,11 +66,24 @@ export class SocketWorker {
         this.socket.emit('getPlayers', null);
     }
 
+    emitGetFold() {
+        this.socket.emit('getFold', null);
+    }
+
+    emitAddNewImg(img) {
+        this.socket.emit('emitAddNewImg', img);
+    }
+
     unSubscribeAllListeners(sceneKey) {
         this.socket.removeAllListeners('playerDisconnected');
         this.socket.removeAllListeners('sceneSwitched');
         this.socket.removeAllListeners('exitstedPlayers');
+        this.socket.removeAllListeners('takeFold');
         this.socket.removeAllListeners(`newPlayer:${sceneKey}`);
         this.socket.removeAllListeners(`playerMoved:${sceneKey}`);
+    }
+
+    unSubscribeTakeFold() {
+        this.socket.removeAllListeners('takeFold');
     }
 }
