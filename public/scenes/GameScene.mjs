@@ -58,10 +58,6 @@ export class GameScene extends Phaser.Scene {
 
         //map
         this.load.image('map', './assets/map/laboratory_room_1.png');
-
-        //ключи
-        this.load.image('firstKey', 'assets/keyFrame/firstKey.png');
-
     }
 
     create(data) {
@@ -87,8 +83,7 @@ export class GameScene extends Phaser.Scene {
         if (this.mobileFlag) {
             createJoystick(this, 'joystickBase', 'joystickThumb', this.isDragging, 160, this.cameras.main.height - 120);
             createMobileXButton(this, 'touchButton', 'joystickBase', this.cameras.main.width - 150, this.cameras.main.height - 120, this.itemInteract);
-            createUILeftMobile(this, 'settingsMobile', 'exitMobile', 90, 70, this.cameras.main.width - 90, 70, this.showSettings, this.showExitMenu);
-            this.createPlayers(players, CAMERA_MARGIN_MOBILE);
+            createUILeftMobile(this, 'settingsMobile', 'exitMobile', 'fold', 90, 70, this.cameras.main.width - 90, 70, this.showSettings, this.showExitMenu, 90, 200, this.showFold); this.createPlayers(players, CAMERA_MARGIN_MOBILE);
         } else {
             createUI(this, this.showSettings, this.showExitMenu, this.showFold);
             this.createPlayers(players, CAMERA_MARGIN);
@@ -371,7 +366,7 @@ export class GameScene extends Phaser.Scene {
 
     createFold() {
         this.foldKeys = this.add.image(this.cameras.main.width - 636, this.cameras.main.height / 2 + 30, 'firstKey');
-        this.foldKeys.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
+        this.foldKeys.setDisplaySize(this.cameras.main.width * 0.60, this.cameras.main.height * 0.63);
         this.foldKeys.setDepth(2);
         this.foldKeys.setScrollFactor(0);
         this.foldKeys.setVisible(false);

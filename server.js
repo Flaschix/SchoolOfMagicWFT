@@ -88,11 +88,15 @@ io.on('connection', (socket) => {
             }
 
             if (!rooms[roomId]) {
-                rooms[roomId] = { levels: {} };
+                rooms[roomId] = { levels: {}, fold: [] };
             }
 
             if (!rooms[roomId].levels['GameScene']) {
                 rooms[roomId].levels['GameScene'] = {};
+            }
+
+            if (!rooms[roomId].fold) {
+                rooms[roomId].fold = [];
             }
 
             socket.join(roomId);
