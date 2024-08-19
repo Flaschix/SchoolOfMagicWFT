@@ -136,7 +136,6 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
     let nameInput;
     let nameError;
     let roomCode;
-    console.log(nameButton);
     if (nameButton == null) nameButton = 'finishEditing';
     if (isMobile) {
         self.avatarDialog = self.add.dom(self.cameras.main.width / 2, self.cameras.main.height / 2).createFromHTML(`
@@ -225,7 +224,6 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
             // Обновляем ссылку на текущий выделенный аватар
             selectedAvatar = avatar;
             imgCount = Number(avatar.dataset.index);
-            console.log(imgCount);
         });
     });
 

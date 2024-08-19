@@ -169,7 +169,6 @@ export class GameScene2 extends Phaser.Scene {
         Object.keys(players).forEach((id) => {
             if (!(id === socket.id) && otherPlayers[id] == null) {
                 context.playersController.createOtherPlayer(context, players[id], otherPlayers);
-                console.log(players[id]);
             }
         });
     }
@@ -473,7 +472,6 @@ export class GameScene2 extends Phaser.Scene {
         this.input.keyboard.on('keydown-X', () => {
             if (this.isInZone) {
                 player.setVelocity(0);
-                console.log(this.eventZone);
 
                 if (this.eventZone == LABEL_ID.DOOR_FORWARD_ID) {
                     this.moveForwardRoom();
@@ -668,7 +666,6 @@ export class GameScene2 extends Phaser.Scene {
                     onComplete: () => {
                         try {
                             context.hideOverlay();
-                            console.log('dddd');
                         } catch (e) { }
 
                     }
