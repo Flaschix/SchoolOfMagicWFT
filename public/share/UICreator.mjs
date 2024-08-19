@@ -222,7 +222,6 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
             // Обновляем ссылку на текущий выделенный аватар
             selectedAvatar = avatar;
             imgCount = Number(avatar.dataset.index);
-            console.log(imgCount);
         });
     });
 

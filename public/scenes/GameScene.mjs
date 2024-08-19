@@ -210,7 +210,6 @@ export class GameScene extends Phaser.Scene {
         Object.keys(players).forEach((id) => {
             if (!(id === socket.id) && otherPlayers[id] == null) {
                 context.playersController.createOtherPlayer(context, players[id], otherPlayers);
-                console.log(players[id]);
             }
         });
     }
@@ -674,7 +673,6 @@ export class GameScene extends Phaser.Scene {
                     onComplete: () => {
                         try {
                             context.hideOverlay();
-                            console.log('dddd');
                         } catch (e) { }
 
                     }

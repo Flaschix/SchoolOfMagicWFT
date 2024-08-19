@@ -41,7 +41,6 @@ export class SocketWorker {
 
     subscribeTakeFold(context, event) {
         this.socket.on('takeFold', (arr) => {
-            console.log(arr);
             event(context, arr);
         });
     }
