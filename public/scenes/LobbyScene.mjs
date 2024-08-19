@@ -186,80 +186,6 @@ export class LobbyScene extends Phaser.Scene {
         });
     }
 
-    //     createAvatarDialog() {
-    //         this.avatarDialog = this.add.dom(this.scale.width / 2, this.scale.height / 2).createFromHTML(`
-    // 	<div id="avatarDialog">
-    //         <h2>Choose avatar</h2>
-    //         <div id="avatarContainer">
-    //             <img src="./assets/character/man1.png" class="avatar" data-index="0">
-    //             <img src="./assets/character/man2.png" class="avatar" data-index="1">
-    //             <img src="./assets/character/man3.png" class="avatar" data-index="2">
-    //             <img src="./assets/character/woman1.png" class="avatar" data-index="3">
-    //             <img src="./assets/character/woman2.png" class="avatar" data-index="4">
-    //             <img src="./assets/character/woman3.png" class="avatar" data-index="5">
-    //         </div>
-    //         <div id="usernameContainer">
-    //             <label for="usernameInput">Name</label>
-    //             <div id="inputContainer">
-    //                 <input type="text" id="usernameInput" placeholder="Enter your name">
-    //                 <img src="./assets/icon/pen.png" id="penIcon">
-    //             </div>
-    //         </div>
-    //         <label id="incorrectName">Incorrect name
-    // *the name must be 1-12 characters</label>
-    //         <input type="image" src="./assets/button/join.png" id="joinBtn">
-    //         <input type="image" src="./assets/button/back.png" id="backBtn">
-    //     </div>
-    //             `);
-    //         this.avatarDialog.setVisible(false);
-
-    //         this.avatarDialog.setOrigin(0.5, 0.6);
-
-    //         const avatars = document.querySelectorAll('#avatarContainer .avatar');
-    //         let selectedAvatar = avatars[0]; // По умолчанию выделяем первый аватар
-    //         let imgCount = 0;
-
-    //         // Добавляем класс выделения первому аватару
-    //         selectedAvatar.classList.add('selected');
-
-    //         avatars.forEach(avatar => {
-    //             avatar.addEventListener('click', function () {
-    //                 // Убираем класс выделения с предыдущего аватара
-    //                 selectedAvatar.classList.remove('selected');
-    //                 // Добавляем класс выделения новому аватару
-    //                 avatar.classList.add('selected');
-    //                 // Обновляем ссылку на текущий выделенный аватар
-    //                 selectedAvatar = avatar;
-    //                 imgCount = Number(avatar.dataset.index);
-    //                 console.log(imgCount);
-    //             });
-    //         });
-
-    //         const nameInput = document.getElementById('usernameInput');
-    //         const nameError = document.getElementById('incorrectName');
-
-    //         const avatarDialogJoin = document.getElementById('joinBtn');
-    //         avatarDialogJoin.addEventListener('click', () => {
-    //             const username = nameInput.value;
-    //             if (username.length < 1 || username.length > 12) {
-    //                 nameError.style.visibility = "visible";
-    //             }
-    //             else {
-    //                 console.log(username);
-
-    //                 let roomCode = this.code;
-    //                 socket.emit('joinRoom', { roomCode, avatar: imgCount + 1, username });
-    //             }
-    //         });
-
-    //         const avatarDialogBack = document.getElementById('backBtn');
-    //         avatarDialogBack.addEventListener('click', () => {
-    //             this.avatarDialog.setVisible(false);
-    //             this.welcomeContainer.setVisible(true);
-    //         });
-
-    //     }
-
     avatartFinishEditing(self, nameInput, nameError, imgCount) {
         const username = nameInput.value;
         if (username.length < 1 || username.length > 12) {
@@ -269,7 +195,7 @@ export class LobbyScene extends Phaser.Scene {
             console.log(username);
 
             let roomCode = self.code;
-            socket.emit('joinRoom', { roomCode, avatar: imgCount + 1, nameInput });
+            socket.emit('joinRoom', { roomCode, avatar: imgCount + 1, username });
         }
     }
     closeAvatarDialog(self) {
@@ -330,14 +256,12 @@ export class LobbyScene extends Phaser.Scene {
         // Добавляем фон
         this.add.image(this.scale.width / 2, this.scale.height / 2, 'backgroundMenu').setDisplaySize(this.scale.width, this.scale.height);
 
-        createExitMenu(this, {}, {}, this.mobileFlag);
-
         this.createWelcomeContainer();
 
         this.createJoinRoomContainer();
 
         // this.createAvatarDialog();
-        createAvatarDialog(this, this.avatartFinishEditing, this.closeAvatarDialog, null, isMobile(), 'join3');
+        createAvatarDialog(this, this.avatartFinishEditing, this.closeAvatarDialog, null, this.mobile, 'join3');
 
         this.createNewSpaceContainer();
 
@@ -350,7 +274,8 @@ export class LobbyScene extends Phaser.Scene {
 
 
         socket.on('currentPlayers', (players) => {
-            createAvatarDialog(this, this.avatartFinishEditing, this.closeAvatarDialog, null, isMobile());
+            createAvatarDialog(this, this.avatartFinishEditing, this.closeAvatarDialog, null, this.mobile);
+            createExitMenu(this, null, null, this.mobile);
             console.log("Received current players:", players);
 
             this.avatarDialog.destroy();
