@@ -683,7 +683,7 @@ export class GameScene6 extends Phaser.Scene {
                         context.overlayBackground.setVisible(false)
                         context.closeButton.setVisible(false);
                     } else {
-                        hideLeftPuzzle(this);
+                        hideLeftPuzzle(context);
                     }
                     context.isOverlayVisible = !context.isOverlayVisible
                     return;
@@ -695,7 +695,7 @@ export class GameScene6 extends Phaser.Scene {
                         context.overlayBackground.setVisible(false)
                         context.closeButton.setVisible(false);
                     } else {
-                        hideLeftPuzzle(this);
+                        hideRightPuzzle(context);
                     }
                     context.isOverlayVisible = !context.isOverlayVisible
                     return;
