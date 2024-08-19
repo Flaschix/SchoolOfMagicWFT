@@ -357,6 +357,45 @@ export class GameScene6 extends Phaser.Scene {
     }
 
     createInputHandlers() {
+        this.input.on('pointerdown', (pointer) => {
+
+
+            if (this.isOverlayVisible) {
+                const { x, y } = pointer;
+                const boundsLeft = puzzleBackLeft.getBounds();
+                const boundsRight = puzzleBackRight.getBounds();
+
+                if (!Phaser.Geom.Rectangle.Contains(boundsLeft, x, y)) {
+                    if (this.eventZone == 2) {
+                        if (this.answerLeft.visible) {
+                            this.answerLeft.setVisible(false);
+                            this.overlayBackground.setVisible(false)
+                            this.closeButton.setVisible(false);
+                        } else {
+                            hideLeftPuzzle(this);
+                        }
+                        this.isOverlayVisible = !this.isOverlayVisible
+                        return;
+                    }
+                }
+
+                if (!Phaser.Geom.Rectangle.Contains(boundsRight, x, y)) {
+                    if (this.eventZone == 3) {
+                        if (this.answerRight.visible) {
+                            this.answerRight.setVisible(false);
+                            this.overlayBackground.setVisible(false)
+                            this.closeButton.setVisible(false);
+                        } else {
+                            hideRightPuzzle(this);
+                        }
+                        this.isOverlayVisible = !this.isOverlayVisible
+                        return;
+                    }
+                }
+
+            }
+        });
+
         this.input.keyboard.on('keydown-X', () => {
             if (this.isInZone) {
                 player.setVelocity(0);
@@ -366,8 +405,6 @@ export class GameScene6 extends Phaser.Scene {
                     this.moveBackRoom();
                     return;
                 }
-
-
 
                 if (!this.isOverlayVisible) {
 
