@@ -811,9 +811,9 @@ let puzzleBackRight;
 
 // Массив, определяющий, какие элементы должны быть повернуты
 let rotatedItemsRight = [
-    [false, false, true],
-    [false, false, true],
-    [true, true, true]
+    [false, true, false],
+    [true, false, false],
+    [false, false, true]
 ];
 
 function createGameFieldRight(scene, startX, startY) {
@@ -969,9 +969,9 @@ let puzzleBackLeft;
 
 // Массив, определяющий, какие элементы должны быть повернуты
 let rotatedItemsLeft = [
-    [false, false, true],
-    [false, false, true],
-    [true, true, true]
+    [false, false, false],
+    [true, true, false],
+    [true, true, false]
 ];
 
 function createGameFieldLeft(scene, startX, startY) {
