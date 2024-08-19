@@ -374,6 +374,8 @@ export class GameScene extends Phaser.Scene {
 
     createInputHandlers() {
         this.input.keyboard.on('keydown-X', () => {
+            if (this.foldKeys.visible) return;
+
             if (this.isInZone) {
                 player.setVelocity(0);
 
@@ -513,6 +515,7 @@ export class GameScene extends Phaser.Scene {
 
     showFold(context) {
         if (context.isOverlayVisible) return;
+        player.setVelocity(0);
         context.isOverlayVisible = true
         context.overlayBackground.setAlpha(1);
         context.foldColseBtn.setAlpha(1);
@@ -521,12 +524,17 @@ export class GameScene extends Phaser.Scene {
         if (context.fold == null || context.fold.length < 1) {
             context.emptySign.setPosition(context.cameras.main.scrollX + 640, context.cameras.main.scrollY + 360).setVisible(true);;
             context.emptySign.setAlpha(1);
+        } else if (context.fold.length > 1) {
+            context.foldImgNumber = 0;
+            context.leftArrow.setVisible(false);
+            context.rightArrow.setVisible(true);
+
+            context.foldKeys.setTexture(context.fold[0]);
+            context.foldKeys.setVisible(true);
         } else {
             context.foldImgNumber = 0;
             context.foldKeys.setTexture(context.fold[0]);
             context.foldKeys.setVisible(true);
-            context.leftArrow.setVisible(true);
-            context.rightArrow.setVisible(true);
         }
 
 
@@ -540,6 +548,8 @@ export class GameScene extends Phaser.Scene {
     moveRightKeys() {
         if (this.foldImgNumber < this.fold.length - 1) {
             this.foldImgNumber += 1;
+            if (this.foldImgNumber == this.fold.length - 1) this.rightArrow.setVisible(false);
+            this.leftArrow.setVisible(true);
 
             this.tweens.add({
                 targets: [this.foldKeys],
@@ -563,6 +573,8 @@ export class GameScene extends Phaser.Scene {
     moveLeftKeys() {
         if (this.foldImgNumber > 0) {
             this.foldImgNumber -= 1;
+            if (this.foldImgNumber == 0) this.leftArrow.setVisible(false);
+            this.rightArrow.setVisible(true);
 
             this.tweens.add({
                 targets: [this.foldKeys],

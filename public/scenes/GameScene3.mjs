@@ -55,7 +55,6 @@ export class GameScene3 extends Phaser.Scene {
 
         //map
         this.load.image('map3', './assets/map/library_room_3.png');
-        this.load.image('clueKey', 'assets/keyFrame/clueKey.png');
     }
 
     create(data) {
@@ -334,6 +333,7 @@ export class GameScene3 extends Phaser.Scene {
 
     createInputHandlers() {
         this.input.keyboard.on('keydown-X', () => {
+            if (this.foldKeys.visible) return;
             if (this.isInZone) {
                 player.setVelocity(0);
 
@@ -396,6 +396,9 @@ export class GameScene3 extends Phaser.Scene {
         }
         else if (this.eventZone == LABEL_ID.CLUE_KEY) {
             this.clueKey.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
+            if (this.fold.indexOf(this.clueKey.texture.key) == -1) {
+                this.mySocket.emitAddNewImg(this.clueKey.texture.key);
+            }
         }
         else {
             this.emptySign.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);;
@@ -480,6 +483,7 @@ export class GameScene3 extends Phaser.Scene {
 
     showFold(context) {
         if (context.isOverlayVisible) return;
+        player.setVelocity(0);
         context.isOverlayVisible = true
         context.overlayBackground.setAlpha(1);
         context.foldColseBtn.setAlpha(1);
@@ -488,12 +492,17 @@ export class GameScene3 extends Phaser.Scene {
         if (context.fold == null || context.fold.length < 1) {
             context.emptySign.setPosition(context.cameras.main.scrollX + 640, context.cameras.main.scrollY + 360).setVisible(true);;
             context.emptySign.setAlpha(1);
+        } else if (context.fold.length > 1) {
+            context.foldImgNumber = 0;
+            context.leftArrow.setVisible(false);
+            context.rightArrow.setVisible(true);
+
+            context.foldKeys.setTexture(context.fold[0]);
+            context.foldKeys.setVisible(true);
         } else {
             context.foldImgNumber = 0;
             context.foldKeys.setTexture(context.fold[0]);
             context.foldKeys.setVisible(true);
-            context.leftArrow.setVisible(true);
-            context.rightArrow.setVisible(true);
         }
 
 
@@ -507,6 +516,8 @@ export class GameScene3 extends Phaser.Scene {
     moveRightKeys() {
         if (this.foldImgNumber < this.fold.length - 1) {
             this.foldImgNumber += 1;
+            if (this.foldImgNumber == this.fold.length - 1) this.rightArrow.setVisible(false);
+            this.leftArrow.setVisible(true);
 
             this.tweens.add({
                 targets: [this.foldKeys],
@@ -530,6 +541,8 @@ export class GameScene3 extends Phaser.Scene {
     moveLeftKeys() {
         if (this.foldImgNumber > 0) {
             this.foldImgNumber -= 1;
+            if (this.foldImgNumber == 0) this.leftArrow.setVisible(false);
+            this.rightArrow.setVisible(true);
 
             this.tweens.add({
                 targets: [this.foldKeys],
