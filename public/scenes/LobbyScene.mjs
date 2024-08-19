@@ -269,7 +269,7 @@ export class LobbyScene extends Phaser.Scene {
             console.log(username);
 
             let roomCode = self.code;
-            socket.emit('joinRoom', { roomCode, avatar: imgCount + 1, username });
+            socket.emit('joinRoom', { roomCode, avatar: imgCount + 1, nameInput });
         }
     }
     closeAvatarDialog(self) {
@@ -348,6 +348,7 @@ export class LobbyScene extends Phaser.Scene {
             this.avatarDialog.setVisible(true);
         });
 
+
         socket.on('currentPlayers', (players) => {
             createAvatarDialog(this, this.avatartFinishEditing, this.closeAvatarDialog, null, isMobile());
             console.log("Received current players:", players);
@@ -373,6 +374,7 @@ export class LobbyScene extends Phaser.Scene {
         socket.on('connect', () => {
             console.log('Connected to server');
         });
+
     }
 
     createAnimations() {
