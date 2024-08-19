@@ -334,6 +334,9 @@ export class LobbyScene extends Phaser.Scene {
         });
 
         socket.on('currentPlayers', (players) => {
+            createAvatarDialog(this, this.avatartFinishEditing, this.closeAvatarDialog, null, this.mobile);
+            createExitMenu(this, null, null, this.mobile);
+
             console.log("Received current players:", players);
 
             this.avatarDialog.destroy();
