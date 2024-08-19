@@ -644,7 +644,7 @@ export class GameScene2 extends Phaser.Scene {
             }
 
             if (context.eventZone == LABEL_ID.DOOR_BACK_ID) {
-                context.moveForwardRoom2();
+                context.moveBackRoom();
                 return;
             }
 
