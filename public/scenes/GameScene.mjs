@@ -600,6 +600,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     showSettings(self) {
+        if (self.foldKeys.visible || self.emptySign.visible) return;
         self.avatarDialog.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
         self.avatarDialog.setVisible(true);
         self.isOverlayVisible = true
@@ -608,6 +609,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     showExitMenu(self) {
+        if (self.foldKeys.visible || self.emptySign.visible) return;
         self.exitContainer.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
         self.exitContainer.setVisible(true);
         self.isOverlayVisible = true
