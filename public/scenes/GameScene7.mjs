@@ -297,6 +297,7 @@ export class GameScene7 extends Phaser.Scene {
         self.avatarDialog.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
         self.avatarDialog.setVisible(true);
         self.isOverlayVisible = true
+        self.exitContainer.setVisible(false);
         player.setVelocity(0);
     }
 
@@ -304,6 +305,7 @@ export class GameScene7 extends Phaser.Scene {
         self.exitContainer.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
         self.exitContainer.setVisible(true);
         self.isOverlayVisible = true
+        self.avatarDialog.setVisible(false);
         player.setVelocity(0);
     }
 
