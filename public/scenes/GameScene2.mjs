@@ -772,4 +772,3 @@ function sceneSwitched(self, data) {
     let players = data.players;
     self.scene.start(data.scene, { players });
 }
-
