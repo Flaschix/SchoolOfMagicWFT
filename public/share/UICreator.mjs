@@ -171,6 +171,7 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
         nameInput = document.getElementById('usernameInputMobile');
         nameError = document.getElementById('incorrectNameMobile');
         roomCode = document.getElementById('roomIdMobile');
+        self.avatarDialog.setOrigin(0.5, 0.5);
     } else {
         self.avatarDialog = self.add.dom(self.cameras.main.width / 2, self.cameras.main.height / 2).createFromHTML(`
             <div id="avatarDialogGame">
@@ -201,6 +202,7 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
         nameInput = document.getElementById('usernameInput');
         nameError = document.getElementById('incorrectName');
         roomCode = document.getElementById('roomId');
+        self.avatarDialog.setOrigin(0.5, 0.5);
     }
     self.avatarDialog.setVisible(false);
 
@@ -305,6 +307,7 @@ export const MAP_SETTINGS = {
     MAP_FULL2: 'mapFull2',
     MAP_FULL3: 'mapFull3',
     MAP_FULL4: 'mapFull4',
+    MAP_FULL5: 'mapFull5',
 
     MAP_SCALE_4_3: 4 / 3,
     MAP_SCALE_2: 2
