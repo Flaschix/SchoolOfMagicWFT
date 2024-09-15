@@ -47,6 +47,10 @@ export class LobbyScene extends Phaser.Scene {
         this.load.spritesheet('character4', './assets/characterMap/character4.png', { frameWidth: 48, frameHeight: 64 });
         this.load.spritesheet('character5', './assets/characterMap/character5.png', { frameWidth: 48, frameHeight: 64 });
         this.load.spritesheet('character6', './assets/characterMap/character6.png', { frameWidth: 48, frameHeight: 64 });
+
+        this.load.image('answer', 'assets/keyFrame/answer.png');
+        this.load.image('answerLeft', 'assets/keyFrame/answerLeft.png');
+        this.load.image('answerRight', 'assets/keyFrame/answerRight.png');
     }
 
     createWelcomeContainer() {

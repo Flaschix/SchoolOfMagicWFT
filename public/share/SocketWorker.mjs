@@ -3,7 +3,7 @@ export class SocketWorker {
     constructor(socket) {
         this.socket = socket;
         this.lastSentTime = 0;
-        this.sendInterval = 75; // 100 ms
+        this.sendInterval = 75;
     }
 
     subscribeNewPlayer(context, sceneKey, playerArr, event) {
@@ -20,9 +20,9 @@ export class SocketWorker {
         });
     }
 
-    subscribePlayerDisconected(event) {
+    subscribePlayerDisconected(context, event) {
         this.socket.on('playerDisconnected', (id) => {
-            event(id);
+            event(context, id);
         });
     }
 
@@ -36,6 +36,12 @@ export class SocketWorker {
     subscribeExistedPlayers(context, event) {
         this.socket.on('exitstedPlayers', (players) => {
             event(context, players);
+        });
+    }
+
+    subscribeTakeFold(context, event) {
+        this.socket.on('takeFold', (arr) => {
+            event(context, arr);
         });
     }
 
@@ -59,11 +65,24 @@ export class SocketWorker {
         this.socket.emit('getPlayers', null);
     }
 
+    emitGetFold() {
+        this.socket.emit('getFold', null);
+    }
+
+    emitAddNewImg(img) {
+        this.socket.emit('emitAddNewImg', img);
+    }
+
     unSubscribeAllListeners(sceneKey) {
         this.socket.removeAllListeners('playerDisconnected');
         this.socket.removeAllListeners('sceneSwitched');
         this.socket.removeAllListeners('exitstedPlayers');
+        this.socket.removeAllListeners('takeFold');
         this.socket.removeAllListeners(`newPlayer:${sceneKey}`);
         this.socket.removeAllListeners(`playerMoved:${sceneKey}`);
+    }
+
+    unSubscribeTakeFold() {
+        this.socket.removeAllListeners('takeFold');
     }
 }

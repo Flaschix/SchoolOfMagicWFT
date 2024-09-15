@@ -1,14 +1,9 @@
 import { CST, LABEL_ID } from "../CST.mjs";
 
 import { socket } from "../CST.mjs";
-import { SocketWorker } from "../share/SocketWorker.mjs";
 
-import { createUIBottom } from "../share/UICreator.mjs";
-import { createUITop } from "../share/UICreator.mjs";
-import { createUIRight } from "../share/UICreator.mjs";
 import { createUILeftMobile } from "../share/UICreator.mjs";
 import { createUI } from "../share/UICreator.mjs";
-import { createExitMenu } from "../share/UICreator.mjs";
 import { createAvatarDialog } from "../share/UICreator.mjs";
 import { isMobile } from "../share/UICreator.mjs";
 import { CAMERA_MARGIN, CAMERA_MARGIN_MOBILE } from "../share/UICreator.mjs";
@@ -16,35 +11,13 @@ import { CAMERA_MARGIN, CAMERA_MARGIN_MOBILE } from "../share/UICreator.mjs";
 import { createJoystick } from "../share/UICreator.mjs";
 import { createMobileXButton } from "../share/UICreator.mjs";
 
-import { HEIGHT_PRESS_X } from "../share/UICreator.mjs";
-import { MAP_SETTINGS } from "../share/UICreator.mjs";
-
 import { AnimationControl } from "../share/AnimationControl.mjs";
 
-import { PlayersController } from "../share/PlayerController.mjs";
+import { BaseScene } from "./BaseScene.mjs";
 
-let player;
-let otherPlayers = {};
-let fullMap = true;
-let moved = false;
-
-export class GameScene6 extends Phaser.Scene {
+export class GameScene6 extends BaseScene {
     constructor() {
-        super({ key: CST.SCENE.GAMESCENE6 });
-
-        //проверка на то, стоит ли игрок в зоне или нет
-        this.isInZone = false;
-
-        //зона в которой стоит игрок
-        this.eventZone = null;
-
-        //массив изображений оверлея
-        this.overlayImages = [];
-
-        this.mobileFlag = false;
-
-        //существует ли оверлей сейчас поврех экрана
-        this.isOverlayVisible = false;
+        super(CST.SCENE.GAMESCENE6);
     }
 
     preload() {
@@ -52,7 +25,7 @@ export class GameScene6 extends Phaser.Scene {
         this.loding.addLoadOnScreen(this, 1280 / 2, 720 / 2, 0.3, 0.3);
 
         //map
-        this.load.image('map6', './assets/map/forest 6.png');
+        this.load.image('map6', './assets/map/forest 6.jpg');
 
         this.load.image('stonePanelLeft', 'assets/map/stonePanelLeft.png');
         this.load.image('stonePanelRight', 'assets/map/stonePanelRight.png');
@@ -60,35 +33,19 @@ export class GameScene6 extends Phaser.Scene {
         this.load.image('leftMiniGameElm', 'assets/overlay/leftMiniGameElm.png');
         this.load.image('rightMiniGameBack', 'assets/overlay/rightMiniGameBack.png');
         this.load.image('rightMiniGameElm', 'assets/overlay/rightMiniGameElm.png');
-        this.load.image('answer', 'assets/keyFrame/answer.png');
-        this.load.image('answerLeft', 'assets/keyFrame/answerLeft.png');
-        this.load.image('answerRight', 'assets/keyFrame/answerRight.png');
-
     }
 
     create(data) {
-        this.mySocket = new SocketWorker(socket);
+        super.create(data);
 
         const { players } = data;
 
-        this.loding.deleteLoadFromScreen(this);
-
-        this.playersController = new PlayersController();
-
-        this.mobileFlag = isMobile();
-
         // Добавляем карту
-        this.createMap('map6', MAP_SETTINGS.MAP_FULL6);
-
-        //Создаём курсор для обработки инпутов пользователя
-        this.cursors = this.input.keyboard.createCursorKeys();
-
-        //Создаём стены и остальные непроходимые объекты
-        this.createUnWalkedObjects();
+        this.createMap('map6');
 
         if (this.mobileFlag) {
-            createJoystick(this, 'joystickBase', 'joystickThumb', this.isDragging, 160, this.cameras.main.height - 120);
-            createMobileXButton(this, 'touchButton', 'joystickBase', this.cameras.main.width - 150, this.cameras.main.height - 120, this.itemInteract);
+            createJoystick(this, 'joystickBase', 'joystickThumb', this.isDragging, 160, this.cameras.main.height - 140);
+            createMobileXButton(this, 'touchButton', 'joystickBase', this.cameras.main.width - 150, this.cameras.main.height - 140, this.itemInteract);
             createUILeftMobile(this, 'settingsMobile', 'exitMobile', 90, 70, this.cameras.main.width - 90, 70, this.showSettings, this.showExitMenu);
             this.createPlayers(players, CAMERA_MARGIN_MOBILE);
         } else {
@@ -98,55 +55,22 @@ export class GameScene6 extends Phaser.Scene {
 
         //Создаём объект с которыми будем взаимодействовать
         this.createCollision();
-
         //Создание оверлея
         this.createOverlays();
-
         //Создание слушателей нажатия кнопок
         this.createInputHandlers();
 
-
-        //Создаём пользовательский UI для сцен
-        createUIRight(this);
-        createUITop(this);
-        createUIBottom(this);
-
-        createExitMenu(this, this.leaveGame, this.closeExitMenu, this.mobileFlag);
-        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, player.room, isMobile());
+        createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, this.player.room, isMobile());
 
         createGameFieldRight(this, 700, 350);
         createGameFieldLeft(this, 700, 350);
 
         this.createEnterCodeContainer();
-
-        //Подключение слушателей
-        this.mySocket.subscribeExistedPlayers(this, this.createOtherPlayersTest);
-        this.mySocket.subscribeNewPlayer(this, this.scene.key, otherPlayers, this.playersController.createOtherPlayer);
-        this.mySocket.subscribePlayerMoved(this, this.scene.key, this.checkOtherPlayer);
-        this.mySocket.subscribePlayerDisconected(this.deletePlayer);
-        this.mySocket.subscribeSceneSwitched(this, this.scene.key, sceneSwitched)
-
-        this.mySocket.emitGetPlayers();
-
-
-        if (!this.textures.exists(MAP_SETTINGS.MAP_FULL6)) {
-
-            this.loadPlusTexture(MAP_SETTINGS.MAP_FULL6, './assets/map/forest 6_full.png');
-
-            fullMap = false;
-        }
     }
 
-    createMap(map, mapFull) {
-        if (this.textures.exists(mapFull)) {
-            this.map = this.add.image(0, 0, mapFull).setOrigin(0, 0);
-            this.map.setScale(MAP_SETTINGS.MAP_SCALE_4_3, MAP_SETTINGS.MAP_SCALE_4_3);
-            this.matter.world.setBounds(0, 0, this.map.width * MAP_SETTINGS.MAP_SCALE_4_3, this.map.height * MAP_SETTINGS.MAP_SCALE_4_3);
-        } else {
-            this.map = this.add.image(0, 0, map).setOrigin(0, 0);
-            this.map.setScale(2, 2);
-            this.matter.world.setBounds(0, 0, this.map.width * MAP_SETTINGS.MAP_SCALE_2, this.map.height * MAP_SETTINGS.MAP_SCALE_2);
-        }
+    createMap(map) {
+        this.map = this.add.image(0, 0, map).setOrigin(0, 0);
+        this.matter.world.setBounds(0, 0, this.map.width, this.map.height);
 
         this.add.image(1306 + 90 / 2, 668 + 90 / 2, 'stonePanelRight');
         this.add.image(674.5 + 45, 666 + 45, 'stonePanelLeft');
@@ -161,71 +85,15 @@ export class GameScene6 extends Phaser.Scene {
         Object.keys(players).forEach((id) => {
             if (id === socket.id) {
                 //добовляем игрока
-                player = this.playersController.createMainPlayer(this, players[id]);
+                this.player = this.playersController.createMainPlayer(this, players[id]);
 
                 //настраиваем камеру игрока
-                this.cameras.main.startFollow(player);
-                if (this.textures.exists(MAP_SETTINGS.MAP_FULL6)) this.cameras.main.setBounds(cameraMargin.left, cameraMargin.top, this.map.width * MAP_SETTINGS.MAP_SCALE_4_3 + cameraMargin.right, this.map.height * MAP_SETTINGS.MAP_SCALE_4_3 + cameraMargin.bottom);
-                else this.cameras.main.setBounds(cameraMargin.left, cameraMargin.top, this.map.width * MAP_SETTINGS.MAP_SCALE_2 + cameraMargin.right, this.map.height * MAP_SETTINGS.MAP_SCALE_2 + cameraMargin.bottom);
+                this.cameras.main.startFollow(this.player);
+                this.cameras.main.setBounds(cameraMargin.left, cameraMargin.top, this.map.width + cameraMargin.right, this.map.height + cameraMargin.bottom);
             } else {
-                this.playersController.createOtherPlayer(this, players[id], otherPlayers);
+                this.playersController.createOtherPlayer(this, players[id], this.otherPlayers);
             }
         });
-    }
-
-    createOtherPlayersTest(context, players) {
-        Object.keys(players).forEach((id) => {
-            if (!(id === socket.id) && otherPlayers[id] == null) {
-                context.playersController.createOtherPlayer(context, players[id], otherPlayers);
-                console.log(players[id]);
-            }
-        });
-    }
-
-    checkOtherPlayer(self, playerInfo) {
-        if (otherPlayers[playerInfo.id]) {
-            const player = otherPlayers[playerInfo.id];
-
-            // Обновляем целевые координаты и скорость
-            player.targetX = playerInfo.x;
-            player.targetY = playerInfo.y;
-            player.velocityX = playerInfo.velocityX;
-            player.velocityY = playerInfo.velocityY;
-            player.isMoving = playerInfo.isMoving;
-            player.direction = playerInfo.direction;
-
-            // Интерполяция движения
-            self.tweens.add({
-                targets: player,
-                x: playerInfo.x,
-                y: playerInfo.y,
-                duration: 200,
-                onUpdate: function () {
-                    // Обновление анимации на основе данных о движении
-                    self.playersController.updateAnimOtherPlayer(player, {
-                        ...playerInfo,
-                        velocityX: player.targetX - player.x,
-                        velocityY: player.targetY - player.y
-                    });
-                },
-                onComplete: function () {
-                    // Проверяем, нужно ли остановить анимацию
-                    try {
-                        if (!player.isMoving) {
-                            player.anims.stop();
-                        }
-                    } catch (e) { };
-                }
-            });
-        }
-    }
-
-    deletePlayer(id) {
-        if (otherPlayers[id]) {
-            otherPlayers[id].nameText.destroy();
-            otherPlayers[id].destroy();
-            delete otherPlayers[id];
-        }
     }
 
     createCollision() {
@@ -245,7 +113,7 @@ export class GameScene6 extends Phaser.Scene {
         const arrBodies = [bodyLeftPanel, bodyRightPanel, bodyMainDoor, bodyBackDoor]
 
         this.matterCollision.addOnCollideStart({
-            objectA: player,
+            objectA: this.player,
             objectB: arrBodies,
             callback: function (eventData) {
                 this.isInZone = true;
@@ -265,7 +133,7 @@ export class GameScene6 extends Phaser.Scene {
         });
 
         this.matterCollision.addOnCollideEnd({
-            objectA: player,
+            objectA: this.player,
             objectB: arrBodies,
             callback: function (eventData) {
                 this.isInZone = false;
@@ -278,42 +146,47 @@ export class GameScene6 extends Phaser.Scene {
     }
 
     createOverlays() {
-        this.pressX = this.add.image(player.x, player.y - 50, 'pressX');
+        this.pressX = this.add.image(this.player.x, this.player.y - 50, 'pressX');
         this.pressX.setDisplaySize(this.pressX.width, this.pressX.height);
         this.pressX.setVisible(false);
 
         //задний фон оверлея
-        this.overlayBackground = this.add.image(0, 0, 'overlayBackground');
+        this.overlayBackground = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'overlayBackground');
         this.overlayBackground.setOrigin(0.5, 0.5);
-        this.overlayBackground.setDisplaySize(this.cameras.main.width * 0.7, this.cameras.main.height * 0.73);
+        this.overlayBackground.setDisplaySize(this.cameras.main.width - 300, this.cameras.main.height - 100);
         this.overlayBackground.setVisible(false);
         this.overlayBackground.setDepth(2);
-        this.overlayBackground.setAlpha(0); // Начальное значение прозрачности
+        this.overlayBackground.setScrollFactor(0);
+        this.overlayBackground.setAlpha(0);
 
-        this.answer = this.add.image(0, 0, 'answer');
-        this.answer.setDisplaySize(this.cameras.main.width * 0.68, this.cameras.main.height * 0.63);
+        this.answer = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 + 10, 'answer');
+        this.answer.setScale(0.5);
         this.answer.setVisible(false);
-        this.answer.setDepth(3);
-        this.answer.setAlpha(0); // Начальное значение прозрачности
+        this.answer.setDepth(2);
+        this.answer.setScrollFactor(0);
+        this.answer.setAlpha(0);
 
-        this.answerLeft = this.add.image(0, 0, 'answerLeft');
-        this.answerLeft.setDisplaySize(this.cameras.main.width * 0.60, this.cameras.main.height * 0.7);
+        this.answerLeft = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 + 10, 'answerLeft');
+        this.answerLeft.setScale(0.9);
         this.answerLeft.setVisible(false);
-        this.answerLeft.setDepth(3);
-        this.answerLeft.setAlpha(0); // Начальное значение прозрачности
+        this.answerLeft.setDepth(2);
+        this.answerLeft.setScrollFactor(0);
+        this.answerLeft.setAlpha(0);
 
-        this.answerRight = this.add.image(0, 0, 'answerRight');
-        this.answerRight.setDisplaySize(this.cameras.main.width * 0.60, this.cameras.main.height * 0.7);
+        this.answerRight = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 + 10, 'answerRight');
+        this.answerRight.setScale(0.9);
         this.answerRight.setVisible(false);
-        this.answerRight.setDepth(3);
-        this.answerRight.setAlpha(0); // Начальное значение прозрачности
+        this.answerRight.setDepth(2);
+        this.answerRight.setScrollFactor(0);
+        this.answerRight.setAlpha(0);
 
-        this.closeButton = this.add.image(0, 0, 'closeIcon');
-        this.closeButton.setDisplaySize(this.overlayBackground.displayWidth * 0.05, this.overlayBackground.displayHeight * 0.07);
+        this.closeButton = this.add.image(this.cameras.main.width - 200, 85, 'closeIcon');
+        this.closeButton.setDisplaySize(50, 50);
         this.closeButton.setInteractive();
         this.closeButton.setVisible(false);
         this.closeButton.setDepth(2);
-        this.closeButton.setAlpha(0); // Начальное значение прозрачности
+        this.closeButton.setScrollFactor(0);
+        this.closeButton.setAlpha(0);
 
         this.closeButton.on('pointerdown', () => {
 
@@ -398,8 +271,7 @@ export class GameScene6 extends Phaser.Scene {
 
         this.input.keyboard.on('keydown-X', () => {
             if (this.isInZone) {
-                player.setVelocity(0);
-                console.log(this.eventZone);
+                this.player.setVelocity(0);
 
                 if (this.eventZone == LABEL_ID.DOOR_BACK_ID) {
                     this.moveBackRoom();
@@ -423,7 +295,7 @@ export class GameScene6 extends Phaser.Scene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer],
+                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.answer],
                         alpha: 1,
                         duration: 500
                     });
@@ -484,86 +356,17 @@ export class GameScene6 extends Phaser.Scene {
             return;
         }
 
-        this.overlayBackground.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
-        this.closeButton.setPosition(
-            this.cameras.main.scrollX + 640 + this.overlayBackground.displayWidth / 2 - this.overlayBackground.displayWidth * 0.1 / 2 + 10,
-            this.cameras.main.scrollY + 360 - this.overlayBackground.displayHeight / 2 + this.overlayBackground.displayHeight * 0.1 / 2,
-        ).setVisible(true);
+        this.overlayBackground.setVisible(true);
+        this.closeButton.setVisible(true);
     }
 
     hideOverlay() {
         this.isOverlayVisible = false
-        if (this.eventZone == 0) {
-            this.enterCodeContainer.setVisible(false);
-            if (this.answer.visible) {
-                this.answer.setVisible(false);
-                this.overlayBackground.setVisible(false);
-                this.closeButton.setVisible(false);
-            }
-            return;
-        }
+        if (this.answer.visible) this.answer.setVisible(false);
+        if (this.enterCodeContainer.visible) this.enterCodeContainer.setVisible(false);
 
         this.overlayBackground.setVisible(false);
         this.closeButton.setVisible(false);
-    }
-
-    showSettings(self) {
-        self.avatarDialog.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
-        self.avatarDialog.setVisible(true);
-        self.isOverlayVisible = true
-        self.exitContainer.setVisible(false);
-        player.setVelocity(0);
-    }
-
-    showExitMenu(self) {
-        self.exitContainer.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
-        self.exitContainer.setVisible(true);
-        self.isOverlayVisible = true
-        self.avatarDialog.setVisible(false);
-        player.setVelocity(0);
-    }
-
-    leaveGame(self) {
-        window.location.reload();
-    }
-
-    closeExitMenu(self) {
-        self.exitContainer.setVisible(false);
-        self.isOverlayVisible = false
-    }
-
-    enterNewSettingsInAvatarDialog(self, usernameInput, nameError, imgCount) {
-        const username = usernameInput.value;
-        if (username.length < 1 || username.length > 12) {
-            nameError.style.visibility = "visible";
-        } else {
-            self.mySocket.emitPlayerReconnect({ x: player.x, y: player.y, avatar: imgCount + 1, name: username });
-            player.setTexture(`character${imgCount + 1}`);
-            player.character = imgCount + 1;
-            player.nameText.setText(username);
-            self.avatarDialog.setVisible(false);
-            self.isOverlayVisible = false;
-            nameError.style.visibility = "hidden";
-        }
-    }
-
-    closeAvatarDialog(self) {
-        self.avatarDialog.setVisible(false);
-        self.isOverlayVisible = false;
-    }
-
-    loadPlusTexture(name, path) {
-        this.load.image(name, path);
-
-        // Начало загрузки
-        this.load.start();
-    }
-
-    loadedResolutionMap(name, scaleX, scaleY) {
-        this.map.setScale(scaleX, scaleY);
-
-        this.map.setTexture(name);
-        this.matter.world.setBounds(0, 0, this.map.width * scaleX, this.map.height * scaleY);
     }
 
     createEnterCodeContainer() {
@@ -634,13 +437,10 @@ export class GameScene6 extends Phaser.Scene {
                 code = code.toUpperCase();
 
                 if (code == correctCode) {
-                    this.overlayBackground.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 360).setVisible(true);
-                    this.answer.setPosition(this.cameras.main.scrollX + 640, this.cameras.main.scrollY + 370).setVisible(true);
+                    this.overlayBackground.setVisible(true);
+                    this.answer.setVisible(true);
                     this.answer.setAlpha(1);
-                    this.closeButton.setPosition(
-                        this.cameras.main.scrollX + 640 + this.overlayBackground.displayWidth / 2 - this.overlayBackground.displayWidth * 0.1 / 2 + 10,
-                        this.cameras.main.scrollY + 360 - this.overlayBackground.displayHeight / 2 + this.overlayBackground.displayHeight * 0.1 / 2,
-                    ).setVisible(true);
+                    this.closeButton.setVisible(true);
 
                     this.enterCodeContainer.setVisible(false);
                 }
@@ -685,7 +485,7 @@ export class GameScene6 extends Phaser.Scene {
 
     itemInteract(context) {
         if (context.isInZone) {
-            player.setVelocity(0);
+            context.player.setVelocity(0);
 
             if (context.eventZone == LABEL_ID.DOOR_BACK_ID) {
                 context.moveBackRoom();
@@ -709,7 +509,7 @@ export class GameScene6 extends Phaser.Scene {
                 context.showOverlay();
 
                 context.tweens.add({
-                    targets: [context.overlayBackground, context.closeButton, context.enterCodeContainer],
+                    targets: [context.overlayBackground, context.closeButton, context.enterCodeContainer, context.answer],
                     alpha: 1,
                     duration: 500
                 });
@@ -741,7 +541,7 @@ export class GameScene6 extends Phaser.Scene {
                 }
 
                 context.tweens.add({
-                    targets: [context.overlayBackground, context.closeButton, context.enterCodeContainer],
+                    targets: [context.overlayBackground, context.closeButton, context.enterCodeContainer, context.answer],
                     alpha: 0,
                     duration: 500,
                     onComplete: () => {
@@ -757,93 +557,10 @@ export class GameScene6 extends Phaser.Scene {
     }
 
     update() {
-        if (!player || this.isOverlayVisible) return;
-
-        this.updatePlayerPosition();
-
-        this.updatePressXVisibility();
-
-        // Интерполяция для других игроков
-        Object.keys(otherPlayers).forEach((id) => {
-            let otherPlayer = otherPlayers[id];
-            if (otherPlayer.targetX !== undefined && otherPlayer.targetY !== undefined) {
-                otherPlayer.x += (otherPlayer.targetX - otherPlayer.x) * 0.1;
-                otherPlayer.y += (otherPlayer.targetY - otherPlayer.y) * 0.1;
-            }
-        });
-
-
-        if (!fullMap) {
-            if (this.textures.exists(MAP_SETTINGS.MAP_FULL6)) {
-                fullMap = true;
-                this.map.setScale(4 / 3, 4 / 3);
-
-                this.map.setTexture(MAP_SETTINGS.MAP_FULL6);
-                this.matter.world.setBounds(0, 0, this.map.width * 4 / 3, this.map.height * 4 / 3);
-            }
-        }
-    }
-
-    updatePlayerPosition() {
-
-        if (!this.mobileFlag) this.playersController.updateMainPlayerPosition(player, this.cursors);
-        else {
-            this.playersController.updateMainPlayerPositionJoystick(player, this.joystickThumb, this.joystickBase);
-        }
-
-        const isMoving = player.body.velocity.x !== 0 || player.body.velocity.y !== 0;
-        const movementData = {
-            x: player.x,
-            y: player.y,
-            velocityX: player.body.velocity.x,
-            velocityY: player.body.velocity.y,
-            isMoving: isMoving,
-            direction: player.direction
-        };
-
-        if (player.body.velocity.x != 0 || player.body.velocity.y != 0) {
-            this.mySocket.emitPlayerMovement(this.scene.key, movementData);
-            moved = true;
-        } else if (moved) {
-            this.mySocket.emitPlayerMovement(this.scene.key, movementData);
-            moved = false;
-        }
-    }
-
-    updatePressXVisibility() {
-        if (this.isInZone) {
-            if (this.mobileFlag) {
-                this.mobileXButton.setVisible(true);
-                this.buttonBackground.setVisible(true);
-            }
-            else {
-                this.pressX.setPosition(player.x, player.y - HEIGHT_PRESS_X);
-                this.pressX.setVisible(true);
-            }
-        } else {
-            if (this.mobileFlag) {
-                this.mobileXButton.setVisible(false);
-                this.buttonBackground.setVisible(false);
-            }
-            else {
-                this.pressX.setVisible(false);
-            }
-        }
+        super.update();
     }
 
 }
-
-function sceneSwitched(self, data) {
-    self.map.destroy();
-    self.avatarDialog.destroy();
-    self.exitContainer.destroy();
-    otherPlayers = {};
-    let players = data.players;
-    self.scene.start(data.scene, { players });
-}
-
-
-
 
 let itemsRight = [];
 let puzzleBackRight;
@@ -904,7 +621,7 @@ function rotateItemsRight(scene, row, col) {
         scene.tweens.add({
             targets: itemsRight[row][c],
             angle: itemsRight[row][c].angle - 90,
-            duration: 300,
+            duration: 150,
             ease: 'Power2'
         });
         rotatedItemsRight[row][c] = !rotatedItemsRight[row][c]; // Меняем значение в массиве
@@ -916,7 +633,7 @@ function rotateItemsRight(scene, row, col) {
             scene.tweens.add({
                 targets: itemsRight[r][col],
                 angle: itemsRight[r][col].angle - 90,
-                duration: 300,
+                duration: 150,
                 ease: 'Power2'
             });
             rotatedItemsRight[r][col] = !rotatedItemsRight[r][col]; // Меняем значение в массиве
@@ -944,12 +661,9 @@ function checkWinConditionRight(context) {
     context.overlayBackground.setAlpha(1);
     context.closeButton.setAlpha(1);
 
-    context.answerRight.setPosition(context.cameras.main.scrollX + 640, context.cameras.main.scrollY + 360).setVisible(true);
-    context.overlayBackground.setPosition(context.cameras.main.scrollX + 640, context.cameras.main.scrollY + 360).setVisible(true);
-    context.closeButton.setPosition(
-        context.cameras.main.scrollX + 640 + context.overlayBackground.displayWidth / 2 - context.overlayBackground.displayWidth * 0.1 / 2 + 10,
-        context.cameras.main.scrollY + 360 - context.overlayBackground.displayHeight / 2 + context.overlayBackground.displayHeight * 0.1 / 2,
-    ).setVisible(true);
+    context.answerRight.setVisible(true);
+    context.overlayBackground.setVisible(true);
+    context.closeButton.setVisible(true);
 }
 
 function showRightPuzzle(context) {
@@ -1062,7 +776,7 @@ function rotateItemsLeft(scene, row, col) {
         scene.tweens.add({
             targets: itemsLeft[row][c],
             angle: itemsLeft[row][c].angle - 90,
-            duration: 300,
+            duration: 150,
             ease: 'Power2'
         });
         rotatedItemsLeft[row][c] = !rotatedItemsLeft[row][c]; // Меняем значение в массиве
@@ -1074,7 +788,7 @@ function rotateItemsLeft(scene, row, col) {
             scene.tweens.add({
                 targets: itemsLeft[r][col],
                 angle: itemsLeft[r][col].angle - 90,
-                duration: 300,
+                duration: 150,
                 ease: 'Power2'
             });
             rotatedItemsLeft[r][col] = !rotatedItemsLeft[r][col]; // Меняем значение в массиве
@@ -1101,12 +815,9 @@ function checkWinConditionLeft(context) {
     context.overlayBackground.setAlpha(1);
     context.closeButton.setAlpha(1);
 
-    context.answerLeft.setPosition(context.cameras.main.scrollX + 640, context.cameras.main.scrollY + 360).setVisible(true);
-    context.overlayBackground.setPosition(context.cameras.main.scrollX + 640, context.cameras.main.scrollY + 360).setVisible(true);
-    context.closeButton.setPosition(
-        context.cameras.main.scrollX + 640 + context.overlayBackground.displayWidth / 2 - context.overlayBackground.displayWidth * 0.1 / 2 + 10,
-        context.cameras.main.scrollY + 360 - context.overlayBackground.displayHeight / 2 + context.overlayBackground.displayHeight * 0.1 / 2,
-    ).setVisible(true);
+    context.answerLeft.setVisible(true);
+    context.overlayBackground.setVisible(true);
+    context.closeButton.setVisible(true);
 }
 
 function showLeftPuzzle(context) {

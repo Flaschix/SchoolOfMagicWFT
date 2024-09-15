@@ -211,7 +211,6 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
             // Обновляем ссылку на текущий выделенный аватар
             selectedAvatar = avatar;
             imgCount = Number(avatar.dataset.index);
-            console.log(imgCount);
         });
     });
 
@@ -296,8 +295,6 @@ export const MAP_SETTINGS = {
     MAP_FULL3: 'mapFull3',
     MAP_FULL4: 'mapFull4',
     MAP_FULL5: 'mapFull5',
-    MAP_FULL6: 'mapFull6',
-    MAP_FULL7: 'mapFull7',
 
     MAP_SCALE_4_3: 4 / 3,
     MAP_SCALE_2: 2
