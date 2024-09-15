@@ -279,6 +279,7 @@ export class GameScene extends BaseScene {
     }
 
     itemInteract(context) {
+        if (context.foldKeys.visible) return;
         if (context.isInZone) {
             context.player.setVelocity(0);
 

@@ -1,14 +1,9 @@
 import { CST, LABEL_ID } from "../CST.mjs";
 
 import { socket } from "../CST.mjs";
-import { SocketWorker } from "../share/SocketWorker.mjs";
 
-import { createUIBottom } from "../share/UICreator.mjs";
-import { createUITop } from "../share/UICreator.mjs";
-import { createUIRight } from "../share/UICreator.mjs";
 import { createUILeftMobile } from "../share/UICreator.mjs";
 import { createUI } from "../share/UICreator.mjs";
-import { createExitMenu } from "../share/UICreator.mjs";
 import { createAvatarDialog } from "../share/UICreator.mjs";
 import { isMobile } from "../share/UICreator.mjs";
 import { CAMERA_MARGIN, CAMERA_MARGIN_MOBILE } from "../share/UICreator.mjs";
@@ -16,12 +11,6 @@ import { CAMERA_MARGIN, CAMERA_MARGIN_MOBILE } from "../share/UICreator.mjs";
 import { createJoystick } from "../share/UICreator.mjs";
 import { createMobileXButton } from "../share/UICreator.mjs";
 
-import { HEIGHT_PRESS_X } from "../share/UICreator.mjs";
-import { MAP_SETTINGS } from "../share/UICreator.mjs";
-
-import { AnimationControl } from "../share/AnimationControl.mjs";
-
-import { PlayersController } from "../share/PlayerController.mjs";
 import { BaseScene } from "./BaseScene.mjs";
 
 export class GameScene4 extends BaseScene {
@@ -428,6 +417,7 @@ export class GameScene4 extends BaseScene {
     }
 
     itemInteract(context) {
+        if (context.foldKeys.visible) return;
         if (context.isInZone) {
             context.player.setVelocity(0);
 
