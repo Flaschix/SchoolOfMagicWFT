@@ -20,9 +20,9 @@ export class SocketWorker {
         });
     }
 
-    subscribePlayerDisconected(event) {
+    subscribePlayerDisconected(context, event) {
         this.socket.on('playerDisconnected', (id) => {
-            event(id);
+            event(context, id);
         });
     }
 
