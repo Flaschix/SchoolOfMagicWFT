@@ -509,18 +509,17 @@ export class GameScene6 extends BaseScene {
                 context.showOverlay();
 
                 context.tweens.add({
-                    targets: [context.overlayBackground, context.closeButton, context.enterCodeContainer, context.answer],
+                    targets: [context.closeButton, context.overlayBackground, context.enterCodeContainer, context.answer],
                     alpha: 1,
                     duration: 500
                 });
             }
             else {
-
                 if (context.eventZone == 2) {
                     if (context.answerLeft.visible) {
-                        context.answerLeft.setVisible(false);
-                        context.overlayBackground.setVisible(false)
-                        context.closeButton.setVisible(false);
+                        context.answerLeft.setVisible(context);
+                        context.overlayBackground.setVisible(context)
+                        context.closeButton.setVisible(context);
                     } else {
                         hideLeftPuzzle(context);
                     }
@@ -541,13 +540,12 @@ export class GameScene6 extends BaseScene {
                 }
 
                 context.tweens.add({
-                    targets: [context.overlayBackground, context.closeButton, context.enterCodeContainer, context.answer],
+                    targets: [context.closeButton, context.overlayBackground, context.enterCodeContainer, context.answer],
                     alpha: 0,
                     duration: 500,
                     onComplete: () => {
                         try {
                             context.hideOverlay();
-                            console.log('dddd');
                         } catch (e) { }
 
                     }
