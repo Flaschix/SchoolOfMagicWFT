@@ -269,7 +269,7 @@ export function createJoystick(context, joystickBase, joystickThumb, flag, x, y)
     });
 }
 
-export function createMobileXButton(context, nameButton, nameBackgorund, x, y, event, interactObj) {
+export function createMobileXButton(context, nameButton, nameBackgorund, x, y, event) {
     context.buttonBackground = context.add.image(x, y, nameBackgorund);
     context.mobileXButton = context.add.image(x, y, nameButton).setInteractive();
 
@@ -283,7 +283,7 @@ export function createMobileXButton(context, nameButton, nameBackgorund, x, y, e
     context.buttonBackground.setScrollFactor(0);
 
     context.mobileXButton.on('pointerdown', () => {
-        event(context, interactObj);
+        event(context);
     });
 }
 

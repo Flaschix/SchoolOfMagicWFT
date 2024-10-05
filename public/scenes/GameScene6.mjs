@@ -230,44 +230,49 @@ export class GameScene6 extends BaseScene {
     }
 
     createInputHandlers() {
-        this.input.on('pointerdown', (pointer) => {
+        if (!this.mobileFlag) {
 
 
-            if (this.isOverlayVisible) {
-                const { x, y } = pointer;
-                const boundsLeft = puzzleBackLeft.getBounds();
-                const boundsRight = puzzleBackRight.getBounds();
+            this.input.on('pointerdown', (pointer) => {
 
-                if (!Phaser.Geom.Rectangle.Contains(boundsLeft, x, y)) {
-                    if (this.eventZone == 2) {
-                        if (this.answerLeft.visible) {
-                            this.answerLeft.setVisible(false);
-                            this.overlayBackground.setVisible(false)
-                            this.closeButton.setVisible(false);
-                        } else {
-                            hideLeftPuzzle(this);
+
+                if (this.isOverlayVisible) {
+                    const { x, y } = pointer;
+                    const boundsLeft = puzzleBackLeft.getBounds();
+                    const boundsRight = puzzleBackRight.getBounds();
+
+                    if (!Phaser.Geom.Rectangle.Contains(boundsLeft, x, y)) {
+                        if (this.eventZone == 2) {
+                            if (this.answerLeft.visible) {
+                                this.answerLeft.setVisible(false);
+                                this.overlayBackground.setVisible(false)
+                                this.closeButton.setVisible(false);
+                            } else {
+                                hideLeftPuzzle(this);
+                            }
+                            this.isOverlayVisible = !this.isOverlayVisible
+                            return;
                         }
-                        this.isOverlayVisible = !this.isOverlayVisible
-                        return;
                     }
-                }
 
-                if (!Phaser.Geom.Rectangle.Contains(boundsRight, x, y)) {
-                    if (this.eventZone == 3) {
-                        if (this.answerRight.visible) {
-                            this.answerRight.setVisible(false);
-                            this.overlayBackground.setVisible(false)
-                            this.closeButton.setVisible(false);
-                        } else {
-                            hideRightPuzzle(this);
+                    if (!Phaser.Geom.Rectangle.Contains(boundsRight, x, y)) {
+                        if (this.eventZone == 3) {
+                            if (this.answerRight.visible) {
+                                this.answerRight.setVisible(false);
+                                this.overlayBackground.setVisible(false)
+                                this.closeButton.setVisible(false);
+                            } else {
+                                hideRightPuzzle(this);
+                            }
+                            this.isOverlayVisible = !this.isOverlayVisible
+                            return;
                         }
-                        this.isOverlayVisible = !this.isOverlayVisible
-                        return;
                     }
-                }
 
-            }
-        });
+                }
+            });
+
+        }
 
         this.input.keyboard.on('keydown-X', () => {
             if (this.isInZone) {
@@ -483,69 +488,69 @@ export class GameScene6 extends BaseScene {
         this.enterCodeContainer.setVisible(false);
     }
 
-    itemInteract(context) {
-        if (context.isInZone) {
-            context.player.setVelocity(0);
+    itemInteract(self) {
+        if (self.isInZone) {
+            self.player.setVelocity(0);
 
-            if (context.eventZone == LABEL_ID.DOOR_BACK_ID) {
-                context.moveBackRoom();
+            if (self.eventZone == LABEL_ID.DOOR_BACK_ID) {
+                self.moveBackRoom();
                 return;
             }
 
-            if (!context.isOverlayVisible) {
+            if (!self.isOverlayVisible) {
 
-                if (context.eventZone == 2) {
-                    showLeftPuzzle(context);
-                    context.isOverlayVisible = !context.isOverlayVisible
+                if (self.eventZone == 2) {
+                    showLeftPuzzle(self);
+                    self.isOverlayVisible = !self.isOverlayVisible
                     return;
                 }
 
-                if (context.eventZone == 3) {
-                    showRightPuzzle(context);
-                    context.isOverlayVisible = !context.isOverlayVisible
+                if (self.eventZone == 3) {
+                    showRightPuzzle(self);
+                    self.isOverlayVisible = !self.isOverlayVisible
                     return;
                 }
 
-                context.showOverlay();
+                self.showOverlay();
 
-                context.tweens.add({
-                    targets: [context.closeButton, context.overlayBackground, context.enterCodeContainer, context.answer],
+                self.tweens.add({
+                    targets: [self.closeButton, self.overlayBackground, self.enterCodeContainer, self.answer],
                     alpha: 1,
                     duration: 500
                 });
             }
             else {
-                if (context.eventZone == 2) {
-                    if (context.answerLeft.visible) {
-                        context.answerLeft.setVisible(context);
-                        context.overlayBackground.setVisible(context)
-                        context.closeButton.setVisible(context);
+                if (self.eventZone == 2) {
+                    if (self.answerLeft.visible) {
+                        self.answerLeft.setVisible(self);
+                        self.overlayBackground.setVisible(self)
+                        self.closeButton.setVisible(self);
                     } else {
-                        hideLeftPuzzle(context);
+                        hideLeftPuzzle(self);
                     }
-                    context.isOverlayVisible = !context.isOverlayVisible
+                    self.isOverlayVisible = !self.isOverlayVisible
                     return;
                 }
 
-                if (context.eventZone == 3) {
-                    if (context.answerRight.visible) {
-                        context.answerRight.setVisible(false);
-                        context.overlayBackground.setVisible(false)
-                        context.closeButton.setVisible(false);
+                if (self.eventZone == 3) {
+                    if (self.answerRight.visible) {
+                        self.answerRight.setVisible(false);
+                        self.overlayBackground.setVisible(false)
+                        self.closeButton.setVisible(false);
                     } else {
-                        hideRightPuzzle(context);
+                        hideRightPuzzle(self);
                     }
-                    context.isOverlayVisible = !context.isOverlayVisible
+                    self.isOverlayVisible = !self.isOverlayVisible
                     return;
                 }
 
-                context.tweens.add({
-                    targets: [context.closeButton, context.overlayBackground, context.enterCodeContainer, context.answer],
+                self.tweens.add({
+                    targets: [self.closeButton, self.overlayBackground, self.enterCodeContainer, self.answer],
                     alpha: 0,
                     duration: 500,
                     onComplete: () => {
                         try {
-                            context.hideOverlay();
+                            self.hideOverlay();
                         } catch (e) { }
 
                     }
@@ -824,7 +829,6 @@ function showLeftPuzzle(context) {
         alpha: 1,
         duration: 500
     });
-
     puzzleBackLeft.setVisible(true)
     itemsLeft.forEach(items => {
         items.forEach(item => {
