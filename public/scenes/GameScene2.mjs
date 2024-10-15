@@ -138,7 +138,6 @@ export class GameScene2 extends BaseScene {
         this.input.keyboard.on('keydown-X', () => {
             if (this.isInZone) {
                 this.player.setVelocity(0);
-                console.log(this.eventZone);
 
                 if (this.eventZone == LABEL_ID.DOOR_BACK_ID) {
                     this.moveBackRoom();

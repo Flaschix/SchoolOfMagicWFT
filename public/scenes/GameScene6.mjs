@@ -58,9 +58,10 @@ export class GameScene6 extends BaseScene {
         //Создание оверлея
         this.createOverlays();
         //Создание слушателей нажатия кнопок
-        this.createInputHandlers();
 
         createAvatarDialog(this, this.enterNewSettingsInAvatarDialog, this.closeAvatarDialog, this.player.room, isMobile());
+
+        this.createInputHandlers();
 
         createGameFieldRight(this, 700, 350);
         createGameFieldLeft(this, 700, 350);
@@ -166,15 +167,24 @@ export class GameScene6 extends BaseScene {
         this.answer.setScrollFactor(0);
         this.answer.setAlpha(0);
 
-        this.answerLeft = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 + 10, 'answerLeft');
-        this.answerLeft.setScale(0.9);
+        this.textA = this.add.text(this.cameras.main.width / 2 - 280, this.cameras.main.height / 2 - 100, 'Congrats!\nThat’s the right answer\n“DIOLUM”', { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textA.setVisible(false);
+        this.textA.setAlpha(0);
+
+        this.paper = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 + 10, 'paper');
+        this.paper.setScale(0.9);
+        this.paper.setVisible(false);
+        this.paper.setDepth(2);
+        this.paper.setScrollFactor(0);
+        this.paper.setAlpha(0);
+
+        this.answerLeft = this.add.text(this.cameras.main.width / 2 - 250, this.cameras.main.height / 2 - 80, 'First part of the spell\n“DIO”', { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' })
         this.answerLeft.setVisible(false);
         this.answerLeft.setDepth(2);
         this.answerLeft.setScrollFactor(0);
         this.answerLeft.setAlpha(0);
 
-        this.answerRight = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 + 10, 'answerRight');
-        this.answerRight.setScale(0.9);
+        this.answerRight = this.add.text(this.cameras.main.width / 2 - 290, this.cameras.main.height / 2 - 80, 'Second part of the spell\n“LUM”', { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' })
         this.answerRight.setVisible(false);
         this.answerRight.setDepth(2);
         this.answerRight.setScrollFactor(0);
@@ -193,6 +203,7 @@ export class GameScene6 extends BaseScene {
             if (this.eventZone == 2) {
                 if (this.answerLeft.visible) {
                     this.answerLeft.setVisible(false);
+                    this.paper.setVisible(false);
                     this.overlayBackground.setVisible(false)
                     this.closeButton.setVisible(false);
                 } else {
@@ -205,6 +216,7 @@ export class GameScene6 extends BaseScene {
             if (this.eventZone == 3) {
                 if (this.answerRight.visible) {
                     this.answerRight.setVisible(false);
+                    this.paper.setVisible(false);
                     this.overlayBackground.setVisible(false)
                     this.closeButton.setVisible(false);
                 } else {
@@ -216,7 +228,7 @@ export class GameScene6 extends BaseScene {
 
             this.isOverlayVisible = false;
             this.tweens.add({
-                targets: [this.closeButton, this.overlayBackground, this.answer],
+                targets: [this.closeButton, this.overlayBackground, this.answer, this.textA],
                 alpha: 0,
                 duration: 500,
                 onComplete: () => {
@@ -245,6 +257,7 @@ export class GameScene6 extends BaseScene {
                         if (this.eventZone == 2) {
                             if (this.answerLeft.visible) {
                                 this.answerLeft.setVisible(false);
+                                this.paper.setVisible(false);
                                 this.overlayBackground.setVisible(false)
                                 this.closeButton.setVisible(false);
                             } else {
@@ -259,6 +272,7 @@ export class GameScene6 extends BaseScene {
                         if (this.eventZone == 3) {
                             if (this.answerRight.visible) {
                                 this.answerRight.setVisible(false);
+                                this.paper.setVisible(false);
                                 this.overlayBackground.setVisible(false)
                                 this.closeButton.setVisible(false);
                             } else {
@@ -275,6 +289,7 @@ export class GameScene6 extends BaseScene {
         }
 
         this.input.keyboard.on('keydown-X', () => {
+            if (this.avatarDialog.visible || this.exitContainer.visible) return;
             if (this.isInZone) {
                 this.player.setVelocity(0);
 
@@ -300,7 +315,7 @@ export class GameScene6 extends BaseScene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.answer],
+                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.answer, this.textA],
                         alpha: 1,
                         duration: 500
                     });
@@ -309,6 +324,7 @@ export class GameScene6 extends BaseScene {
                     if (this.eventZone == 2) {
                         if (this.answerLeft.visible) {
                             this.answerLeft.setVisible(false);
+                            this.paper.setVisible(false);
                             this.overlayBackground.setVisible(false)
                             this.closeButton.setVisible(false);
                         } else {
@@ -321,6 +337,7 @@ export class GameScene6 extends BaseScene {
                     if (this.eventZone == 3) {
                         if (this.answerRight.visible) {
                             this.answerRight.setVisible(false);
+                            this.paper.setVisible(false);
                             this.overlayBackground.setVisible(false)
                             this.closeButton.setVisible(false);
                         } else {
@@ -331,7 +348,7 @@ export class GameScene6 extends BaseScene {
                     }
 
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.answer],
+                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.answer, this.textA],
                         alpha: 0,
                         duration: 500,
                         onComplete: () => {
@@ -367,7 +384,7 @@ export class GameScene6 extends BaseScene {
 
     hideOverlay() {
         this.isOverlayVisible = false
-        if (this.answer.visible) this.answer.setVisible(false);
+        if (this.answer.visible) { this.answer.setVisible(false); this.textA.setVisible(false); }
         if (this.enterCodeContainer.visible) this.enterCodeContainer.setVisible(false);
 
         this.overlayBackground.setVisible(false);
@@ -445,6 +462,8 @@ export class GameScene6 extends BaseScene {
                     this.overlayBackground.setVisible(true);
                     this.answer.setVisible(true);
                     this.answer.setAlpha(1);
+                    this.textA.setVisible(true);
+                    this.textA.setAlpha(true);
                     this.closeButton.setVisible(true);
 
                     this.enterCodeContainer.setVisible(false);
@@ -489,6 +508,7 @@ export class GameScene6 extends BaseScene {
     }
 
     itemInteract(self) {
+        if (self.avatarDialog.visible || self.exitContainer.visible) return;
         if (self.isInZone) {
             self.player.setVelocity(0);
 
@@ -514,7 +534,7 @@ export class GameScene6 extends BaseScene {
                 self.showOverlay();
 
                 self.tweens.add({
-                    targets: [self.closeButton, self.overlayBackground, self.enterCodeContainer, self.answer],
+                    targets: [self.closeButton, self.overlayBackground, self.enterCodeContainer, self.answer, self.textA],
                     alpha: 1,
                     duration: 500
                 });
@@ -522,9 +542,10 @@ export class GameScene6 extends BaseScene {
             else {
                 if (self.eventZone == 2) {
                     if (self.answerLeft.visible) {
-                        self.answerLeft.setVisible(self);
-                        self.overlayBackground.setVisible(self)
-                        self.closeButton.setVisible(self);
+                        self.answerLeft.setVisible(false);
+                        self.paper.setVisible(false);
+                        self.overlayBackground.setVisible(false)
+                        self.closeButton.setVisible(false);
                     } else {
                         hideLeftPuzzle(self);
                     }
@@ -535,6 +556,7 @@ export class GameScene6 extends BaseScene {
                 if (self.eventZone == 3) {
                     if (self.answerRight.visible) {
                         self.answerRight.setVisible(false);
+                        self.paper.setVisible(false);
                         self.overlayBackground.setVisible(false)
                         self.closeButton.setVisible(false);
                     } else {
@@ -545,7 +567,7 @@ export class GameScene6 extends BaseScene {
                 }
 
                 self.tweens.add({
-                    targets: [self.closeButton, self.overlayBackground, self.enterCodeContainer, self.answer],
+                    targets: [self.closeButton, self.overlayBackground, self.enterCodeContainer, self.answer, self.textA],
                     alpha: 0,
                     duration: 500,
                     onComplete: () => {
@@ -656,15 +678,16 @@ function checkWinConditionRight(context) {
             }
         }
     }
-    console.log('win');
 
     hideRightPuzzle(context);
 
     context.answerRight.setAlpha(1);
+    context.paper.setAlpha(1);
     context.overlayBackground.setAlpha(1);
     context.closeButton.setAlpha(1);
 
     context.answerRight.setVisible(true);
+    context.paper.setVisible(true);
     context.overlayBackground.setVisible(true);
     context.closeButton.setVisible(true);
 }
@@ -811,14 +834,15 @@ function checkWinConditionLeft(context) {
             }
         }
     }
-    console.log('win');
     hideLeftPuzzle(context);
 
     context.answerLeft.setAlpha(1);
+    context.paper.setAlpha(1);
     context.overlayBackground.setAlpha(1);
     context.closeButton.setAlpha(1);
 
     context.answerLeft.setVisible(true);
+    context.paper.setVisible(true);
     context.overlayBackground.setVisible(true);
     context.closeButton.setVisible(true);
 }

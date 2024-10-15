@@ -135,16 +135,17 @@ export class BaseScene extends Phaser.Scene {
     createOverlays() {
     }
 
-    createInputHandlers() {
-    }
-
     showOverlay() {
     }
 
     hideOverlay() {
     }
 
+    createInputHandlers() {
+    }
+
     showSettings(self) {
+        if (self.isOverlayVisible) return;
         self.avatarDialog.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
         self.avatarDialog.setVisible(true);
         self.isOverlayVisible = true
@@ -153,6 +154,7 @@ export class BaseScene extends Phaser.Scene {
     }
 
     showExitMenu(self) {
+        if (self.isOverlayVisible) return;
         self.exitContainer.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
         self.exitContainer.setVisible(true);
         self.isOverlayVisible = true
