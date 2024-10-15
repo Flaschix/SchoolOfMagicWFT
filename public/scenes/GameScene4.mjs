@@ -169,11 +169,15 @@ export class GameScene4 extends BaseScene {
         this.overlayBackground.setAlpha(0);
 
         this.sixethKey = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 + 10, 'sixethKey');
-        this.sixethKey.setScale(0.25);
+        this.sixethKey.setScale(0.5);
         this.sixethKey.setVisible(false);
         this.sixethKey.setDepth(2);
         this.sixethKey.setScrollFactor(0);
         this.sixethKey.setAlpha(0);
+
+        this.textA = this.add.text(250 * 3.9, this.cameras.main.height / 2, '39', { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textA.setVisible(false);
+        this.textA.setAlpha(0);
 
         //Текст для пустых
         this.emptySign = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'empty');
@@ -189,6 +193,10 @@ export class GameScene4 extends BaseScene {
         this.answer.setScrollFactor(0);
         this.answer.setAlpha(0);
 
+        this.textB = this.add.text(this.cameras.main.width / 2 - 320, this.cameras.main.height / 2 - 120, 'Congrats!\nYou’ve found the right spell\n“OKOLIZ”', { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textB.setVisible(false);
+        this.textB.setAlpha(0);
+
         this.closeButton = this.add.image(this.cameras.main.width - 200, 85, 'closeIcon');
         this.closeButton.setDisplaySize(50, 50);
         this.closeButton.setInteractive();
@@ -200,7 +208,7 @@ export class GameScene4 extends BaseScene {
         this.closeButton.on('pointerdown', () => {
             this.isOverlayVisible = false;
             this.tweens.add({
-                targets: [this.closeButton, this.overlayBackground, this.sixethKey, this.emptySign, this.answer],
+                targets: [this.closeButton, this.overlayBackground, this.sixethKey, this.emptySign, this.answer, this.textA, this.textB],
                 alpha: 0,
                 duration: 500,
                 onComplete: () => {
@@ -215,6 +223,7 @@ export class GameScene4 extends BaseScene {
 
     createInputHandlers() {
         this.input.keyboard.on('keydown-X', () => {
+            if (this.avatarDialog.visible || this.exitContainer.visible) return;
             if (this.foldKeys.visible) return;
             if (this.isInZone) {
                 this.player.setVelocity(0);
@@ -229,14 +238,14 @@ export class GameScene4 extends BaseScene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySign, this.answer],
+                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySign, this.answer, this.textA, this.textB],
                         alpha: 1,
                         duration: 500
                     });
                 }
                 else {
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySign, this.answer],
+                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySign, this.answer, this.textA, this.textB],
                         alpha: 0,
                         duration: 500,
                         onComplete: () => {
@@ -266,6 +275,7 @@ export class GameScene4 extends BaseScene {
             return;
         } else if (this.eventZone == LABEL_ID.SIXETH_KEY) {
             this.sixethKey.setVisible(true);
+            this.textA.setVisible(true);
             if (this.fold.indexOf(this.sixethKey.texture.key) == -1) {
                 this.mySocket.emitAddNewImg(this.sixethKey.texture.key);
             }
@@ -280,21 +290,14 @@ export class GameScene4 extends BaseScene {
 
     hideOverlay() {
         this.isOverlayVisible = false
-        // if (this.eventZone == 0) {
-        //     this.enterCodeContainer.setVisible(false);
-        //     if (this.answer.visible) {
-        //         this.answer.setVisible(false);
-        //         this.overlayBackground.setVisible(false);
-        //         this.closeButton.setVisible(false);
-        //     }
-        //     return;
-        // }
-        // else if (this.eventZone == LABEL_ID.SIXETH_KEY) this.sixethKey.setVisible(false);
-        // else {
-        //     this.emptySign.setVisible(false);
-        // }
-        if (this.sixethKey.visible) this.sixethKey.setVisible(false);
-        if (this.answer.visible) this.answer.setVisible(false);
+        if (this.sixethKey.visible) {
+            this.sixethKey.setVisible(false);
+            this.textA.setVisible(false);
+        }
+        if (this.answer.visible) {
+            this.answer.setVisible(false);
+            this.textB.setVisible(false);
+        }
         if (this.emptySign.visible) this.emptySign.setVisible(false);
         if (this.enterCodeContainer.visible) this.enterCodeContainer.setVisible(false);
 
@@ -373,6 +376,8 @@ export class GameScene4 extends BaseScene {
                     this.overlayBackground.setVisible(true);
                     this.answer.setVisible(true);
                     this.answer.setAlpha(1);
+                    this.textB.setVisible(true);
+                    this.textB.setAlpha(1);
                     this.closeButton.setVisible(true);
 
                     this.enterCodeContainer.setVisible(false);
@@ -417,6 +422,7 @@ export class GameScene4 extends BaseScene {
     }
 
     itemInteract(context) {
+        if (context.avatarDialog.visible || context.exitContainer.visible) return;
         if (context.foldKeys.visible) return;
         if (context.isInZone) {
             context.player.setVelocity(0);
@@ -436,14 +442,14 @@ export class GameScene4 extends BaseScene {
                 context.showOverlay();
 
                 context.tweens.add({
-                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.sixethKey, context.enterCodeContainer, context.answer],
+                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.sixethKey, context.enterCodeContainer, context.answer, context.textA, context.textB],
                     alpha: 1,
                     duration: 500
                 });
             }
             else {
                 context.tweens.add({
-                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.sixethKey, context.enterCodeContainer, context.answer],
+                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.sixethKey, context.enterCodeContainer, context.answer, context.textA, , context.textB],
                     alpha: 0,
                     duration: 500,
                     onComplete: () => {

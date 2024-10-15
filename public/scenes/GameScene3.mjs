@@ -168,15 +168,19 @@ export class GameScene3 extends BaseScene {
 
         //Первый ключ
         this.fiverthKey = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 + 10, 'fiverthKey');
-        this.fiverthKey.setScale(0.25);
+        this.fiverthKey.setScale(0.5);
         this.fiverthKey.setVisible(false);
         this.fiverthKey.setDepth(2);
         this.fiverthKey.setScrollFactor(0);
         this.fiverthKey.setAlpha(0);
 
+        this.textA = this.add.text(250 * 3.5, this.cameras.main.height / 2, '11', { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textA.setVisible(false);
+        this.textA.setAlpha(0);
+
         //Второй ключ
         this.clueKey = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 + 10, 'clueKey');
-        this.clueKey.setScale(0.25);
+        this.clueKey.setScale(0.5);
         this.clueKey.setVisible(false);
         this.clueKey.setDepth(2);
         this.clueKey.setScrollFactor(0);
@@ -200,7 +204,7 @@ export class GameScene3 extends BaseScene {
         this.closeButton.on('pointerdown', () => {
             this.isOverlayVisible = false;
             this.tweens.add({
-                targets: [this.closeButton, this.overlayBackground, this.emptySign, this.clueKey, this.fiverthKey],
+                targets: [this.closeButton, this.overlayBackground, this.emptySign, this.clueKey, this.fiverthKey, this.textA],
                 alpha: 0,
                 duration: 500,
                 onComplete: () => {
@@ -215,6 +219,7 @@ export class GameScene3 extends BaseScene {
 
     createInputHandlers() {
         this.input.keyboard.on('keydown-X', () => {
+            if (this.avatarDialog.visible || this.exitContainer.visible) return;
             if (this.foldKeys.visible) return;
             if (this.isInZone) {
                 this.player.setVelocity(0);
@@ -233,14 +238,14 @@ export class GameScene3 extends BaseScene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.clueKey, this.fiverthKey],
+                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.clueKey, this.fiverthKey, this.textA],
                         alpha: 1,
                         duration: 500
                     });
                 }
                 else {
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.clueKey, this.fiverthKey],
+                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.clueKey, this.fiverthKey, this.textA],
                         alpha: 0,
                         duration: 500,
                         onComplete: () => {
@@ -272,6 +277,7 @@ export class GameScene3 extends BaseScene {
 
         if (this.eventZone == LABEL_ID.FIVETH_KEY) {
             this.fiverthKey.setVisible(true);
+            this.textA.setVisible(true);
             if (this.fold.indexOf(this.fiverthKey.texture.key) == -1) {
                 this.mySocket.emitAddNewImg(this.fiverthKey.texture.key);
             }
@@ -292,7 +298,10 @@ export class GameScene3 extends BaseScene {
 
     hideOverlay() {
         this.isOverlayVisible = false
-        if (this.fiverthKey.visible) this.fiverthKey.setVisible(false);
+        if (this.fiverthKey.visible) {
+            this.fiverthKey.setVisible(false);
+            this.textA.setVisible(false);
+        }
         if (this.clueKey.visible) this.clueKey.setVisible(false);
         if (this.emptySign.visible) this.emptySign.setVisible(false);
 
@@ -301,6 +310,7 @@ export class GameScene3 extends BaseScene {
     }
 
     itemInteract(context) {
+        if (context.avatarDialog.visible || context.exitContainer.visible) return;
         if (context.foldKeys.visible) return;
         if (context.isInZone) {
             context.player.setVelocity(0);
@@ -320,14 +330,14 @@ export class GameScene3 extends BaseScene {
                 context.showOverlay();
 
                 context.tweens.add({
-                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.clueKey, context.fiverthKey],
+                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.clueKey, context.fiverthKey, context.textA],
                     alpha: 1,
                     duration: 500
                 });
             }
             else {
                 context.tweens.add({
-                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.clueKey, context.fiverthKey],
+                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.clueKey, context.fiverthKey, context.textA],
                     alpha: 0,
                     duration: 500,
                     onComplete: () => {
