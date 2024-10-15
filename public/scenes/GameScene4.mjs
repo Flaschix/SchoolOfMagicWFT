@@ -154,18 +154,26 @@ export class GameScene4 extends BaseScene {
         this.overlayBackground.setAlpha(0);
 
         this.fiverthKey = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 + 10, 'fiverthKey');
-        this.fiverthKey.setScale(0.6);
+        this.fiverthKey.setScale(0.85);
         this.fiverthKey.setVisible(false);
         this.fiverthKey.setDepth(2);
         this.fiverthKey.setScrollFactor(0);
         this.fiverthKey.setAlpha(0);
 
+        this.textA = this.add.text(350, this.cameras.main.height / 2 - 100, 'Вы нашли древний манускрипт, в котором\nописывается четвертая часть приготовление\nзелья. В манускрипте сказано, что для\nприготовления зелья требуется использовать\nчешую дракона. Одна чешуя уже лежит на\nстоле. По манускрипту, для завершения рецепта\nнужно еще столько же.', { font: "normal 26px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textA.setVisible(false);
+        this.textA.setAlpha(0);
+
         this.sixethKey = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 + 10, 'sixethKey');
-        this.sixethKey.setScale(0.6);
+        this.sixethKey.setScale(0.85);
         this.sixethKey.setVisible(false);
         this.sixethKey.setDepth(2);
         this.sixethKey.setScrollFactor(0);
         this.sixethKey.setAlpha(0);
+
+        this.textB = this.add.text(390, this.cameras.main.height / 2 - 100, 'На одной из полок вы находите старинный\nсвиток, в котором описывается пятая часть\nприготовление зелья. В свитке говорится, что на\nкаждом этапе приготовления нужно добавить\nпо 2 корня самоцвета. Всего этапов 3.', { font: "normal 26px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textB.setVisible(false);
+        this.textB.setAlpha(0);
 
         //Текст для пустых
         this.emptySign = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'empty');
@@ -181,6 +189,10 @@ export class GameScene4 extends BaseScene {
         this.answer.setScrollFactor(0);
         this.answer.setAlpha(0);
 
+        this.textC = this.add.text(this.cameras.main.width / 2 - 320, this.cameras.main.height / 2 - 130, 'Congrats!\nYou’ve made the right potion\n“437268”', { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textC.setVisible(false);
+        this.textB.setAlpha(0);
+
         this.closeButton = this.add.image(this.cameras.main.width - 200, 85, 'closeIcon');
         this.closeButton.setDisplaySize(50, 50);
         this.closeButton.setInteractive();
@@ -192,7 +204,7 @@ export class GameScene4 extends BaseScene {
         this.closeButton.on('pointerdown', () => {
             this.isOverlayVisible = false;
             this.tweens.add({
-                targets: [this.emptySign, this.closeButton, this.overlayBackground, this.sixethKey, this.answer, this.fiverthKey],
+                targets: [this.emptySign, this.closeButton, this.overlayBackground, this.sixethKey, this.answer, this.fiverthKey, this.textA, this.textB, this.textC],
                 alpha: 0,
                 duration: 500,
                 onComplete: () => {
@@ -207,6 +219,7 @@ export class GameScene4 extends BaseScene {
 
     createInputHandlers() {
         this.input.keyboard.on('keydown-X', () => {
+            if (this.avatarDialog.visible || this.exitContainer.visible) return;
             if (this.foldKeys.visible) return;
 
             if (this.isInZone) {
@@ -222,14 +235,14 @@ export class GameScene4 extends BaseScene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySign, this.fiverthKey, this.answer],
+                        targets: [this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.emptySign, this.fiverthKey, this.answer, this.textA, this.textB, this.textC],
                         alpha: 1,
                         duration: 500
                     });
                 }
                 else {
                     this.tweens.add({
-                        targets: [this.emptySign, this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.answer, this.fiverthKey],
+                        targets: [this.emptySign, this.closeButton, this.overlayBackground, this.enterCodeContainer, this.sixethKey, this.answer, this.fiverthKey, this.textA, this.textB, this.textC],
                         alpha: 0,
                         duration: 500,
                         onComplete: () => {
@@ -259,11 +272,13 @@ export class GameScene4 extends BaseScene {
             return;
         } else if (this.eventZone == LABEL_ID.SIXETH_KEY) {
             this.sixethKey.setVisible(true);
+            this.textB.setVisible(true);
             if (this.fold.indexOf(this.sixethKey.texture.key) == -1) {
                 this.mySocket.emitAddNewImg(this.sixethKey.texture.key);
             }
         } else if (this.eventZone == LABEL_ID.FIVETH_KEY) {
             this.fiverthKey.setVisible(true);
+            this.textA.setVisible(true);
             if (this.fold.indexOf(this.fiverthKey.texture.key) == -1) {
                 this.mySocket.emitAddNewImg(this.fiverthKey.texture.key);
             }
@@ -278,9 +293,9 @@ export class GameScene4 extends BaseScene {
 
     hideOverlay() {
         this.isOverlayVisible = false
-        if (this.sixethKey.visible) this.sixethKey.setVisible(false);
-        if (this.fiverthKey.visible) this.fiverthKey.setVisible(false);
-        if (this.answer.visible) this.answer.setVisible(false);
+        if (this.sixethKey.visible) { this.sixethKey.setVisible(false); this.textB.setVisible(false); }
+        if (this.fiverthKey.visible) { this.fiverthKey.setVisible(false); this.textA.setVisible(false); }
+        if (this.answer.visible) { this.answer.setVisible(false); this.textC.setVisible(false); }
         if (this.emptySign.visible) this.emptySign.setVisible(false);
         if (this.enterCodeContainer.visible) this.enterCodeContainer.setVisible(false);
 
@@ -358,6 +373,8 @@ export class GameScene4 extends BaseScene {
                     this.overlayBackground.setVisible(true);
                     this.answer.setVisible(true);
                     this.answer.setAlpha(1);
+                    this.textC.setVisible(true);
+                    this.textC.setAlpha(1);
                     this.closeButton.setVisible(true);
 
                     this.enterCodeContainer.setVisible(false);
@@ -402,6 +419,7 @@ export class GameScene4 extends BaseScene {
     }
 
     itemInteract(context) {
+        if (context.avatarDialog.visible || context.exitContainer.visible) return;
         if (context.foldKeys.visible) return;
         if (context.isInZone) {
             context.player.setVelocity(0);
@@ -421,14 +439,14 @@ export class GameScene4 extends BaseScene {
                 context.showOverlay();
 
                 context.tweens.add({
-                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.sixethKey, context.fiverthKey, context.enterCodeContainer, context.answer],
+                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.sixethKey, context.fiverthKey, context.enterCodeContainer, context.answer, context.textA, context.textB, context.textC],
                     alpha: 1,
                     duration: 500
                 });
             }
             else {
                 context.tweens.add({
-                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.sixethKey, context.fiverthKey, context.enterCodeContainer, context.answer],
+                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.sixethKey, context.fiverthKey, context.enterCodeContainer, context.answer, context.textA, context.textB, context.textC],
                     alpha: 0,
                     duration: 500,
                     onComplete: () => {

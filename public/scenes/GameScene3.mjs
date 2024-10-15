@@ -162,11 +162,15 @@ export class GameScene3 extends BaseScene {
 
         //Пятый ключ
         this.secondKey = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 + 10, 'secondKey');
-        this.secondKey.setScale(0.6);
+        this.secondKey.setScale(0.85);
         this.secondKey.setVisible(false);
         this.secondKey.setDepth(2);
         this.secondKey.setScrollFactor(0);
         this.secondKey.setAlpha(0);
+
+        this.textA = this.add.text(370, this.cameras.main.height / 2 - 100, 'В старой книге вы находите рецепт шестой\nчасти приготовление зелья. В книге говорится,\nчто в первый день нужно собрать 5 листьев\nдерева Лучей, а на следующий день еще 3 листа.', { font: "normal 26px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textA.setVisible(false);
+        this.textA.setAlpha(0);
 
         //Текст для пустых
         this.emptySign = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'empty');
@@ -186,7 +190,7 @@ export class GameScene3 extends BaseScene {
         this.closeButton.on('pointerdown', () => {
             this.isOverlayVisible = false;
             this.tweens.add({
-                targets: [this.closeButton, this.overlayBackground, this.emptySign, this.secondKey],
+                targets: [this.closeButton, this.overlayBackground, this.emptySign, this.secondKey, this.textA],
                 alpha: 0,
                 duration: 500,
                 onComplete: () => {
@@ -201,6 +205,7 @@ export class GameScene3 extends BaseScene {
 
     createInputHandlers() {
         this.input.keyboard.on('keydown-X', () => {
+            if (this.avatarDialog.visible || this.exitContainer.visible) return;
             if (this.foldKeys.visible) return;
 
             if (this.isInZone) {
@@ -216,14 +221,14 @@ export class GameScene3 extends BaseScene {
                     this.showOverlay();
 
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.secondKey],
+                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.secondKey, this.textA],
                         alpha: 1,
                         duration: 500
                     });
                 }
                 else {
                     this.tweens.add({
-                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.secondKey],
+                        targets: [this.closeButton, this.overlayBackground, this.emptySign, this.secondKey, this.textA],
                         alpha: 0,
                         duration: 500,
                         onComplete: () => {
@@ -255,6 +260,7 @@ export class GameScene3 extends BaseScene {
 
         if (this.eventZone == LABEL_ID.SECOND_KEY) {
             this.secondKey.setVisible(true);
+            this.textA.setVisible(true);
             if (this.fold.indexOf(this.secondKey.texture.key) == -1) {
                 this.mySocket.emitAddNewImg(this.secondKey.texture.key);
             }
@@ -269,7 +275,10 @@ export class GameScene3 extends BaseScene {
 
     hideOverlay() {
         this.isOverlayVisible = false
-        if (this.secondKey.visible) this.secondKey.setVisible(false);
+        if (this.secondKey.visible) {
+            this.secondKey.setVisible(false);
+            this.textA.setVisible(false);
+        }
         if (this.emptySign.visible) this.emptySign.setVisible(false);
 
         this.overlayBackground.setVisible(false);
@@ -277,6 +286,7 @@ export class GameScene3 extends BaseScene {
     }
 
     itemInteract(context) {
+        if (context.avatarDialog.visible || context.exitContainer.visible) return;
         if (context.foldKeys.visible) return;
         if (context.isInZone) {
             context.player.setVelocity(0);
@@ -292,14 +302,14 @@ export class GameScene3 extends BaseScene {
                 context.showOverlay();
 
                 context.tweens.add({
-                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.secondKey],
+                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.secondKey, context.textA],
                     alpha: 1,
                     duration: 500
                 });
             }
             else {
                 context.tweens.add({
-                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.secondKey],
+                    targets: [context.emptySign, context.overlayBackground, context.closeButton, context.secondKey, context.textA],
                     alpha: 0,
                     duration: 500,
                     onComplete: () => {

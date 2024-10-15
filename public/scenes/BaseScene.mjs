@@ -150,11 +150,14 @@ export class BaseScene extends Phaser.Scene {
 
     createFold() {
         this.foldKeys = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 + 10, 'disk');
-        this.foldKeys.setScale(0.6);
+        this.foldKeys.setScale(0.85);
         this.foldKeys.setDepth(2);
         this.foldKeys.setScrollFactor(0);
         this.foldKeys.setVisible(false);
         this.foldKeys.setAlpha(1);
+
+        this.foldText = this.add.text(350, this.cameras.main.height / 2 - 100, 'Вы нашли старый дневник зельевара, в котором\nописывается первая часть приготовление зелья.\nВ дневнике сказано, что для приготовления зелья\nнеобходимо использовать мухоморы. В первый\nдень он использовал 1 мухомор, во второй день он\nиспользовал еще 3 мухомора.', { font: "normal 26px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.foldText.setVisible(false);
 
 
         this.leftArrow = this.add.image(0, 0, 'leftArrow');
@@ -199,6 +202,7 @@ export class BaseScene extends Phaser.Scene {
             this.isOverlayVisible = false;
 
             this.foldKeys.setVisible(false);
+            this.foldText.setVisible(false);
             this.foldColseBtn.setVisible(false);
             this.overlayBackground.setVisible(false);
             this.leftArrow.setVisible(false);
@@ -222,11 +226,16 @@ export class BaseScene extends Phaser.Scene {
             context.rightArrow.setVisible(true);
 
             context.foldKeys.setTexture(context.fold[0]);
+            context.updateFoldText(context.fold[0])
+
             context.foldKeys.setVisible(true);
+            context.foldText.setVisible(true);
         } else {
             context.foldImgNumber = 0;
             context.foldKeys.setTexture(context.fold[0]);
+            context.updateFoldText(context.fold[0])
             context.foldKeys.setVisible(true);
+            context.foldText.setVisible(true);
         }
 
 
@@ -241,14 +250,36 @@ export class BaseScene extends Phaser.Scene {
             this.leftArrow.setVisible(true);
 
             this.tweens.add({
-                targets: [this.foldKeys],
+                targets: [this.foldKeys, this.foldText],
                 alpha: 0,
                 duration: 250,
                 onComplete: () => {
                     try {
                         this.foldKeys.setTexture(this.fold[this.foldImgNumber]);
+
+
+                        if (this.fold[this.foldImgNumber] == 'firstKey') {
+                            this.foldText.setText('Вы нашли старый дневник зельевара, в котором\nописывается первая часть приготовление зелья.\nВ дневнике сказано, что для приготовления зелья\nнеобходимо использовать мухоморы. В первый\nдень он использовал 1 мухомор, во второй день он\nиспользовал еще 3 мухомора.');
+                            this.foldText.setX(350);
+                        } else if (this.fold[this.foldImgNumber] == 'secondKey') {
+                            this.foldText.setText('В старой книге вы находите рецепт шестой\nчасти приготовление зелья. В книге говорится,\nчто в первый день нужно собрать 5 листьев\nдерева Лучей, а на следующий день еще 3 листа.');
+                            this.foldText.setX(370);
+                        } else if (this.fold[this.foldImgNumber] == 'thirdKey') {
+                            this.foldText.setText('В углу лаборатории обнаружен флакон с\nинструкцией, которая описывает третью\nчасть приготовления зелья. В инструкции\nсказано, что для первого этапа нужно 4 слезы,\nа для второго этапа еще 3 слезы.');
+                            this.foldText.setX(350);
+                        } else if (this.fold[this.foldImgNumber] == 'fourthKey') {
+                            this.foldText.setText('В углу лаборатории вы нашли записку, в\nкоторой описывается вторая часть\nприготовление зелья. В записке сказано,\nчто на приготовление зелья требуется 3\nкрыла летучей мыши.');
+                            this.foldText.setX(420);
+                        } else if (this.fold[this.foldImgNumber] == 'fiverthKey') {
+                            this.foldText.setText('Вы нашли древний манускрипт, в котором\nописывается четвертая часть приготовление\nзелья. В манускрипте сказано, что для\nприготовления зелья требуется использовать\nчешую дракона. Одна чешуя уже лежит на\nстоле. По манускрипту, для завершения рецепта\nнужно еще столько же.');
+                            this.foldText.setX(350);
+                        } else if (this.fold[this.foldImgNumber] == 'sixethKey') {
+                            this.foldText.setText('На одной из полок вы находите старинный\nсвиток, в котором описывается пятая часть\nприготовление зелья. В свитке говорится, что на\nкаждом этапе приготовления нужно добавить\nпо 2 корня самоцвета. Всего этапов 3.');
+                            this.foldText.setX(390);
+                        }
+
                         this.tweens.add({
-                            targets: [this.foldKeys],
+                            targets: [this.foldKeys, this.foldText],
                             alpha: 1,
                             duration: 250,
                         });
@@ -266,14 +297,35 @@ export class BaseScene extends Phaser.Scene {
             this.rightArrow.setVisible(true);
 
             this.tweens.add({
-                targets: [this.foldKeys],
+                targets: [this.foldKeys, this.foldText],
                 alpha: 0,
                 duration: 250,
                 onComplete: () => {
                     try {
                         this.foldKeys.setTexture(this.fold[this.foldImgNumber]);
+
+                        if (this.fold[this.foldImgNumber] == 'firstKey') {
+                            this.foldText.setText('Вы нашли старый дневник зельевара, в котором\nописывается первая часть приготовление зелья.\nВ дневнике сказано, что для приготовления зелья\nнеобходимо использовать мухоморы. В первый\nдень он использовал 1 мухомор, во второй день он\nиспользовал еще 3 мухомора.');
+                            this.foldText.setX(350);
+                        } else if (this.fold[this.foldImgNumber] == 'secondKey') {
+                            this.foldText.setText('В старой книге вы находите рецепт шестой\nчасти приготовление зелья. В книге говорится,\nчто в первый день нужно собрать 5 листьев\nдерева Лучей, а на следующий день еще 3 листа.');
+                            this.foldText.setX(370);
+                        } else if (this.fold[this.foldImgNumber] == 'thirdKey') {
+                            this.foldText.setText('В углу лаборатории обнаружен флакон с\nинструкцией, которая описывает третью\nчасть приготовления зелья. В инструкции\nсказано, что для первого этапа нужно 4 слезы,\nа для второго этапа еще 3 слезы.');
+                            this.foldText.setX(350);
+                        } else if (this.fold[this.foldImgNumber] == 'fourthKey') {
+                            this.foldText.setText('В углу лаборатории вы нашли записку, в\nкоторой описывается вторая часть\nприготовление зелья. В записке сказано,\nчто на приготовление зелья требуется 3\nкрыла летучей мыши.');
+                            this.foldText.setX(420);
+                        } else if (this.fold[this.foldImgNumber] == 'fiverthKey') {
+                            this.foldText.setText('Вы нашли древний манускрипт, в котором\nописывается четвертая часть приготовление\nзелья. В манускрипте сказано, что для\nприготовления зелья требуется использовать\nчешую дракона. Одна чешуя уже лежит на\nстоле. По манускрипту, для завершения рецепта\nнужно еще столько же.');
+                            this.foldText.setX(350);
+                        } else if (this.fold[this.foldImgNumber] == 'sixethKey') {
+                            this.foldText.setText('На одной из полок вы находите старинный\nсвиток, в котором описывается пятая часть\nприготовление зелья. В свитке говорится, что на\nкаждом этапе приготовления нужно добавить\nпо 2 корня самоцвета. Всего этапов 3.');
+                            this.foldText.setX(390);
+                        }
+
                         this.tweens.add({
-                            targets: [this.foldKeys],
+                            targets: [this.foldKeys, this.foldText],
                             alpha: 1,
                             duration: 250,
                         });
@@ -289,6 +341,7 @@ export class BaseScene extends Phaser.Scene {
     }
 
     showSettings(self) {
+        if (self.isOverlayVisible) return;
         if (self.foldKeys.visible || self.overlayBackground.visible) return;
         self.avatarDialog.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
         self.avatarDialog.setVisible(true);
@@ -298,6 +351,7 @@ export class BaseScene extends Phaser.Scene {
     }
 
     showExitMenu(self) {
+        if (self.isOverlayVisible) return;
         if (self.foldKeys.visible || self.overlayBackground.visible) return;
         self.exitContainer.setPosition(self.cameras.main.scrollX + 640, self.cameras.main.scrollY + 360);
         self.exitContainer.setVisible(true);
@@ -404,6 +458,29 @@ export class BaseScene extends Phaser.Scene {
             else {
                 this.pressX.setVisible(false);
             }
+        }
+    }
+
+
+    updateFoldText(img) {
+        if (img == 'firstKey') {
+            this.foldText.setText('Вы нашли старый дневник зельевара, в котором\nописывается первая часть приготовление зелья.\nВ дневнике сказано, что для приготовления зелья\nнеобходимо использовать мухоморы. В первый\nдень он использовал 1 мухомор, во второй день он\nиспользовал еще 3 мухомора.');
+            this.foldText.setX(350);
+        } else if (img == 'secondKey') {
+            this.foldText.setText('В старой книге вы находите рецепт шестой\nчасти приготовление зелья. В книге говорится,\nчто в первый день нужно собрать 5 листьев\nдерева Лучей, а на следующий день еще 3 листа.');
+            this.foldText.setX(370);
+        } else if (img == 'thirdKey') {
+            this.foldText.setText('В углу лаборатории обнаружен флакон с\nинструкцией, которая описывает третью\nчасть приготовления зелья. В инструкции\nсказано, что для первого этапа нужно 4 слезы,\nа для второго этапа еще 3 слезы.');
+            this.foldText.setX(350);
+        } else if (img == 'fourthKey') {
+            this.foldText.setText('В углу лаборатории вы нашли записку, в\nкоторой описывается вторая часть\nприготовление зелья. В записке сказано,\nчто на приготовление зелья требуется 3\nкрыла летучей мыши.');
+            this.foldText.setX(420);
+        } else if (img == 'fiverthKey') {
+            this.foldText.setText('Вы нашли древний манускрипт, в котором\nописывается четвертая часть приготовление\nзелья. В манускрипте сказано, что для\nприготовления зелья требуется использовать\nчешую дракона. Одна чешуя уже лежит на\nстоле. По манускрипту, для завершения рецепта\nнужно еще столько же.');
+            this.foldText.setX(350);
+        } else if (img == 'sixethKey') {
+            this.foldText.setText('На одной из полок вы находите старинный\nсвиток, в котором описывается пятая часть\nприготовление зелья. В свитке говорится, что на\nкаждом этапе приготовления нужно добавить\nпо 2 корня самоцвета. Всего этапов 3.');
+            this.foldText.setX(390);
         }
     }
 }

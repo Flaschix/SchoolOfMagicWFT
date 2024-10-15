@@ -6,6 +6,11 @@ body {
     font-family: Arial, sans-serif;
 }
 
+@font-face {
+    font-family: 'MyCustomFont';
+    src: url('assets/font/Petersburg-Italic.ttf') format('truetype');
+}
+
 #lottieGif {
     min-width: 500px;
     min-height: 500px;
