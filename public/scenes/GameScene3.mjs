@@ -2,7 +2,7 @@ import { CST, LABEL_ID } from "../CST.mjs";
 
 import { socket } from "../CST.mjs";
 
-import { createUILeftMobile } from "../share/UICreator.mjs";
+import { createUILeftMobile, decrypt } from "../share/UICreator.mjs";
 import { createUI } from "../share/UICreator.mjs";
 import { createAvatarDialog } from "../share/UICreator.mjs";
 import { isMobile } from "../share/UICreator.mjs";
@@ -10,6 +10,8 @@ import { CAMERA_MARGIN, CAMERA_MARGIN_MOBILE } from "../share/UICreator.mjs";
 
 import { createJoystick } from "../share/UICreator.mjs";
 import { createMobileXButton } from "../share/UICreator.mjs";
+
+import { myMap } from "../CST.mjs";
 
 import { BaseScene } from "./BaseScene.mjs";
 
@@ -147,6 +149,8 @@ export class GameScene3 extends BaseScene {
     }
 
     createOverlays() {
+        const a = myMap.get('secondKey');
+
         this.pressX = this.add.image(this.player.x, this.player.y - 50, 'pressX');
         this.pressX.setDisplaySize(this.pressX.width, this.pressX.height);
         this.pressX.setVisible(false);
@@ -168,7 +172,7 @@ export class GameScene3 extends BaseScene {
         this.secondKey.setScrollFactor(0);
         this.secondKey.setAlpha(0);
 
-        this.textA = this.add.text(370, this.cameras.main.height / 2 - 100, 'В старой книге вы находите рецепт шестой\nчасти приготовление зелья. В книге говорится,\nчто в первый день нужно собрать 5 листьев\nдерева Лучей, а на следующий день еще 3 листа.', { font: "normal 26px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textA = this.add.text(a.x, this.cameras.main.height / 2 - 100, decrypt(a.text), { font: "normal 26px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
         this.textA.setVisible(false);
         this.textA.setAlpha(0);
 

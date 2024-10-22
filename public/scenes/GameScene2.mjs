@@ -2,7 +2,7 @@ import { CST, LABEL_ID } from "../CST.mjs";
 
 import { socket } from "../CST.mjs";
 
-import { createUILeftMobile } from "../share/UICreator.mjs";
+import { createUILeftMobile, decrypt } from "../share/UICreator.mjs";
 import { createUI } from "../share/UICreator.mjs";
 import { createAvatarDialog } from "../share/UICreator.mjs";
 import { isMobile } from "../share/UICreator.mjs";
@@ -10,6 +10,8 @@ import { CAMERA_MARGIN, CAMERA_MARGIN_MOBILE } from "../share/UICreator.mjs";
 
 import { createJoystick } from "../share/UICreator.mjs";
 import { createMobileXButton } from "../share/UICreator.mjs";
+
+import { myMap } from "../CST.mjs";
 
 import { BaseScene } from "./BaseScene.mjs";
 
@@ -151,6 +153,9 @@ export class GameScene2 extends BaseScene {
     }
 
     createOverlays() {
+        const a = myMap.get('thirdKey');
+        const b = myMap.get('fourthKey');
+
         this.pressX = this.add.image(this.player.x, this.player.y - 50, 'pressX');
         this.pressX.setDisplaySize(this.pressX.width, this.pressX.height);
         this.pressX.setVisible(false);
@@ -171,7 +176,7 @@ export class GameScene2 extends BaseScene {
         this.thirdKey.setScrollFactor(0);
         this.thirdKey.setAlpha(0);
 
-        this.textA = this.add.text(350, this.cameras.main.height / 2 - 100, 'В углу лаборатории обнаружен флакон с\nинструкцией, которая описывает третью\nчасть приготовления зелья. В инструкции\nсказано, что для первого этапа нужно 4 слезы,\nа для второго этапа еще 3 слезы.', { font: "normal 26px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textA = this.add.text(a.x, this.cameras.main.height / 2 - 100, decrypt(a.text), { font: "normal 26px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
         this.textA.setVisible(false);
         this.textA.setAlpha(0);
 
@@ -182,7 +187,7 @@ export class GameScene2 extends BaseScene {
         this.fourthKey.setScrollFactor(0);
         this.fourthKey.setAlpha(0);
 
-        this.textB = this.add.text(420, this.cameras.main.height / 2 - 100, 'В углу лаборатории вы нашли записку, в\nкоторой описывается вторая часть\nприготовление зелья. В записке сказано,\nчто на приготовление зелья требуется 3\nкрыла летучей мыши.', { font: "normal 26px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textB = this.add.text(b.x, this.cameras.main.height / 2 - 100, decrypt(b.text), { font: "normal 26px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
         this.textB.setVisible(false);
         this.textB.setAlpha(0);
 

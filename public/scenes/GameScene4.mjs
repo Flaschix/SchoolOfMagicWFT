@@ -1,8 +1,8 @@
-import { CST, LABEL_ID } from "../CST.mjs";
+import { CST, LABEL_ID, myMap } from "../CST.mjs";
 
 import { socket } from "../CST.mjs";
 
-import { createUILeftMobile } from "../share/UICreator.mjs";
+import { cd, createUILeftMobile, decrypt, decryptN } from "../share/UICreator.mjs";
 import { createUI } from "../share/UICreator.mjs";
 import { createAvatarDialog } from "../share/UICreator.mjs";
 import { isMobile } from "../share/UICreator.mjs";
@@ -140,6 +140,9 @@ export class GameScene4 extends BaseScene {
     }
 
     createOverlays() {
+        const a = myMap.get('fiverthKey');
+        const b = myMap.get('sixethKey');
+
         this.pressX = this.add.image(this.player.x, this.player.y - 50, 'pressX');
         this.pressX.setDisplaySize(this.pressX.width, this.pressX.height);
         this.pressX.setVisible(false);
@@ -160,7 +163,7 @@ export class GameScene4 extends BaseScene {
         this.fiverthKey.setScrollFactor(0);
         this.fiverthKey.setAlpha(0);
 
-        this.textA = this.add.text(350, this.cameras.main.height / 2 - 100, 'Вы нашли древний манускрипт, в котором\nописывается четвертая часть приготовление\nзелья. В манускрипте сказано, что для\nприготовления зелья требуется использовать\nчешую дракона. Одна чешуя уже лежит на\nстоле. По манускрипту, для завершения рецепта\nнужно еще столько же.', { font: "normal 26px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textA = this.add.text(a.x, this.cameras.main.height / 2 - 100, decrypt(a.text), { font: "normal 26px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
         this.textA.setVisible(false);
         this.textA.setAlpha(0);
 
@@ -171,7 +174,7 @@ export class GameScene4 extends BaseScene {
         this.sixethKey.setScrollFactor(0);
         this.sixethKey.setAlpha(0);
 
-        this.textB = this.add.text(390, this.cameras.main.height / 2 - 100, 'На одной из полок вы находите старинный\nсвиток, в котором описывается пятая часть\nприготовление зелья. В свитке говорится, что на\nкаждом этапе приготовления нужно добавить\nпо 2 корня самоцвета. Всего этапов 3.', { font: "normal 26px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textB = this.add.text(b.x, this.cameras.main.height / 2 - 100, decrypt(b.text), { font: "normal 26px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
         this.textB.setVisible(false);
         this.textB.setAlpha(0);
 
@@ -355,7 +358,7 @@ export class GameScene4 extends BaseScene {
             });
         });
 
-        const correctCode = '437268';
+        const correctCode = decryptN(cd);
         let correctFlag = true;
 
         const joinRoomConnect = document.getElementById('join-room-connect');
