@@ -25,11 +25,11 @@ export const LABEL_ID = {
 }
 
 export const myMap = new Map([
-    ['firstKey', { x: 350, text: 'Brx kdyh irxqg dq rog srwlrq pdnhu\'v gldub wkdw\nghvfulehv wkh iluvw sduw ri srwlrq pdnlqj. Wkh gldub\nvdbv wkdw wr pdnh wkh srwlrq, brx qhhg wr xvh iob\ndjdulf. Rq wkh iluvw gdb kh xvhg 1 iob djdulf, rq wkh\nvhfrqg gdb kh xvhg 3 pruh iob djdulf.' }],
-    ['secondKey', { x: 370, text: 'Lq dq rog errn, brx zloo ilqg wkh uhflsh iru wkh vlawk\nsduw ri pdnlqj wkh srwlrq. Wkh errn vdbv wr slfn 5\nohdyhv ri wkh udb wuhh rq wkh iluvw gdb dqg 3 pruh\nohdyhv rq wkh qhaw gdb.' }],
-    ['thirdKey', { x: 350, text: 'Lq wkh fruqhu ri wkh ode lv d yldo zlwk dq\nlqvwuxfwlrq vkhhw wkdw ghvfulehv wkh wklug sduw ri\npdnlqj wkh srwlrq. Wkh lqvwuxfwlrqv vdb brx qhhg\n4 whduv iru wkh iluvw vwhs dqg 3 pruh iru wkh\nvhfrqg vwhs.' }],
-    ['fourthKey', { x: 420, text: 'Lq wkh fruqhu ri wkh ode, brx irxqg d qrwh wkdw\nghvfulehv wkh vhfrqg sduw ri pdnlqj wkh srwlrq.\nWkh qrwh vdbv wkdw brx qhhg 3 edw zlqjv iru\nwkh srwlrq.' }],
-    ['fiverthKey', { x: 350, text: 'Brx kdyh irxqg dq dqflhqw pdqxvfulsw wkdw ghvfulehv\nwkh irxuwk sduw ri pdnlqj d srwlrq. Wkh pdqxvfulsw vdbv\nwkdw wkh srwlrq uhtxluhv wkh xvh ri gudjrq vfdohv. Rqh\nvfdoh lv douhdgb oblqj rq wkh wdeoh. Dffruglqj wr wkh\npdqxvfulsw, wkh vdph dprxqw lv qhhghg wr frpsohwh wkh\nuhflsh.' }],
-    ['sixethKey', { x: 390, text: 'Rq rqh ri wkh vkhoyhv, brx ilqg dq dqflhqw vfuroo\nwkdw ghvfulehv wkh iliwk sduw ri srwlrq pdnlqj. Wkh\nvfuroo vdbv wr dgg 2 jhp urrwv dw hdfk vwdjh ri\nsuhsdudwlrq. Wkhuh duh 3 vwdjhv lq wrwdo.' }],
+    ['firstKey', { x: 350, text: 'Ею ргыол фхгуюм зриерлн киояиегуг, е нсхсусп\nстлфюегихфв тиуегв ъгфхя тулжсхсеоирли киояв.\nЕ зриерлни фнгкгрс, ъхс зов тулжсхсеоирлв киояв\nрисдшсзлпс лфтсояксегхя пцшспсую. Е тиуеюм\nзиря ср лфтсояксего 1 пцшспсу, ес ехсусм зиря ср\nлфтсояксего иьи 3 пцшспсуг.' }],
+    ['secondKey', { x: 370, text: 'Е фхгусм нрлжи ею ргшсзлхи уищитх ыифхсм\nъгфхл тулжсхсеоирли киояв. Е нрлжи жсесулхфв,\nъхс е тиуеюм зиря рцйрс фсдугхя 5 олфхяие\nзиуиег Оцъим, г рг фоизцбьлм зиря иьи 3 олфхг.' }],
+    ['thirdKey', { x: 350, text: 'Е цжоц огдсугхсулл сдргуцйир чогнср ф\nлрфхуцнщлим, нсхсугв стлфюегих хуихяб\nъгфхя тулжсхсеоирлв киояв. Е лрфхуцнщлл\nфнгкгрс, ъхс зов тиуесжс ахгтг рцйрс 4 фоикю,\nг зов ехсусжс ахгтг иьи 3 фоикю.' }],
+    ['fourthKey', { x: 420, text: 'Е цжоц огдсугхсулл ею ргыол кгтлфнц, е\nнсхсусм стлфюегихфв ехсугв ъгфхя\nтулжсхсеоирли киояв. Е кгтлфни фнгкгрс,\nъхс рг тулжсхсеоирли киояв хуидцихфв 3\nнуюог оихцъим пюыл.' }],
+    ['fiverthKey', { x: 350, text: 'Ею ргыол зуиерлм пгрцфнултх, е нсхсусп\nстлфюегихфв ъихеиухгв ъгфхя тулжсхсеоирли\nкиояв. Е пгрцфнултхи фнгкгрс, ъхс зов\nтулжсхсеоирлв киояв хуидцихфв лфтсояксегхя\nъиыцб зугнсрг. Сзрг ъиыцв цйи оийлх рг\nфхсои. Тс пгрцфнултхц, зов кгеиуыирлв уищитхг\nрцйрс иьи фхсоянс йи.' }],
+    ['sixethKey', { x: 390, text: 'Рг сзрсм лк тсосн ею ргшсзлхи фхгулррюм\nфелхсн, е нсхсусп стлфюегихфв твхгв ъгфхя\nтулжсхсеоирли киояв. Е фелхни жсесулхфв, ъхс рг\nнгйзсп ахгти тулжсхсеоирлв рцйрс зсдгелхя\nтс 2 нсурв фгпсщеихг. Ефижс ахгтсе 3.' }],
     ['answer', { x: 100, text: 'Frqjudwv!\nBrx’yh pdgh wkh uljkw srwlrq\n“437268”' }]
 ]);
