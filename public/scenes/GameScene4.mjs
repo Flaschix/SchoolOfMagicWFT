@@ -142,6 +142,7 @@ export class GameScene4 extends BaseScene {
     createOverlays() {
         const a = myMap.get('fiverthKey');
         const b = myMap.get('sixethKey');
+        const c = myMap.get('answer');
 
         this.pressX = this.add.image(this.player.x, this.player.y - 50, 'pressX');
         this.pressX.setDisplaySize(this.pressX.width, this.pressX.height);
@@ -192,7 +193,7 @@ export class GameScene4 extends BaseScene {
         this.answer.setScrollFactor(0);
         this.answer.setAlpha(0);
 
-        this.textC = this.add.text(this.cameras.main.width / 2 - 320, this.cameras.main.height / 2 - 130, 'Congrats!\nYou’ve made the right potion\n“437268”', { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textC = this.add.text(this.cameras.main.width / 2 - 320, this.cameras.main.height / 2 - 130, decrypt(c.text), { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
         this.textC.setVisible(false);
         this.textB.setAlpha(0);
 
