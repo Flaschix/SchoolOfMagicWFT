@@ -22,3 +22,12 @@ export const LABEL_ID = {
     SIXETH_KEY: 8888888,
     CLUE_KEY: 99999999,
 }
+
+export const myMap = new Map([
+    ['firstKey', { x: 250, text: '69' }],
+    ['secondKey', { x: 250 * 1.7, text: '56' }],
+    ['thirdKey', { x: 250 * 2.4, text: '69' }],
+    ['fourthKey', { x: 250 * 3, text: '29' }],
+    ['fiverthKey', { x: 250 * 3.5, text: '44' }],
+    ['sixethKey', { x: 250 * 3.9, text: '62' }],
+]);

@@ -1,6 +1,6 @@
-import { socket } from "../CST.mjs";
+import { socket, myMap } from "../CST.mjs";
 import { SocketWorker } from "../share/SocketWorker.mjs";
-import { createUIBottom, createUITop, createUIRight, createExitMenu, isMobile, HEIGHT_PRESS_X } from "../share/UICreator.mjs";
+import { createUIBottom, createUITop, createUIRight, createExitMenu, isMobile, HEIGHT_PRESS_X, decryptN } from "../share/UICreator.mjs";
 import { AnimationControl } from "../share/AnimationControl.mjs";
 import { PlayersController } from "../share/PlayerController.mjs";
 
@@ -221,19 +221,22 @@ export class BaseScene extends Phaser.Scene {
         if (context.fold == null || context.fold.length < 1) {
 
         } else if (context.fold.length > 1) {
+            const c = myMap.get(context.fold[0])
             context.foldImgNumber = 0;
             context.leftArrow.setVisible(false);
             context.rightArrow.setVisible(true);
 
             context.foldKeys.setTexture(context.fold[0]);
-            context.updateFoldText(context.fold[0])
-
+            context.foldText.setText(decryptN(c.text));
+            context.foldText.setX(c.x);
             context.foldKeys.setVisible(true);
             context.foldText.setVisible(true);
         } else {
+            const c = myMap.get(context.fold[0])
             context.foldImgNumber = 0;
             context.foldKeys.setTexture(context.fold[0]);
-            context.updateFoldText(context.fold[0])
+            context.foldText.setText(decryptN(c.text));
+            context.foldText.setX(c.x);
             context.foldKeys.setVisible(true);
             context.foldText.setVisible(true);
         }
@@ -257,30 +260,8 @@ export class BaseScene extends Phaser.Scene {
                     try {
                         this.foldKeys.setTexture(this.fold[this.foldImgNumber]);
 
-
-                        if (this.fold[this.foldImgNumber] == 'firstKey') {
-                            this.foldText.setText('36');
-                            this.foldText.setX(250);
-                        } else if (this.fold[this.foldImgNumber] == 'secondKey') {
-                            this.foldText.setText('23');
-                            this.foldText.setX(250 * 1.7);
-                        } else if (this.fold[this.foldImgNumber] == 'thirdKey') {
-                            this.foldText.setText('36');
-                            this.foldText.setX(250 * 2.4);
-                        } else if (this.fold[this.foldImgNumber] == 'fourthKey') {
-                            this.foldText.setText('96');
-                            this.foldText.setX(250 * 3);
-                        } else if (this.fold[this.foldImgNumber] == 'fiverthKey') {
-                            this.foldText.setText('11');
-                            this.foldText.setX(250 * 3.5);
-                        } else if (this.fold[this.foldImgNumber] == 'sixethKey') {
-                            this.foldText.setText('39');
-                            this.foldText.setX(250 * 3.9);
-                        } else if (this.fold[this.foldImgNumber] == 'clueKey') {
-                            this.foldText.setText('');
-                        }
-
-
+                        this.foldText.setText(decryptN(myMap.get(this.fold[this.foldImgNumber]).text));
+                        this.foldText.setX(myMap.get(this.fold[this.foldImgNumber]).x);
                         this.tweens.add({
                             targets: [this.foldKeys, this.foldText],
                             alpha: 1,
@@ -307,28 +288,8 @@ export class BaseScene extends Phaser.Scene {
                     try {
                         this.foldKeys.setTexture(this.fold[this.foldImgNumber]);
 
-                        if (this.fold[this.foldImgNumber] == 'firstKey') {
-                            this.foldText.setText('36');
-                            this.foldText.setX(250);
-                        } else if (this.fold[this.foldImgNumber] == 'secondKey') {
-                            this.foldText.setText('23');
-                            this.foldText.setX(250 * 1.7);
-                        } else if (this.fold[this.foldImgNumber] == 'thirdKey') {
-                            this.foldText.setText('36');
-                            this.foldText.setX(250 * 2.4);
-                        } else if (this.fold[this.foldImgNumber] == 'fourthKey') {
-                            this.foldText.setText('96');
-                            this.foldText.setX(250 * 3);
-                        } else if (this.fold[this.foldImgNumber] == 'fiverthKey') {
-                            this.foldText.setText('11');
-                            this.foldText.setX(250 * 3.5);
-                        } else if (this.fold[this.foldImgNumber] == 'sixethKey') {
-                            this.foldText.setText('39');
-                            this.foldText.setX(250 * 3.9);
-                        } else if (this.fold[this.foldImgNumber] == 'clueKey') {
-                            this.foldText.setText('');
-                        }
-
+                        this.foldText.setText(decryptN(myMap.get(this.fold[this.foldImgNumber]).text));
+                        this.foldText.setX(myMap.get(this.fold[this.foldImgNumber]).x);
                         this.tweens.add({
                             targets: [this.foldKeys, this.foldText],
                             alpha: 1,
