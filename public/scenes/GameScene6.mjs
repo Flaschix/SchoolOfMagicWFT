@@ -2,7 +2,7 @@ import { CST, LABEL_ID } from "../CST.mjs";
 
 import { socket } from "../CST.mjs";
 
-import { createUILeftMobile } from "../share/UICreator.mjs";
+import { cd, createUILeftMobile, decrypt } from "../share/UICreator.mjs";
 import { createUI } from "../share/UICreator.mjs";
 import { createAvatarDialog } from "../share/UICreator.mjs";
 import { isMobile } from "../share/UICreator.mjs";
@@ -167,7 +167,7 @@ export class GameScene6 extends BaseScene {
         this.answer.setScrollFactor(0);
         this.answer.setAlpha(0);
 
-        this.textA = this.add.text(this.cameras.main.width / 2 - 280, this.cameras.main.height / 2 - 100, 'Congrats!\nThat’s the right answer\n“DIOLUM”', { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textA = this.add.text(this.cameras.main.width / 2 - 280, this.cameras.main.height / 2 - 100, decrypt('Frqjudwv!\nWkdw’v wkh uljkw dqvzhu\n“GLROXP”'), { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
         this.textA.setVisible(false);
         this.textA.setAlpha(0);
 
@@ -178,13 +178,13 @@ export class GameScene6 extends BaseScene {
         this.paper.setScrollFactor(0);
         this.paper.setAlpha(0);
 
-        this.answerLeft = this.add.text(this.cameras.main.width / 2 - 250, this.cameras.main.height / 2 - 80, 'First part of the spell\n“DIO”', { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' })
+        this.answerLeft = this.add.text(this.cameras.main.width / 2 - 250, this.cameras.main.height / 2 - 80, decrypt('Iluvw sduw ri wkh vshoo\n“GLR”'), { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' })
         this.answerLeft.setVisible(false);
         this.answerLeft.setDepth(2);
         this.answerLeft.setScrollFactor(0);
         this.answerLeft.setAlpha(0);
 
-        this.answerRight = this.add.text(this.cameras.main.width / 2 - 290, this.cameras.main.height / 2 - 80, 'Second part of the spell\n“LUM”', { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' })
+        this.answerRight = this.add.text(this.cameras.main.width / 2 - 290, this.cameras.main.height / 2 - 80, decrypt('Vhfrqg sduw ri wkh vshoo\n“OXP”'), { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' })
         this.answerRight.setVisible(false);
         this.answerRight.setDepth(2);
         this.answerRight.setScrollFactor(0);
@@ -444,7 +444,7 @@ export class GameScene6 extends BaseScene {
             });
         });
 
-        const correctCode = 'DIOLUM';
+        const correctCode = decrypt(cd);
         let correctFlag = true;
 
         const joinRoomConnect = document.getElementById('join-room-connect');
