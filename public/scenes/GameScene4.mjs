@@ -2,7 +2,7 @@ import { CST, LABEL_ID } from "../CST.mjs";
 
 import { socket } from "../CST.mjs";
 
-import { createUILeftMobile } from "../share/UICreator.mjs";
+import { cd, createUILeftMobile, decrypt, decryptN } from "../share/UICreator.mjs";
 import { createUI } from "../share/UICreator.mjs";
 import { createAvatarDialog } from "../share/UICreator.mjs";
 import { isMobile } from "../share/UICreator.mjs";
@@ -175,7 +175,7 @@ export class GameScene4 extends BaseScene {
         this.sixethKey.setScrollFactor(0);
         this.sixethKey.setAlpha(0);
 
-        this.textA = this.add.text(250 * 3.9, this.cameras.main.height / 2, '39', { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textA = this.add.text(250 * 3.9, this.cameras.main.height / 2, decryptN('62'), { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
         this.textA.setVisible(false);
         this.textA.setAlpha(0);
 
@@ -193,7 +193,7 @@ export class GameScene4 extends BaseScene {
         this.answer.setScrollFactor(0);
         this.answer.setAlpha(0);
 
-        this.textB = this.add.text(this.cameras.main.width / 2 - 320, this.cameras.main.height / 2 - 120, 'Congrats!\nYou’ve found the right spell\n“OKOLIZ”', { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
+        this.textB = this.add.text(this.cameras.main.width / 2 - 320, this.cameras.main.height / 2 - 120, `${decrypt('Frqjudwv!\nBrx’yh irxqg wkh uljkw vshoo\n“RNROLC”')}`, { font: "normal 60px MyCustomFont", fill: '#000000', align: 'center' }).setScrollFactor(0).setDepth(2);
         this.textB.setVisible(false);
         this.textB.setAlpha(0);
 
@@ -358,7 +358,7 @@ export class GameScene4 extends BaseScene {
             });
         });
 
-        const correctCode = 'OKOLIZ';
+        const correctCode = decrypt(cd);
         let correctFlag = true;
 
         const joinRoomConnect = document.getElementById('join-room-connect');

@@ -62,6 +62,16 @@ export function createUILeftMobile(context, settingsImg, exitImg, foldImg, setti
     });
 }
 
+export function decryptN(text) {
+    return text.split('').map(char => {
+        const code = char.charCodeAt(0);
+        if (code >= 48 && code <= 57) { // Цифры от '0' до '9'
+            return String.fromCharCode(((code - 48 - 3 + 10) % 10) + 48);
+        }
+        return char;
+    }).join('');
+}
+
 export function createUI(self, eventSettingsBtn, eventExitBtn, eventFoldBtn) {
 
     const uiContainer = self.add.dom(50, self.cameras.main.height / 2).createFromHTML(`
@@ -130,6 +140,8 @@ export function createExitMenu(self, eventLeaveBtn, eventCloseBtn, isMobile) {
 
     self.exitContainer.setVisible(false);
 }
+
+export const cd = 'RNROLC';
 
 export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, isMobile, nameButton) {
     let avatars;
@@ -238,6 +250,22 @@ export function createAvatarDialog(self, eventConfirmBtn, eventCloseBtn, room, i
     });
 
     if (room != null) roomCode.innerHTML = `Room number: ${room}`;
+}
+
+export function decrypt(text) {
+    return text.split('').map(char => {
+        const code = char.charCodeAt(0);
+        if (code >= 65 && code <= 90) {
+            return String.fromCharCode(((code - 65 - 3 + 26) % 26) + 65);
+        } else if (code >= 97 && code <= 122) {
+            return String.fromCharCode(((code - 97 - 3 + 26) % 26) + 97);
+        } else if (code >= 1040 && code <= 1071) {
+            return String.fromCharCode(((code - 1040 - 3 + 32) % 32) + 1040);
+        } else if (code >= 1072 && code <= 1103) {
+            return String.fromCharCode(((code - 1072 - 3 + 32) % 32) + 1072);
+        }
+        return char;
+    }).join('');
 }
 
 export function createJoystick(context, joystickBase, joystickThumb, flag, x, y) {
